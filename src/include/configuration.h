@@ -23,8 +23,8 @@ class configuration {
   // file name
   std::string file_name;
 
-  // operation count
-  size_t operation_count;
+  // column_1_size
+  size_t column_1_size;
 
   // Verbose output
   bool verbose;

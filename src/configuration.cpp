@@ -14,7 +14,7 @@ void Usage() {
       "Command line options : machine <options>\n"
       "   -a --hierarchy_type                 :  hierarchy type\n"
       "   -f --file_name                      :  file name\n"
-      "   -o --operation_count                :  operation count\n"
+      "   -o --column_1_size                  :  column 1 size\n"
       "   -v --verbose                        :  verbose\n"
       ;
   exit(EXIT_FAILURE);
@@ -23,7 +23,7 @@ void Usage() {
 static struct option opts[] = {
     {"hierarchy_type", optional_argument, NULL, 'a'},
     {"file_name", optional_argument, NULL, 'f'},
-    {"operation_count", optional_argument, NULL, 'o'},
+    {"column_1_size", optional_argument, NULL, 'o'},
     {"verbose", optional_argument, NULL, 'v'},
     {NULL, 0, NULL, 0}
 };
@@ -43,9 +43,9 @@ static void ValidateFileName(const configuration &state){
   printf("%30s : %s\n", "file_name", state.file_name.c_str());
 }
 
-static void ValidateOperationCount(const configuration &state){
-  if(state.operation_count > 0) {
-    printf("%30s : %lu\n", "operation_count", state.operation_count);
+static void ValidateColumn1Size(const configuration &state){
+  if(state.column_1_size > 0) {
+    printf("%30s : %lu\n", "column_1_size", state.column_1_size);
   }
 }
 
@@ -56,7 +56,7 @@ void ParseArguments(int argc, char *argv[], configuration &state) {
 
   state.hierarchy_type = HIERARCHY_TYPE_DRAM_NVM_DISK;
   state.file_name = "";
-  state.operation_count = 0;
+  state.column_1_size = 1000 * 100;
 
   // Parse args
   while (1) {
@@ -75,7 +75,7 @@ void ParseArguments(int argc, char *argv[], configuration &state) {
         state.file_name = optarg;
         break;
       case 'o':
-        state.operation_count = atoi(optarg);
+        state.column_1_size = atoi(optarg);
         break;
       case 'v':
         state.verbose = atoi(optarg);
@@ -92,7 +92,7 @@ void ParseArguments(int argc, char *argv[], configuration &state) {
 
   ValidateHierarchyType(state);
   ValidateFileName(state);
-  ValidateOperationCount(state);
+  ValidateColumn1Size(state);
 
   printf("//===----------------------------------------------------------------------===//\n");
 

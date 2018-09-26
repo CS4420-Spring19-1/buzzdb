@@ -3,6 +3,7 @@
 #include <math.h>
 #include <random>
 #include <unordered_map>
+#include <chrono>
 
 #include "benchmark.h"
 #include "configuration.h"
@@ -10,6 +11,11 @@
 namespace emerald{
 
 configuration state;
+
+typedef std::vector<std::pair<int,int>> matches_type;
+typedef std::unordered_map<int,std::vector<int>> map_type;
+
+typedef std::chrono::high_resolution_clock Time;
 
 unsigned seed = 23;
 std::default_random_engine generator (seed);
@@ -32,6 +38,7 @@ int GenerateNumber(){
 
 }
 
+// Build hash table for a given column
 std::unordered_map<int,std::vector<int>> GenerateHashTable(int* array, int array_size){
 
 	std::unordered_map<int,std::vector<int>> map;
@@ -45,33 +52,82 @@ std::unordered_map<int,std::vector<int>> GenerateHashTable(int* array, int array
 	return map;
 }
 
+// Print the matches
+void PrintMatches(const matches_type& matches, int* array, bool verbose){
+
+	std::cout << "MATCHES: ";
+	std::cout << matches.size();
+	std::cout << "\n";
+
+	// Print all matches
+	if(verbose == true){
+		for(auto match: matches){
+			std::cout << array[match.first] << " :: " << match.first << " " << match.second << "\n";
+		}
+		std::cout << "\n";
+	}
+
+}
+
+// Print the contents of the map
+void PrintMap(const map_type& map){
+
+	for(auto entry: map){
+		std::cout << entry.first << " :: ";
+		for(auto offset: entry.second){
+			std::cout << offset << " ";
+		}
+		std::cout << "\n";
+	}
+
+}
+
+// Print the contents of the array
+void PrintArray(int* array, int array_size){
+
+	for(int array_itr = 0; array_itr < array_size; array_itr++){
+		std::cout << array[array_itr] << " ";
+	}
+	std::cout << "\n";
+
+}
+
 void RunJoinBenchmark(){
 
+	// Each column contains an array of numbers (table 1 and table 2)
+	// 1-D array is sufficient since we are focusing on a couple of columns for now
 	int* column_1;
 	int* column_2;
-	int column_1_size = 50;
+
+	// TODO: Make it a runtime parameter
+	int column_1_size = state.column_1_size;
 	int column_2_size = column_1_size/5;
 
 	// Initialize arrays
 	column_1 = new int[column_1_size];
 	column_2 = new int[column_2_size];
 
-	// Load data
+	// Load data into first column
 	for(int column_1_itr = 0; column_1_itr < column_1_size; column_1_itr++){
 		auto number = GenerateNumber();
 		column_1[column_1_itr] = number;
-		std::cout << column_1[column_1_itr] << " ";
 	}
-	std::cout << "\n";
 
+	// Print array
+	//PrintArray(column_1, column_1_size);
+
+	// Load data into second column
 	for(int column_2_itr = 0; column_2_itr < column_2_size; column_2_itr++){
 		auto number = GenerateNumber();
 		column_2[column_2_itr] = number;
-		std::cout << column_2[column_2_itr] << " ";
 	}
-	std::cout << "\n";
+
+	// Print array
+	//PrintArray(column_2, column_2_size);
 
 	std::vector<std::pair<int,int>> matches;
+
+	auto start = Time::now();
 
 	// TUPLE-CENTRIC JOIN
 	for(int column_1_itr = 0; column_1_itr < column_1_size; column_1_itr++){
@@ -88,26 +144,22 @@ void RunJoinBenchmark(){
 		}
 	}
 
-	std::cout << "MATCHES: \n";
-	std::cout << matches.size();
-	for(auto match: matches){
-		std::cout << column_1[match.first] << " :: " << match.first << " " << match.second << "\n";
-	}
-	std::cout << "\n";
+    auto stop = Time::now();
+	std::chrono::duration<double> elapsed = stop - start;
+	std::chrono::milliseconds time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
+	std::cout << "TUPLE-CENTRIC JOIN: " << time_milliseconds.count() << " ms \n";
+
+	PrintMatches(matches, column_1, false);
 
 	// Build hash tables for value-centric join
 	auto map_1 = GenerateHashTable(column_1, column_1_size);
 	auto map_2 = GenerateHashTable(column_2, column_2_size);
 
-	for(auto entry: map_1){
-		std::cout << entry.first << " :: ";
-		for(auto offset: entry.second){
-			std::cout << offset << " ";
-		}
-		std::cout << "\n";
-	}
+	//PrintMap(map_1);
 
 	matches.clear();
+
+	start = Time::now();
 
 	// VALUE-CENTRIC JOIN
 	for(auto entry: map_1){
@@ -125,13 +177,12 @@ void RunJoinBenchmark(){
 
 	}
 
-	std::cout << "MATCHES: \n";
-	std::cout << matches.size();
-	for(auto match: matches){
-		std::cout << column_1[match.first] << " :: " << match.first << " " << match.second << "\n";
-	}
-	std::cout << "\n";
+    stop = Time::now();
+	elapsed = stop - start;
+	time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
+	std::cout << "VALUE-CENTRIC JOIN: " << time_milliseconds.count() << " ms \n";
 
+	PrintMatches(matches, column_1, false);
 
 	// Clean up arrays
 	delete column_1;
