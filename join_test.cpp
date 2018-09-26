@@ -5,7 +5,7 @@
 #include <fstream>
 #include <chrono>
 
-#define MAX_ROWS 100
+#define MAX_ROWS 1000 * 10
 
 struct eleIndex {
 	int rowNum;
@@ -36,16 +36,16 @@ std::vector<int> generateData(unsigned int count){
 	std::random_device rd;
 	std::mt19937 gen(rd());
 
-	//std::uniform_int_distribution<> dis1(1, 10);
+	std::uniform_int_distribution<> dis1(1, 10);
 	unsigned int i;
-	// //for half the data, sample from 0-10
-	// for(i=0; i < count/2; i++){
-	// 	table.push_back(dis1(gen));
-	// }
+	//for half the data, sample from 0-10
+	for(i=0; i < count/2; i++){
+		table.push_back(dis1(gen));
+	}
 
 	//for next half, sample from 10-100
 	std::uniform_int_distribution<> dis2(1, 100);
-	for(i=0; i<count; i++){
+	for(; i<count; i++){
 		table.push_back(dis2(gen));
 	}
 	return table;
@@ -56,8 +56,8 @@ int main(int argc, char const *argv[])
 	std::ofstream output_file;
 	output_file.open("output.csv");
 	output_file << "test no, index generation T1, index generation T2, Join\n";
-	for(int i=0; i<10; i++){
-		std::cout << "executing" <<std::endl;
+	for(int i=0; i<3; i++){
+		std::cout << "\nexecuting" <<std::endl;
 		output_file << i << ",";
 
 		std::vector<int> t1 = generateData(MAX_ROWS);
@@ -78,7 +78,9 @@ int main(int argc, char const *argv[])
 		elapsed = stop - start;
 		output_file << elapsed.count() << ",";
 
-		std::cout<< "joining" << std::endl;
+		std::cout<< "\njoining" << std::endl;
+		std::vector<std::pair<int,int>> matches;
+
 		start = std::chrono::high_resolution_clock::now();
 		for(auto &x:indexT1){
 			unsigned int value = x.first;
@@ -90,19 +92,22 @@ int main(int argc, char const *argv[])
 				while(tmp!=NULL){
 					struct eleIndex * tmp1 = list2;
 					while(tmp1!=NULL){
-						std::cout << "(" <<tmp->rowNum << ", " << tmp1->rowNum << ")" << std::endl;
+						matches.push_back(std::make_pair(tmp->rowNum, tmp1->rowNum));
 						tmp1=tmp1->next;
 					}
 					tmp = tmp->next;
 				}
 
-			} catch(const std::out_of_range &e){ //if that value is not present in T2
+			}
+			catch(const std::out_of_range &e){ //if that value is not present in T2
 				continue;
 			}
 		}
 		stop = std::chrono::high_resolution_clock::now();
 		elapsed = stop - start;
 		output_file << elapsed.count() << ",\n";
+
+		std::cout << "MATCHES: " << matches.size();
 
 	}
 	output_file.close();

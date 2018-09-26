@@ -336,6 +336,7 @@ machine.txt
 *.summary
 tmp*
 *.txt
+*.csv
 
 # Traces
 traces/*

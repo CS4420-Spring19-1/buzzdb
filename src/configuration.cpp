@@ -28,7 +28,7 @@ static struct option opts[] = {
     {NULL, 0, NULL, 0}
 };
 
-static void ValidateHierarchyType(const configuration &state) {
+__attribute__((unused)) static void ValidateHierarchyType(const configuration &state) {
   if (state.hierarchy_type < 1 || state.hierarchy_type > HIERARCHY_TYPE_MAX) {
     printf("Invalid hierarchy_type :: %d\n", state.hierarchy_type);
     exit(EXIT_FAILURE);
@@ -39,7 +39,7 @@ static void ValidateHierarchyType(const configuration &state) {
   }
 }
 
-static void ValidateFileName(const configuration &state){
+__attribute__((unused)) static void ValidateFileName(const configuration &state){
   printf("%30s : %s\n", "file_name", state.file_name.c_str());
 }
 
@@ -90,8 +90,8 @@ void ParseArguments(int argc, char *argv[], configuration &state) {
     }
   }
 
-  ValidateHierarchyType(state);
-  ValidateFileName(state);
+  //ValidateHierarchyType(state);
+  //ValidateFileName(state);
   ValidateColumn1Size(state);
 
   printf("//===----------------------------------------------------------------------===//\n");
