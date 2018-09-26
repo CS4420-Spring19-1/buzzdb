@@ -2,6 +2,7 @@
 
 #include <math.h>
 #include <random>
+#include <unordered_map>
 
 #include "benchmark.h"
 #include "configuration.h"
@@ -16,7 +17,7 @@ std::uniform_int_distribution<int> boolean_distribution(0,1);
 std::uniform_int_distribution<int> first_half_distribution(1,10);
 std::uniform_int_distribution<int> second_half_distribution(10,100);
 
-int generate_number(){
+int GenerateNumber(){
 
 	// first or second half?
 	bool first_half = boolean_distribution(generator);
@@ -29,6 +30,19 @@ int generate_number(){
 		return second_half_distribution(generator);
 	}
 
+}
+
+std::unordered_map<int,std::vector<int>> GenerateHashTable(int* array, int array_size){
+
+	std::unordered_map<int,std::vector<int>> map;
+
+	// Process array data
+	for(int array_itr = 0; array_itr < array_size; array_itr++){
+		auto number = array[array_itr];
+		map[number].push_back(array_itr);
+	}
+
+	return map;
 }
 
 void RunJoinBenchmark(){
@@ -44,14 +58,14 @@ void RunJoinBenchmark(){
 
 	// Load data
 	for(int column_1_itr = 0; column_1_itr < column_1_size; column_1_itr++){
-		auto number = generate_number();
+		auto number = GenerateNumber();
 		column_1[column_1_itr] = number;
 		std::cout << column_1[column_1_itr] << " ";
 	}
 	std::cout << "\n";
 
 	for(int column_2_itr = 0; column_2_itr < column_2_size; column_2_itr++){
-		auto number = generate_number();
+		auto number = GenerateNumber();
 		column_2[column_2_itr] = number;
 		std::cout << column_2[column_2_itr] << " ";
 	}
@@ -59,7 +73,7 @@ void RunJoinBenchmark(){
 
 	std::vector<std::pair<int,int>> matches;
 
-	// NESTED LOOP JOIN
+	// TUPLE-CENTRIC JOIN
 	for(int column_1_itr = 0; column_1_itr < column_1_size; column_1_itr++){
 		auto column_1_number = column_1[column_1_itr];
 
@@ -75,10 +89,38 @@ void RunJoinBenchmark(){
 	}
 
 	std::cout << "MATCHES: \n";
-	for(auto match: matches){
-		std::cout << column_1[match.first] << " :: " << match.first << " " << match.second << "\n";
-	}
+	std::cout << matches.size();
+	//for(auto match: matches){
+	//std::cout << column_1[match.first] << " :: " << match.first << " " << match.second << "\n";
+	//}
 	std::cout << "\n";
+
+	// Build hash tables for value-centric join
+	auto map_1 = GenerateHashTable(column_1, column_1_size);
+	auto map_2 = GenerateHashTable(column_2, column_2_size);
+
+	for(auto entry: map_1){
+		std::cout << entry.first << " :: ";
+		for(auto offset: entry.second){
+			std::cout << offset << " ";
+		}
+		std::cout << "\n";
+	}
+
+	// VALUE-CENTRIC JOIN
+	for(int column_1_itr = 0; column_1_itr < column_1_size; column_1_itr++){
+		auto column_1_number = column_1[column_1_itr];
+
+		for(int column_2_itr = 0; column_2_itr < column_2_size; column_2_itr++){
+			auto column_2_number = column_2[column_2_itr];
+
+			// Check if numbers match
+			if(column_1_number == column_2_number){
+				// Add to match list
+				matches.push_back(std::make_pair(column_1_itr, column_2_itr));
+			}
+		}
+	}
 
 	// Clean up arrays
 	delete column_1;
