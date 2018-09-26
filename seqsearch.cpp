@@ -74,6 +74,7 @@ int main() {
     start = std::chrono::high_resolution_clock::now();
     for(j=0;j<1000000;j++)
     {
+        // WHAT'S HAPPENING HERE?
         it1 = find (testvec1.begin(), testvec1.end(),testvec1.at(j));
         for(k=0;k<1000000;k++)
         {
