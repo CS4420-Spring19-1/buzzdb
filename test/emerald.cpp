@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <chrono>
 
 #include <gtest/gtest.h>
 #include <glog/logging.h>

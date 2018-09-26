@@ -90,9 +90,9 @@ void RunJoinBenchmark(){
 
 	std::cout << "MATCHES: \n";
 	std::cout << matches.size();
-	//for(auto match: matches){
-	//std::cout << column_1[match.first] << " :: " << match.first << " " << match.second << "\n";
-	//}
+	for(auto match: matches){
+		std::cout << column_1[match.first] << " :: " << match.first << " " << match.second << "\n";
+	}
 	std::cout << "\n";
 
 	// Build hash tables for value-centric join
@@ -107,20 +107,31 @@ void RunJoinBenchmark(){
 		std::cout << "\n";
 	}
 
+	matches.clear();
+
 	// VALUE-CENTRIC JOIN
-	for(int column_1_itr = 0; column_1_itr < column_1_size; column_1_itr++){
-		auto column_1_number = column_1[column_1_itr];
+	for(auto entry: map_1){
 
-		for(int column_2_itr = 0; column_2_itr < column_2_size; column_2_itr++){
-			auto column_2_number = column_2[column_2_itr];
+		auto value = entry.first;
+		auto column_1_offsets = entry.second;
 
-			// Check if numbers match
-			if(column_1_number == column_2_number){
-				// Add to match list
-				matches.push_back(std::make_pair(column_1_itr, column_2_itr));
+		auto column_2_offsets = map_2[value];
+
+		for(auto column_1_offset: column_1_offsets){
+			for(auto column_2_offset: column_2_offsets){
+				matches.push_back(std::make_pair(column_1_offset, column_2_offset));
 			}
 		}
+
 	}
+
+	std::cout << "MATCHES: \n";
+	std::cout << matches.size();
+	for(auto match: matches){
+		std::cout << column_1[match.first] << " :: " << match.first << " " << match.second << "\n";
+	}
+	std::cout << "\n";
+
 
 	// Clean up arrays
 	delete column_1;
