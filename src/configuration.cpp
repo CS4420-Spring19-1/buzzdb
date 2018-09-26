@@ -6,7 +6,7 @@
 
 #include "configuration.h"
 
-namespace engine {
+namespace emerald {
 
 void Usage() {
   std::cout <<
@@ -98,4 +98,4 @@ void ParseArguments(int argc, char *argv[], configuration &state) {
 
 }
 
-}  // namespace engine
+}  // namespace emerald

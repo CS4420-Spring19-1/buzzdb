@@ -2,16 +2,14 @@
 
 #include <gtest/gtest.h>
 
-#include "engine.h"
+#include "benchmark.h"
 
-namespace engine {
+namespace emerald {
 
 TEST(BasicTest, Test1) {
 
-    std::cout << "Square root:" << square_root(2500) << "\n";
-
-    EXPECT_EQ(square_root(100), 10);
+    EXPECT_EQ(10, 10);
 
 }
 
-}  // End engine namespace
+}  // End emerald namespace

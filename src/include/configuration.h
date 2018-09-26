@@ -10,7 +10,7 @@
 
 #include "types.h"
 
-namespace engine {
+namespace emerald {
 
 static const int generator_seed = 50;
 
@@ -35,4 +35,4 @@ void Usage(FILE *out);
 
 void ParseArguments(int argc, char *argv[], configuration &state);
 
-}  // namespace engine
+}  // namespace emerald

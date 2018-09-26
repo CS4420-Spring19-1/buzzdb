@@ -4,23 +4,23 @@
 
 # ---[ BASIC TEST
 add_executable(basic_test basic_test.cpp)
-target_link_libraries(basic_test engine_library
+target_link_libraries(basic_test emerald_library
 ${GTEST_BOTH_LIBRARIES} 
 ${GLOG_LIBRARIES} 
 ${CMAKE_THREAD_LIBS_INIT}
 )
 add_test(NAME BasicTest COMMAND basic_test)
 
-## ENGINE 
+## MAIN 
 
-# ---[ ENGINE
-add_executable(engine engine.cpp)
-target_link_libraries(engine engine_library 
+# ---[ MAIN
+add_executable(emerald emerald.cpp)
+target_link_libraries(emerald emerald_library 
 ${GTEST_BOTH_LIBRARIES} 
 ${GLOG_LIBRARIES} 
 ${CMAKE_THREAD_LIBS_INIT}
 )
-add_test(NAME EngineTest COMMAND engine)
+add_test(NAME Emerald COMMAND emerald)
 
 # --[ Add "make check" target
 

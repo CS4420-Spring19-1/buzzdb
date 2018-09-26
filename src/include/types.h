@@ -4,7 +4,7 @@
 
 #include <string>
 
-namespace engine {
+namespace emerald {
 
 enum HierarchyType {
   HIERARCHY_TYPE_INVALID = 0,
@@ -20,4 +20,4 @@ enum HierarchyType {
 
 std::string HierarchyTypeToString(const HierarchyType& hierarchy_type);
 
-}  // End engine namespace
+}  // End emerald namespace

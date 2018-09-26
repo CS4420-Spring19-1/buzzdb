@@ -6,16 +6,18 @@
 #include <gtest/gtest.h>
 #include <glog/logging.h>
 
+#include "benchmark.h"
 #include "macros.h"
-#include "engine.h"
 #include "configuration.h"
 
-namespace engine {
+namespace emerald {
 
 extern configuration state;
 
 // Main Entry Point
 void RunBenchmark() {
+
+	RunJoinBenchmark();
 
 }
 
@@ -26,10 +28,10 @@ int main(int argc, char **argv) {
   // Initialize Google's logging library.
   google::InitGoogleLogging(argv[0]);
 
-  engine::ParseArguments(
-      argc, argv, engine::state);
+  emerald::ParseArguments(
+      argc, argv, emerald::state);
 
-  engine::RunBenchmark();
+  emerald::RunBenchmark();
 
   return 0;
 }

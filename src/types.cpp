@@ -2,7 +2,7 @@
 
 #include "types.h"
 
-namespace engine {
+namespace emerald {
 
 std::string HierarchyTypeToString(const HierarchyType& hierarchy_type){
 
@@ -23,5 +23,5 @@ std::string HierarchyTypeToString(const HierarchyType& hierarchy_type){
 
 }
 
-}  // End engine namespace
+}  // End engine emerald
 
