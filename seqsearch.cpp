@@ -74,20 +74,15 @@ int main() {
     start = std::chrono::high_resolution_clock::now();
     for(j=0;j<1000000;j++)
     {
-        // WHAT'S HAPPENING HERE?
-        it1 = find (testvec1.begin(), testvec1.end(),testvec1.at(j));
         for(k=0;k<1000000;k++)
         {
-            it2 = find (testvec2.begin(), testvec2.end(),testvec2.at(j));
-            if (testvec1.at(j) == testvec2.at(k))
+            if (testvec1[j] == testvec2[k])
             {
-            result1= distance(testvec1.begin(), it1);
-            result2= distance(testvec2.begin(), it2);
-            std::cout << "<" << result1 << "," << result2 << "> \n";  //Position
+            std::cout << "<" << j << "," << k << "> \n";  //Position
             }
             else
             {
-                break;
+                continue;
             }
         }
     }
