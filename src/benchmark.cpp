@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <map>
 #include <chrono>
+#include <set>
 
 #include "benchmark.h"
 #include "configuration.h"
@@ -28,10 +29,10 @@ struct dictionary_entry {
 unsigned seed = 23;
 std::default_random_engine generator (seed);
 std::uniform_int_distribution<int> boolean_distribution(0,1);
-std::uniform_int_distribution<int> column_1_first_half_distribution(1,10);
-std::uniform_int_distribution<int> column_1_second_half_distribution(10,100000);
+std::uniform_int_distribution<int> column_1_first_half_distribution(1,10000);
+std::uniform_int_distribution<int> column_1_second_half_distribution(10000,1000000);
 std::uniform_int_distribution<int> column_2_first_half_distribution(1,100);
-std::uniform_int_distribution<int> column_2_second_half_distribution(100,100000);
+std::uniform_int_distribution<int> column_2_second_half_distribution(100,1000);
 
 int GenerateNumberColumn1(){
 
@@ -257,11 +258,17 @@ void RunJoinBenchmark(){
 	column_1 = new int[column_1_size];
 	column_2 = new int[column_2_size];
 
+	std::set<int> column_1_set;
+	std::set<int> column_2_set;
+
 	// Load data into first column
 	for(int column_1_itr = 0; column_1_itr < column_1_size; column_1_itr++){
 		auto number = GenerateNumberColumn1();
 		column_1[column_1_itr] = number;
+		column_1_set.insert(number);
 	}
+
+	std::cout << "COLUMN 1 SET SIZE: " << column_1_set.size() << "\n";
 
 	// Print array
 	//PrintArray(column_1, column_1_size);
@@ -270,7 +277,10 @@ void RunJoinBenchmark(){
 	for(int column_2_itr = 0; column_2_itr < column_2_size; column_2_itr++){
 		auto number = GenerateNumberColumn2();
 		column_2[column_2_itr] = number;
+		column_2_set.insert(number);
 	}
+
+	std::cout << "COLUMN 2 SET SIZE: " << column_2_set.size() << "\n";
 
 	// Print array
 	//PrintArray(column_2, column_2_size);
