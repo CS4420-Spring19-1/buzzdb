@@ -34,6 +34,10 @@ std::uniform_int_distribution<int> column_1_second_half_distribution(100,1000000
 std::uniform_int_distribution<int> column_2_first_half_distribution(1,100000);
 std::uniform_int_distribution<int> column_2_second_half_distribution(100000,1000000);
 
+////////////////////////////////////////////////////////////////////////////////////////////
+// GENERATORS
+////////////////////////////////////////////////////////////////////////////////////////////
+
 int GenerateNumberColumn1(){
 
 	// first or second half?
@@ -63,6 +67,11 @@ int GenerateNumberColumn2(){
 	}
 
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////
+// BUILDERS
+////////////////////////////////////////////////////////////////////////////////////////////
+
 
 // Build hash table for one columns
 std::unordered_map<int,std::vector<int>> BuildHashTable(int* array_1, int array_1_size){
@@ -189,6 +198,9 @@ std::pair<std::vector<dictionary_entry>, std::vector<int>> BuildDictionary(int* 
 	return std::make_pair(dictionary, dictionary_map_vector);
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////
+// PRINTERS
+////////////////////////////////////////////////////////////////////////////////////////////
 
 // Print the matches
 void PrintMatches(const matches_type& matches, int* array, bool verbose){
@@ -243,6 +255,235 @@ void PrintArray(int* array, int array_size){
 
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////
+// ALGORITHMS
+////////////////////////////////////////////////////////////////////////////////////////////
+
+void RunAlgorithm1(int* column_1, int column_1_size, int* column_2, int column_2_size){
+
+	std::vector<std::pair<int,int>> matches;
+
+	// ALGORITHM 1: TUPLE-CENTRIC JOIN (NO INDEX)
+
+	auto start = Time::now();
+
+	for(int column_1_itr = 0; column_1_itr < column_1_size; column_1_itr++){
+		auto column_1_number = column_1[column_1_itr];
+
+		for(int column_2_itr = 0; column_2_itr < column_2_size; column_2_itr++){
+			auto column_2_number = column_2[column_2_itr];
+
+			// Check if numbers match
+			if(column_1_number == column_2_number){
+				// Add to match list
+				matches.push_back(std::make_pair(column_1_itr, column_2_itr));
+			}
+		}
+	}
+
+	auto stop = Time::now();
+	std::chrono::duration<double> elapsed = stop - start;
+	std::chrono::milliseconds time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
+	std::cout << "TUPLE-CENTRIC JOIN (NO INDEX): " << time_milliseconds.count() << " ms \n";
+
+	PrintMatches(matches, column_1, false);
+
+}
+
+void RunAlgorithm2(int* column_1, int column_1_size, int* column_2, int column_2_size){
+	std::vector<std::pair<int,int>> matches;
+
+	// ALGORITHM 2: VALUE-CENTRIC JOIN (JOINT HASH TABLE) (TYPE 1)
+
+	// Build hash table for value-centric join
+	auto join_hash_table = BuildJoinHashTable(column_1, column_1_size, column_2, column_2_size);
+
+	auto start = Time::now();
+
+	for(auto entry: join_hash_table){
+
+		auto column_1_offsets = entry.second.first;
+		auto column_2_offsets = entry.second.second;
+
+		for(auto column_1_offset: column_1_offsets){
+			for(auto column_2_offset: column_2_offsets){
+				matches.push_back(std::make_pair(column_1_offset, column_2_offset));
+			}
+		}
+
+	}
+
+	auto stop = Time::now();
+	auto elapsed = stop - start;
+	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
+	std::cout << "VALUE-CENTRIC JOIN (JOINT HASH TABLE) (TYPE 1): " << time_milliseconds.count() << " ms \n";
+
+	PrintMatches(matches, column_1, false);
+
+}
+
+void RunAlgorithm3(int* column_1, int column_1_size, int* column_2, int column_2_size){
+	std::vector<std::pair<int,int>> matches;
+
+	// ALGORITHM 3: TUPLE-CENTRIC JOIN (WITH INVERTED INDEX ON COLUMN_1)
+
+	// Build tree for inverted index
+	auto tree_1 = BuildTree(column_1, column_1_size);
+
+	//PrintTree(tree_1);
+
+	auto start = Time::now();
+
+	for(int column_2_itr = 0; column_2_itr < column_2_size; column_2_itr++){
+		auto value = column_2[column_2_itr];
+
+		auto column_1_offsets = tree_1[value];
+
+		for(auto column_1_offset: column_1_offsets){
+			matches.push_back(std::make_pair(column_1_offset, column_2_itr));
+		}
+	}
+
+	auto stop = Time::now();
+	auto elapsed = stop - start;
+	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
+	std::cout << "TUPLE-CENTRIC JOIN (WITH INVERTED INDEX ON COLUMN_1): " << time_milliseconds.count() << " ms \n";
+
+	PrintMatches(matches, column_1, false);
+
+}
+
+void RunAlgorithm4(int* column_1, int column_1_size, int* column_2, int column_2_size){
+	std::vector<std::pair<int,int>> matches;
+
+	// ALGORITHM 4: TUPLE-CENTRIC JOIN (WITH JOINT INDEX ON BOTH COLUMNS)
+
+	// Build join tree
+	auto join_tree = BuildJoinTree(column_1, column_1_size, column_2, column_2_size);
+
+	//std::cout <<"JOIN TREE SIZE: " << join_tree.size() << "\n";
+
+	auto start = Time::now();
+
+	for(auto entry: join_tree){
+
+		auto match_list = entry.second;
+
+		for(auto pair_itr: match_list){
+			matches.push_back(pair_itr);
+		}
+
+	}
+
+	auto stop = Time::now();
+	auto elapsed = stop - start;
+	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
+	//std::cout << "TUPLE-CENTRIC JOIN (WITH JOINT INDEX ON BOTH COLUMNS): " << time_milliseconds.count() << " ms \n";
+
+	PrintMatches(matches, column_1, false);
+
+	matches.clear();
+
+}
+
+void RunAlgorithm5(int* column_1, int column_1_size, int* column_2, int column_2_size){
+	std::vector<std::pair<int,int>> matches;
+
+	// ALGORITHM 5: VALUE-CENTRIC JOIN (SINGLE HASH TABLE) (TYPE 2)
+
+	// Build hash table for value-centric join
+	auto hash_table = BuildHashTable(column_1, column_1_size);
+
+	auto start = Time::now();
+
+	for(int column_2_itr = 0; column_2_itr < column_2_size; column_2_itr++){
+		auto value = column_2[column_2_itr];
+
+		auto column_1_offsets = hash_table[value];
+
+		for(auto column_1_offset: column_1_offsets){
+			matches.push_back(std::make_pair(column_1_offset, column_2_itr));
+		}
+	}
+
+	auto stop = Time::now();
+	auto elapsed = stop - start;
+	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
+	std::cout << "VALUE-CENTRIC JOIN (SINGLE HASH TABLE) (TYPE 2): " << time_milliseconds.count() << " ms \n";
+
+	PrintMatches(matches, column_1, false);
+
+	matches.clear();
+
+}
+
+void RunAlgorithm6(int* column_1, int column_1_size, int* column_2, int column_2_size){
+	std::vector<std::pair<int,int>> matches;
+
+	// ALGORITHM 6: VALUE-CENTRIC JOIN (DICTIONARY) (TYPE 1)
+
+	// Build dictionary for value-centric join
+	std::vector<dictionary_entry> dictionary;
+	std::vector<int> dictionary_map_vector;
+	std::tie(dictionary, dictionary_map_vector) = BuildDictionary(column_1, column_1_size, column_2, column_2_size);
+
+	std::cout << "LIST SIZE: " << dictionary_map_vector.size() << "\n";
+
+	auto start = Time::now();
+
+	for(auto entry: dictionary){
+
+		auto column_1_offsets = entry.column_1_offset_array;
+		auto column_2_offsets = entry.column_2_offset_array;
+
+		for(auto column_1_offset: column_1_offsets){
+			for(auto column_2_offset: column_2_offsets){
+				matches.push_back(std::make_pair(column_1_offset, column_2_offset));
+			}
+		}
+
+	}
+
+	auto stop = Time::now();
+	auto elapsed = stop - start;
+	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
+	std::cout << "VALUE-CENTRIC JOIN (DICTIONARY) (TYPE 1): " << time_milliseconds.count() << " ms \n";
+
+	PrintMatches(matches, column_1, false);
+
+	matches.clear();
+}
+
+void RunAlgorithm7(int* column_1, int column_1_size, int* column_2, int column_2_size){
+	std::vector<std::pair<int,int>> matches;
+
+	// ALGORITHM 7: VALUE-CENTRIC JOIN (DICTIONARY) (TYPE 2)
+
+	// Build dictionary for value-centric join
+	std::vector<dictionary_entry> dictionary;
+	std::vector<int> dictionary_map_vector;
+	std::tie(dictionary, dictionary_map_vector) = BuildDictionary(column_1, column_1_size, column_2, column_2_size);
+
+	auto start = Time::now();
+
+	for(int column_2_itr = 0; column_2_itr < column_2_size; column_2_itr++){
+
+		auto dictionary_offset = dictionary_map_vector[column_2_itr];
+		auto column_1_offsets = dictionary[dictionary_offset].column_1_offset_array;
+
+		for(auto column_1_offset: column_1_offsets){
+			matches.push_back(std::make_pair(column_1_offset, column_2_itr));
+		}
+	}
+
+	auto stop = Time::now();
+	auto elapsed = stop - start;
+	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
+	std::cout << "VALUE-CENTRIC JOIN (DICTIONARY) (TYPE 2): " << time_milliseconds.count() << " ms \n";
+
+	PrintMatches(matches, column_1, false);
+}
+
 void RunJoinBenchmark(){
 
 	// Each column contains an array of numbers (table 1 and table 2)
@@ -270,9 +511,6 @@ void RunJoinBenchmark(){
 
 	std::cout << "COLUMN 1 SET SIZE: " << column_1_set.size() << "\n";
 
-	// Print array
-	//PrintArray(column_1, column_1_size);
-
 	// Load data into second column
 	for(int column_2_itr = 0; column_2_itr < column_2_size; column_2_itr++){
 		auto number = GenerateNumberColumn2();
@@ -282,207 +520,21 @@ void RunJoinBenchmark(){
 
 	std::cout << "COLUMN 2 SET SIZE: " << column_2_set.size() << "\n";
 
-	// Print array
-	//PrintArray(column_2, column_2_size);
+	// RUN ALGORITHMS
 
-	std::vector<std::pair<int,int>> matches;
+	RunAlgorithm1(column_1, column_1_size, column_2, column_2_size);
 
-	// ALGORITHM 1: TUPLE-CENTRIC JOIN (NO INDEX)
+	RunAlgorithm2(column_1, column_1_size, column_2, column_2_size);
 
-	auto start = Time::now();
+	RunAlgorithm3(column_1, column_1_size, column_2, column_2_size);
 
-	for(int column_1_itr = 0; column_1_itr < column_1_size; column_1_itr++){
-		auto column_1_number = column_1[column_1_itr];
+	RunAlgorithm4(column_1, column_1_size, column_2, column_2_size);
 
-		for(int column_2_itr = 0; column_2_itr < column_2_size; column_2_itr++){
-			auto column_2_number = column_2[column_2_itr];
+	RunAlgorithm5(column_1, column_1_size, column_2, column_2_size);
 
-			// Check if numbers match
-			if(column_1_number == column_2_number){
-				// Add to match list
-				matches.push_back(std::make_pair(column_1_itr, column_2_itr));
-			}
-		}
-	}
+	RunAlgorithm6(column_1, column_1_size, column_2, column_2_size);
 
-    auto stop = Time::now();
-	std::chrono::duration<double> elapsed = stop - start;
-	std::chrono::milliseconds time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
-	std::cout << "TUPLE-CENTRIC JOIN (NO INDEX): " << time_milliseconds.count() << " ms \n";
-
-	PrintMatches(matches, column_1, false);
-
-	matches.clear();
-
-	// ALGORITHM 2: VALUE-CENTRIC JOIN (JOINT HASH TABLE) (TYPE 1)
-
-	// Build hash table for value-centric join
-	auto join_hash_table = BuildJoinHashTable(column_1, column_1_size, column_2, column_2_size);
-
-	start = Time::now();
-
-	for(auto entry: join_hash_table){
-
-		auto column_1_offsets = entry.second.first;
-		auto column_2_offsets = entry.second.second;
-
-		for(auto column_1_offset: column_1_offsets){
-			for(auto column_2_offset: column_2_offsets){
-				matches.push_back(std::make_pair(column_1_offset, column_2_offset));
-			}
-		}
-
-	}
-
-    stop = Time::now();
-	elapsed = stop - start;
-	time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
-	std::cout << "VALUE-CENTRIC JOIN (JOINT HASH TABLE) (TYPE 1): " << time_milliseconds.count() << " ms \n";
-
-	PrintMatches(matches, column_1, false);
-
-	matches.clear();
-
-	// ALGORITHM 3: TUPLE-CENTRIC JOIN (WITH INVERTED INDEX ON COLUMN_1)
-
-	// Build tree for inverted index
-	auto tree_1 = BuildTree(column_1, column_1_size);
-
-	//PrintTree(tree_1);
-
-	start = Time::now();
-
-	for(int column_2_itr = 0; column_2_itr < column_2_size; column_2_itr++){
-		auto value = column_2[column_2_itr];
-
-		auto column_1_offsets = tree_1[value];
-
-		for(auto column_1_offset: column_1_offsets){
-			matches.push_back(std::make_pair(column_1_offset, column_2_itr));
-		}
-	}
-
-    stop = Time::now();
-	elapsed = stop - start;
-	time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
-	std::cout << "TUPLE-CENTRIC JOIN (WITH INVERTED INDEX ON COLUMN_1): " << time_milliseconds.count() << " ms \n";
-
-	PrintMatches(matches, column_1, false);
-
-	matches.clear();
-
-	// ALGORITHM 4: TUPLE-CENTRIC JOIN (WITH JOINT INDEX ON BOTH COLUMNS)
-
-	// Build join tree
-	auto join_tree = BuildJoinTree(column_1, column_1_size, column_2, column_2_size);
-
-	//std::cout <<"JOIN TREE SIZE: " << join_tree.size() << "\n";
-
-	//PrintTree(tree_1);
-
-	start = Time::now();
-
-	for(auto entry: join_tree){
-
-		auto match_list = entry.second;
-
-		for(auto pair_itr: match_list){
-			matches.push_back(pair_itr);
-		}
-
-	}
-
-    stop = Time::now();
-	elapsed = stop - start;
-	time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
-	//std::cout << "TUPLE-CENTRIC JOIN (WITH JOINT INDEX ON BOTH COLUMNS): " << time_milliseconds.count() << " ms \n";
-
-	PrintMatches(matches, column_1, false);
-
-	matches.clear();
-
-	// ALGORITHM 5: VALUE-CENTRIC JOIN (SINGLE HASH TABLE) (TYPE 2)
-
-	// Build hash table for value-centric join
-	auto hash_table = BuildHashTable(column_1, column_1_size);
-
-	start = Time::now();
-
-	for(int column_2_itr = 0; column_2_itr < column_2_size; column_2_itr++){
-		auto value = column_2[column_2_itr];
-
-		auto column_1_offsets = hash_table[value];
-
-		for(auto column_1_offset: column_1_offsets){
-			matches.push_back(std::make_pair(column_1_offset, column_2_itr));
-		}
-	}
-
-    stop = Time::now();
-	elapsed = stop - start;
-	time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
-	std::cout << "VALUE-CENTRIC JOIN (SINGLE HASH TABLE) (TYPE 2): " << time_milliseconds.count() << " ms \n";
-
-	PrintMatches(matches, column_1, false);
-
-	matches.clear();
-
-	// ALGORITHM 6: VALUE-CENTRIC JOIN (DICTIONARY) (TYPE 1)
-
-	// Build dictionary for value-centric join
-	std::vector<dictionary_entry> dictionary;
-	std::vector<int> dictionary_map_vector;
-	std::tie(dictionary, dictionary_map_vector) = BuildDictionary(column_1, column_1_size, column_2, column_2_size);
-
-	std::cout << "LIST SIZE: " << dictionary_map_vector.size() << "\n";
-
-	start = Time::now();
-
-	for(auto entry: dictionary){
-
-		auto column_1_offsets = entry.column_1_offset_array;
-		auto column_2_offsets = entry.column_2_offset_array;
-
-		for(auto column_1_offset: column_1_offsets){
-			for(auto column_2_offset: column_2_offsets){
-				matches.push_back(std::make_pair(column_1_offset, column_2_offset));
-			}
-		}
-
-	}
-
-    stop = Time::now();
-	elapsed = stop - start;
-	time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
-	std::cout << "VALUE-CENTRIC JOIN (DICTIONARY) (TYPE 1): " << time_milliseconds.count() << " ms \n";
-
-	PrintMatches(matches, column_1, false);
-
-	matches.clear();
-
-	// ALGORITHM 7: VALUE-CENTRIC JOIN (DICTIONARY) (TYPE 2)
-
-	// Build dictionary for value-centric join
-	std::tie(dictionary, dictionary_map_vector) = BuildDictionary(column_1, column_1_size, column_2, column_2_size);
-
-	start = Time::now();
-
-	for(int column_2_itr = 0; column_2_itr < column_2_size; column_2_itr++){
-
-		auto dictionary_offset = dictionary_map_vector[column_2_itr];
-		auto column_1_offsets = dictionary[dictionary_offset].column_1_offset_array;
-
-		for(auto column_1_offset: column_1_offsets){
-			matches.push_back(std::make_pair(column_1_offset, column_2_itr));
-		}
-	}
-
-    stop = Time::now();
-	elapsed = stop - start;
-	time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
-	std::cout << "VALUE-CENTRIC JOIN (DICTIONARY) (TYPE 2): " << time_milliseconds.count() << " ms \n";
-
-	PrintMatches(matches, column_1, false);
+	RunAlgorithm7(column_1, column_1_size, column_2, column_2_size);
 
 	// Clean up arrays
 	delete[] column_1;
