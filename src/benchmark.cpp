@@ -28,19 +28,19 @@ struct dictionary_entry {
 
 unsigned seed = 23;
 std::default_random_engine generator (seed);
-std::uniform_int_distribution<int> boolean_distribution(0,1);
-std::uniform_int_distribution<int> column_1_first_half_distribution(1,10000);
-std::uniform_int_distribution<int> column_1_second_half_distribution(10000,1000000);
-std::uniform_int_distribution<int> column_2_first_half_distribution(1,100);
-std::uniform_int_distribution<int> column_2_second_half_distribution(100,1000);
+std::uniform_int_distribution<int> skew_distribution(1,10);
+std::uniform_int_distribution<int> column_1_first_half_distribution(1,100);
+std::uniform_int_distribution<int> column_1_second_half_distribution(100,1000000);
+std::uniform_int_distribution<int> column_2_first_half_distribution(1,100000);
+std::uniform_int_distribution<int> column_2_second_half_distribution(100000,1000000);
 
 int GenerateNumberColumn1(){
 
 	// first or second half?
-	bool first_half = boolean_distribution(generator);
+	auto number = skew_distribution(generator);
 
 	// generate number using distribution
-	if(first_half == true){
+	if(number < 2){
 		return column_1_first_half_distribution(generator);
 	}
 	else {
@@ -52,10 +52,10 @@ int GenerateNumberColumn1(){
 int GenerateNumberColumn2(){
 
 	// first or second half?
-	bool first_half = boolean_distribution(generator);
+	auto number = skew_distribution(generator);
 
 	// generate number using distribution
-	if(first_half == true){
+	if(number < 5){
 		return column_2_first_half_distribution(generator);
 	}
 	else {
@@ -376,7 +376,7 @@ void RunJoinBenchmark(){
 	// Build join tree
 	auto join_tree = BuildJoinTree(column_1, column_1_size, column_2, column_2_size);
 
-	std::cout <<"JOIN TREE SIZE: " << join_tree.size() << "\n";
+	//std::cout <<"JOIN TREE SIZE: " << join_tree.size() << "\n";
 
 	//PrintTree(tree_1);
 
@@ -395,7 +395,7 @@ void RunJoinBenchmark(){
     stop = Time::now();
 	elapsed = stop - start;
 	time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
-	std::cout << "TUPLE-CENTRIC JOIN (WITH JOINT INDEX ON BOTH COLUMNS): " << time_milliseconds.count() << " ms \n";
+	//std::cout << "TUPLE-CENTRIC JOIN (WITH JOINT INDEX ON BOTH COLUMNS): " << time_milliseconds.count() << " ms \n";
 
 	PrintMatches(matches, column_1, false);
 
