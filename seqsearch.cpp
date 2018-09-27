@@ -10,17 +10,6 @@
 using namespace std;
 
 
-struct RandomGenerator {
-    int maxValue;
-    RandomGenerator(int max) :
-            maxValue(max) {
-    }
-
-    int operator()() {
-        return rand() % maxValue;
-    }
-};
-
 std::vector<int> generateData(unsigned int count){
     std:: vector<int> testvec;
     std::random_device rd;
@@ -40,7 +29,7 @@ std::vector<int> generateData(unsigned int count){
         testvec.push_back(dis2(gen));
     }
     for (int val: testvec)
-       std::cout << val << std::endl;
+        std::cout << val << std::endl;
     return testvec;
 }
 
@@ -50,8 +39,8 @@ int main() {
 
     // Initialize 2 vectors with 1M ints
     auto start = std::chrono::high_resolution_clock::now();
-    std::vector<int> testvec1 = generateData(1000000);
-    std::vector<int> testvec2 = generateData(1000000);
+    std::vector<int> testvec1 = generateData(100000);
+    std::vector<int> testvec2 = generateData(100000);
     auto stop = std::chrono::high_resolution_clock::now();
 
     //Initialize output into a csv file
@@ -65,16 +54,10 @@ int main() {
 
     int j=0,k=0;
 
-    //Find the required value
-    std::vector<int>::iterator it1;
-    std::vector<int>::iterator it2;
-
-    int result1, result2;
-
     start = std::chrono::high_resolution_clock::now();
-    for(j=0;j<1000000;j++)
+    for(j=0;j<100000;j++)
     {
-        for(k=0;k<1000000;k++)
+        for(k=0;k<100000;k++)
         {
             if (testvec1[j] == testvec2[k])
             {
