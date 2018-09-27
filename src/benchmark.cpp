@@ -382,8 +382,6 @@ void RunAlgorithm4(int* column_1, int column_1_size, int* column_2, int column_2
 
 	PrintMatches(matches, column_1, false);
 
-	matches.clear();
-
 }
 
 void RunAlgorithm5(int* column_1, int column_1_size, int* column_2, int column_2_size){
@@ -412,8 +410,6 @@ void RunAlgorithm5(int* column_1, int column_1_size, int* column_2, int column_2
 	std::cout << "VALUE-CENTRIC JOIN (SINGLE HASH TABLE) (TYPE 2): " << time_milliseconds.count() << " ms \n";
 
 	PrintMatches(matches, column_1, false);
-
-	matches.clear();
 
 }
 
@@ -451,7 +447,6 @@ void RunAlgorithm6(int* column_1, int column_1_size, int* column_2, int column_2
 
 	PrintMatches(matches, column_1, false);
 
-	matches.clear();
 }
 
 void RunAlgorithm7(int* column_1, int column_1_size, int* column_2, int column_2_size){
@@ -463,6 +458,8 @@ void RunAlgorithm7(int* column_1, int column_1_size, int* column_2, int column_2
 	std::vector<dictionary_entry> dictionary;
 	std::vector<int> dictionary_map_vector;
 	std::tie(dictionary, dictionary_map_vector) = BuildDictionary(column_1, column_1_size, column_2, column_2_size);
+
+	std::cout << "LIST SIZE: " << dictionary_map_vector.size() << "\n";
 
 	auto start = Time::now();
 
@@ -522,15 +519,15 @@ void RunJoinBenchmark(){
 
 	// RUN ALGORITHMS
 
-	RunAlgorithm1(column_1, column_1_size, column_2, column_2_size);
+	//RunAlgorithm1(column_1, column_1_size, column_2, column_2_size);
 
-	RunAlgorithm2(column_1, column_1_size, column_2, column_2_size);
+	//RunAlgorithm2(column_1, column_1_size, column_2, column_2_size);
 
 	RunAlgorithm3(column_1, column_1_size, column_2, column_2_size);
 
-	RunAlgorithm4(column_1, column_1_size, column_2, column_2_size);
+	//RunAlgorithm4(column_1, column_1_size, column_2, column_2_size);
 
-	RunAlgorithm5(column_1, column_1_size, column_2, column_2_size);
+	//RunAlgorithm5(column_1, column_1_size, column_2, column_2_size);
 
 	RunAlgorithm6(column_1, column_1_size, column_2, column_2_size);
 
