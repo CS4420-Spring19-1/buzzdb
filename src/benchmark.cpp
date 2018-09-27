@@ -22,20 +22,37 @@ typedef std::chrono::high_resolution_clock Time;
 unsigned seed = 23;
 std::default_random_engine generator (seed);
 std::uniform_int_distribution<int> boolean_distribution(0,1);
-std::uniform_int_distribution<int> first_half_distribution(1,10);
-std::uniform_int_distribution<int> second_half_distribution(10,100000);
+std::uniform_int_distribution<int> column_1_first_half_distribution(1,10);
+std::uniform_int_distribution<int> column_1_second_half_distribution(10,100000);
+std::uniform_int_distribution<int> column_2_first_half_distribution(1,100);
+std::uniform_int_distribution<int> column_2_second_half_distribution(100,100000);
 
-int GenerateNumber(){
+int GenerateNumberColumn1(){
 
 	// first or second half?
 	bool first_half = boolean_distribution(generator);
 
 	// generate number using distribution
 	if(first_half == true){
-		return first_half_distribution(generator);
+		return column_1_first_half_distribution(generator);
 	}
 	else {
-		return second_half_distribution(generator);
+		return column_1_second_half_distribution(generator);
+	}
+
+}
+
+int GenerateNumberColumn2(){
+
+	// first or second half?
+	bool first_half = boolean_distribution(generator);
+
+	// generate number using distribution
+	if(first_half == true){
+		return column_2_first_half_distribution(generator);
+	}
+	else {
+		return column_2_second_half_distribution(generator);
 	}
 
 }
@@ -178,7 +195,7 @@ void RunJoinBenchmark(){
 
 	// Load data into first column
 	for(int column_1_itr = 0; column_1_itr < column_1_size; column_1_itr++){
-		auto number = GenerateNumber();
+		auto number = GenerateNumberColumn1();
 		column_1[column_1_itr] = number;
 	}
 
@@ -187,7 +204,7 @@ void RunJoinBenchmark(){
 
 	// Load data into second column
 	for(int column_2_itr = 0; column_2_itr < column_2_size; column_2_itr++){
-		auto number = GenerateNumber();
+		auto number = GenerateNumberColumn2();
 		column_2[column_2_itr] = number;
 	}
 
