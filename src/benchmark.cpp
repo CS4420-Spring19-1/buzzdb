@@ -330,8 +330,9 @@ void RunAlgorithm3(int* column_1, int column_1_size, int* column_2, int column_2
 	// Build tree for inverted index
 	auto tree_1 = BuildTree(column_1, column_1_size);
 
-	//PrintTree(tree_1);
+	std::chrono::duration<double> elapsed;
 
+	//PrintTree(tree_1);
 	auto start = Time::now();
 
 	for(int column_2_itr = 0; column_2_itr < column_2_size; column_2_itr++){
@@ -342,10 +343,11 @@ void RunAlgorithm3(int* column_1, int column_1_size, int* column_2, int column_2
 		for(auto column_1_offset: column_1_offsets){
 			matches.push_back(std::make_pair(column_1_offset, column_2_itr));
 		}
+
 	}
 
 	auto stop = Time::now();
-	auto elapsed = stop - start;
+	elapsed += stop - start;
 	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
 	std::cout << "TUPLE-CENTRIC JOIN (WITH INVERTED INDEX ON COLUMN_1): " << time_milliseconds.count() << " ms \n";
 
@@ -461,11 +463,14 @@ void RunAlgorithm7(int* column_1, int column_1_size, int* column_2, int column_2
 
 	std::cout << "LIST SIZE: " << dictionary_map_vector.size() << "\n";
 
+	std::chrono::duration<double> elapsed;
+
 	auto start = Time::now();
 
 	for(int column_2_itr = 0; column_2_itr < column_2_size; column_2_itr++){
 
 		auto dictionary_offset = dictionary_map_vector[column_2_itr];
+
 		auto column_1_offsets = dictionary[dictionary_offset].column_1_offset_array;
 
 		for(auto column_1_offset: column_1_offsets){
@@ -474,7 +479,7 @@ void RunAlgorithm7(int* column_1, int column_1_size, int* column_2, int column_2
 	}
 
 	auto stop = Time::now();
-	auto elapsed = stop - start;
+	elapsed += stop - start;
 	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
 	std::cout << "VALUE-CENTRIC JOIN (DICTIONARY) (TYPE 2): " << time_milliseconds.count() << " ms \n";
 
@@ -529,7 +534,7 @@ void RunJoinBenchmark(){
 
 	//RunAlgorithm5(column_1, column_1_size, column_2, column_2_size);
 
-	RunAlgorithm6(column_1, column_1_size, column_2, column_2_size);
+	//RunAlgorithm6(column_1, column_1_size, column_2, column_2_size);
 
 	RunAlgorithm7(column_1, column_1_size, column_2, column_2_size);
 
