@@ -19,6 +19,12 @@ typedef std::map<int,std::vector<int>> tree_type;
 
 typedef std::chrono::high_resolution_clock Time;
 
+struct dictionary_entry {
+	int value;
+	std::vector<int> column_1_offset_array;
+	std::vector<int> column_2_offset_array;
+};
+
 unsigned seed = 23;
 std::default_random_engine generator (seed);
 std::uniform_int_distribution<int> boolean_distribution(0,1);
@@ -124,6 +130,64 @@ std::map<std::pair<int,int>,std::vector<std::pair<int,int>>> BuildJoinTree(int* 
 
 	return join_tree;
 }
+
+// Build dictionary for a given pair of columns
+std::pair<std::vector<dictionary_entry>, std::vector<int>> BuildDictionary(int* array_1, int array_1_size, int* array_2, int array_2_size){
+
+	std::vector<dictionary_entry> dictionary;
+	int dictionary_itr = 0;
+	std::map<int, int> dictionary_map;
+	std::vector<int> dictionary_map_vector;
+
+	// Process arrays data
+	for(int array_1_itr = 0; array_1_itr < array_1_size; array_1_itr++){
+		auto number = array_1[array_1_itr];
+
+		// New entry
+		if(dictionary_map.count(number) == 0){
+			dictionary_map[number] = dictionary_itr;
+
+			dictionary_entry e;
+			e.value = number;
+			e.column_1_offset_array.push_back(array_1_itr);
+
+			dictionary.push_back(e);
+			dictionary_itr++;
+		}
+		// Update existing entry
+		else{
+			auto entry_offset = dictionary_map[number];
+			dictionary[entry_offset].column_1_offset_array.push_back(array_1_itr);
+		}
+	}
+
+	for(int array_2_itr = 0; array_2_itr < array_2_size; array_2_itr++){
+		auto number = array_2[array_2_itr];
+
+		// New entry
+		if(dictionary_map.count(number) == 0){
+			dictionary_map[number] = dictionary_itr;
+
+			dictionary_entry e;
+			e.value = number;
+			e.column_2_offset_array.push_back(array_2_itr);
+
+			dictionary.push_back(e);
+			dictionary_map_vector.push_back(dictionary_itr);
+			dictionary_itr++;
+		}
+		// Update existing entry
+		else{
+			auto entry_offset = dictionary_map[number];
+			dictionary[entry_offset].column_2_offset_array.push_back(array_2_itr);
+			dictionary_map_vector.push_back(entry_offset);
+		}
+
+	}
+
+	return std::make_pair(dictionary, dictionary_map_vector);
+}
+
 
 // Print the matches
 void PrintMatches(const matches_type& matches, int* array, bool verbose){
@@ -353,10 +417,66 @@ void RunJoinBenchmark(){
 
 	matches.clear();
 
+	// ALGORITHM 6: VALUE-CENTRIC JOIN (DICTIONARY) (TYPE 1)
+
+	// Build dictionary for value-centric join
+	std::vector<dictionary_entry> dictionary;
+	std::vector<int> dictionary_map_vector;
+	std::tie(dictionary, dictionary_map_vector) = BuildDictionary(column_1, column_1_size, column_2, column_2_size);
+
+	std::cout << "LIST SIZE: " << dictionary_map_vector.size() << "\n";
+
+	start = Time::now();
+
+	for(auto entry: dictionary){
+
+		auto column_1_offsets = entry.column_1_offset_array;
+		auto column_2_offsets = entry.column_2_offset_array;
+
+		for(auto column_1_offset: column_1_offsets){
+			for(auto column_2_offset: column_2_offsets){
+				matches.push_back(std::make_pair(column_1_offset, column_2_offset));
+			}
+		}
+
+	}
+
+    stop = Time::now();
+	elapsed = stop - start;
+	time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
+	std::cout << "VALUE-CENTRIC JOIN (DICTIONARY) (TYPE 1): " << time_milliseconds.count() << " ms \n";
+
+	PrintMatches(matches, column_1, false);
+
+	matches.clear();
+
+	// ALGORITHM 7: VALUE-CENTRIC JOIN (DICTIONARY) (TYPE 2)
+
+	// Build dictionary for value-centric join
+	std::tie(dictionary, dictionary_map_vector) = BuildDictionary(column_1, column_1_size, column_2, column_2_size);
+
+	start = Time::now();
+
+	for(int column_2_itr = 0; column_2_itr < column_2_size; column_2_itr++){
+
+		auto dictionary_offset = dictionary_map_vector[column_2_itr];
+		auto column_1_offsets = dictionary[dictionary_offset].column_1_offset_array;
+
+		for(auto column_1_offset: column_1_offsets){
+			matches.push_back(std::make_pair(column_1_offset, column_2_itr));
+		}
+	}
+
+    stop = Time::now();
+	elapsed = stop - start;
+	time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
+	std::cout << "VALUE-CENTRIC JOIN (DICTIONARY) (TYPE 2): " << time_milliseconds.count() << " ms \n";
+
+	PrintMatches(matches, column_1, false);
 
 	// Clean up arrays
-	delete column_1;
-	delete column_2;
+	delete[] column_1;
+	delete[] column_2;
 
 }
 
