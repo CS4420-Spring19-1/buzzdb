@@ -6,6 +6,7 @@
 #include <map>
 #include <chrono>
 #include <set>
+#include <climits>
 
 #include "benchmark.h"
 #include "configuration.h"
@@ -20,17 +21,24 @@ typedef std::map<int,std::vector<int>> tree_type;
 
 typedef std::chrono::high_resolution_clock Time;
 
-struct dictionary_entry {
-	int value;
-	std::vector<int> column_1_offset_array;
-	std::vector<int> column_2_offset_array;
+struct offset_entry{
+	int offset = INT_MAX;
+	offset_entry* next = nullptr;
 };
+
+struct dictionary_entry {
+	int value = INT_MAX;
+	offset_entry* column_1_offset_array = nullptr;
+	offset_entry* column_2_offset_array = nullptr;
+	dictionary_entry* next = nullptr;
+};
+
 
 unsigned seed = 23;
 std::default_random_engine generator (seed);
 std::uniform_int_distribution<int> skew_distribution(1,10);
-std::uniform_int_distribution<int> column_1_first_half_distribution(1,100);
-std::uniform_int_distribution<int> column_1_second_half_distribution(100,1000000);
+std::uniform_int_distribution<int> column_1_first_half_distribution(1,1000);
+std::uniform_int_distribution<int> column_1_second_half_distribution(1000,100000);
 std::uniform_int_distribution<int> column_2_first_half_distribution(1,100000);
 std::uniform_int_distribution<int> column_2_second_half_distribution(100000,1000000);
 
@@ -44,7 +52,7 @@ int GenerateNumberColumn1(){
 	auto number = skew_distribution(generator);
 
 	// generate number using distribution
-	if(number < 2){
+	if(number < 5){
 		return column_1_first_half_distribution(generator);
 	}
 	else {
@@ -141,61 +149,158 @@ std::map<std::pair<int,int>,std::vector<std::pair<int,int>>> BuildJoinTree(int* 
 	return join_tree;
 }
 
-// Build dictionary for a given pair of columns
-std::pair<std::vector<dictionary_entry>, std::vector<int>> BuildDictionary(int* array_1, int array_1_size, int* array_2, int array_2_size){
+void PrintDictionary(dictionary_entry* dictionary){
 
-	std::vector<dictionary_entry> dictionary;
-	int dictionary_itr = 0;
-	std::map<int, int> dictionary_map;
-	std::vector<int> dictionary_map_vector;
+	dictionary_entry* dictionary_itr = dictionary;
+	auto itr = 0;
+	while(dictionary_itr != nullptr){
+		std::cout << itr++ << " :: " << dictionary_itr->value << " :: ";
+
+		auto column_1_offset_array = dictionary_itr->column_1_offset_array;
+		auto column_1_itr = column_1_offset_array;
+		while(column_1_itr != nullptr){
+			std::cout << column_1_itr->offset << " ";
+			column_1_itr = column_1_itr->next;
+		}
+
+		std::cout << " --- ";
+
+		auto column_2_offset_array = dictionary_itr->column_2_offset_array;
+		auto column_2_itr = column_2_offset_array;
+		while(column_2_itr != nullptr){
+			std::cout << column_2_itr->offset << " ";
+			column_2_itr = column_2_itr->next;
+		}
+
+		std::cout << "\n";
+
+		dictionary_itr = dictionary_itr->next;
+	}
+
+	std::cout << "--------------------------------------------\n\n";
+}
+
+// Build dictionary for a given pair of columns
+dictionary_entry* BuildDictionary(int* array_1, int array_1_size, int* array_2, int array_2_size){
+
+	dictionary_entry* dictionary = nullptr;
+	dictionary_entry* dictionary_last_entry = nullptr;
+	int value_offset_itr = 0;
+	std::map<int, int> value_to_offset_map;
 
 	// Process arrays data
 	for(int array_1_itr = 0; array_1_itr < array_1_size; array_1_itr++){
 		auto number = array_1[array_1_itr];
 
 		// New entry
-		if(dictionary_map.count(number) == 0){
-			dictionary_map[number] = dictionary_itr;
+		if(value_to_offset_map.count(number) == 0){
+			value_to_offset_map[number] = value_offset_itr;
 
-			dictionary_entry e;
-			e.value = number;
-			e.column_1_offset_array.push_back(array_1_itr);
+			dictionary_entry* e = new dictionary_entry();
+			e->value = number;
+			offset_entry* o = new offset_entry();
+			o->offset = array_1_itr;
+			e->column_1_offset_array = o;
 
-			dictionary.push_back(e);
-			dictionary_itr++;
+			if(dictionary_last_entry != nullptr){
+				dictionary_last_entry->next = e;
+				dictionary_last_entry = e;
+			}
+			else{
+				dictionary_last_entry = e;
+				dictionary = e;
+			}
+
+			value_offset_itr++;
 		}
 		// Update existing entry
 		else{
-			auto entry_offset = dictionary_map[number];
-			dictionary[entry_offset].column_1_offset_array.push_back(array_1_itr);
+			dictionary_entry* dictionary_itr = dictionary;
+
+			offset_entry* o = new offset_entry();
+			o->offset = array_1_itr;
+
+			while(dictionary_itr != nullptr){
+				if(dictionary_itr->value == number){
+					break;
+				}
+				dictionary_itr = dictionary_itr->next;
+			}
+
+			if(dictionary_itr->column_1_offset_array == nullptr){
+				dictionary_itr->column_1_offset_array = o;
+			}
+			else{
+				offset_entry* offset_itr = dictionary_itr->column_1_offset_array;
+				while(offset_itr != nullptr){
+					if(offset_itr->next == nullptr){
+						break;
+					}
+					offset_itr = offset_itr->next;
+				}
+				offset_itr->next = o;
+			}
 		}
 	}
 
+	// Process arrays data
 	for(int array_2_itr = 0; array_2_itr < array_2_size; array_2_itr++){
 		auto number = array_2[array_2_itr];
 
 		// New entry
-		if(dictionary_map.count(number) == 0){
-			dictionary_map[number] = dictionary_itr;
+		if(value_to_offset_map.count(number) == 0){
+			value_to_offset_map[number] = value_offset_itr;
 
-			dictionary_entry e;
-			e.value = number;
-			e.column_2_offset_array.push_back(array_2_itr);
+			dictionary_entry* e = new dictionary_entry();
+			e->value = number;
+			offset_entry* o = new offset_entry();
+			o->offset = array_2_itr;
+			e->column_2_offset_array = o;
 
-			dictionary.push_back(e);
-			dictionary_map_vector.push_back(dictionary_itr);
-			dictionary_itr++;
+			if(dictionary_last_entry != nullptr){
+				dictionary_last_entry->next = e;
+				dictionary_last_entry = e;
+			}
+			else{
+				dictionary_last_entry = e;
+				dictionary = e;
+			}
+
+			value_offset_itr++;
 		}
 		// Update existing entry
 		else{
-			auto entry_offset = dictionary_map[number];
-			dictionary[entry_offset].column_2_offset_array.push_back(array_2_itr);
-			dictionary_map_vector.push_back(entry_offset);
-		}
+			dictionary_entry* dictionary_itr = dictionary;
 
+			offset_entry* o = new offset_entry();
+			o->offset = array_2_itr;
+
+			while(dictionary_itr != nullptr){
+				if(dictionary_itr->value == number){
+					break;
+				}
+				dictionary_itr = dictionary_itr->next;
+			}
+
+			if(dictionary_itr->column_2_offset_array == nullptr){
+				dictionary_itr->column_2_offset_array = o;
+			}
+			else{
+				offset_entry* offset_itr = dictionary_itr->column_2_offset_array;
+				while(offset_itr != nullptr){
+					if(offset_itr->next == nullptr){
+						break;
+					}
+					offset_itr = offset_itr->next;
+				}
+				offset_itr->next = o;
+			}
+		}
 	}
 
-	return std::make_pair(dictionary, dictionary_map_vector);
+	//PrintDictionary(dictionary);
+
+	return dictionary;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -421,25 +526,29 @@ void RunAlgorithm6(int* column_1, int column_1_size, int* column_2, int column_2
 	// ALGORITHM 6: VALUE-CENTRIC JOIN (DICTIONARY) (TYPE 1)
 
 	// Build dictionary for value-centric join
-	std::vector<dictionary_entry> dictionary;
-	std::vector<int> dictionary_map_vector;
-	std::tie(dictionary, dictionary_map_vector) = BuildDictionary(column_1, column_1_size, column_2, column_2_size);
-
-	std::cout << "LIST SIZE: " << dictionary_map_vector.size() << "\n";
+	dictionary_entry* dictionary = BuildDictionary(column_1, column_1_size, column_2, column_2_size);
+	dictionary_entry* dictionary_itr = dictionary;
+	offset_entry* column_1_offset_itr = nullptr;
+	offset_entry* column_2_offset_itr = nullptr;
 
 	auto start = Time::now();
 
-	for(auto entry: dictionary){
+	while(dictionary_itr != nullptr){
 
-		auto column_1_offsets = entry.column_1_offset_array;
-		auto column_2_offsets = entry.column_2_offset_array;
+		column_1_offset_itr = dictionary_itr->column_1_offset_array;
+		while(column_1_offset_itr != nullptr){
 
-		for(auto column_1_offset: column_1_offsets){
-			for(auto column_2_offset: column_2_offsets){
-				matches.push_back(std::make_pair(column_1_offset, column_2_offset));
+			column_2_offset_itr = dictionary_itr->column_2_offset_array;
+			while(column_2_offset_itr != nullptr){
+
+				matches.push_back(std::make_pair(column_1_offset_itr->offset, column_2_offset_itr->offset));
+
+				column_2_offset_itr = column_2_offset_itr->next;
 			}
+			column_1_offset_itr = column_1_offset_itr->next;
 		}
 
+		dictionary_itr = dictionary_itr->next;
 	}
 
 	auto stop = Time::now();
@@ -451,6 +560,7 @@ void RunAlgorithm6(int* column_1, int column_1_size, int* column_2, int column_2
 
 }
 
+/*
 void RunAlgorithm7(int* column_1, int column_1_size, int* column_2, int column_2_size){
 	std::vector<std::pair<int,int>> matches;
 
@@ -485,6 +595,7 @@ void RunAlgorithm7(int* column_1, int column_1_size, int* column_2, int column_2
 
 	PrintMatches(matches, column_1, false);
 }
+ */
 
 void RunJoinBenchmark(){
 
@@ -534,9 +645,9 @@ void RunJoinBenchmark(){
 
 	//RunAlgorithm5(column_1, column_1_size, column_2, column_2_size);
 
-	//RunAlgorithm6(column_1, column_1_size, column_2, column_2_size);
+	RunAlgorithm6(column_1, column_1_size, column_2, column_2_size);
 
-	RunAlgorithm7(column_1, column_1_size, column_2, column_2_size);
+	//RunAlgorithm7(column_1, column_1_size, column_2, column_2_size);
 
 	// Clean up arrays
 	delete[] column_1;
