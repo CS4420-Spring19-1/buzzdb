@@ -27,6 +27,13 @@ enable_testing()
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
 
+# -- [ Profile flas
+if(CMAKE_BUILD_TYPE STREQUAL Profile)
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
+	SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
+	SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -pg")
+endif()
+
 # -- [ Threads
 
 find_package(Threads REQUIRED)
