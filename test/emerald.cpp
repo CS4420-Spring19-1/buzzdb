@@ -34,5 +34,5 @@ int main(int argc, char **argv) {
 
   emerald::RunBenchmark();
 
-  return 0;
+  exit(0);
 }

@@ -26,6 +26,9 @@ class configuration {
   // column_1_size
   size_t column_1_size;
 
+  //batch_size
+  size_t batch_size;
+
   // Verbose output
   bool verbose;
 

@@ -16,6 +16,7 @@ void Usage() {
       "   -f --file_name                      :  file name\n"
       "   -o --column_1_size                  :  column 1 size\n"
       "   -v --verbose                        :  verbose\n"
+      "   -b --batch_size                     :  batch size\n"
       ;
   exit(EXIT_FAILURE);
 }
@@ -25,6 +26,7 @@ static struct option opts[] = {
     {"file_name", optional_argument, NULL, 'f'},
     {"column_1_size", optional_argument, NULL, 'o'},
     {"verbose", optional_argument, NULL, 'v'},
+    {"batch_size", optional_argument, NULL, 'b'},
     {NULL, 0, NULL, 0}
 };
 
@@ -57,6 +59,7 @@ void ParseArguments(int argc, char *argv[], configuration &state) {
   state.hierarchy_type = HIERARCHY_TYPE_DRAM_NVM_DISK;
   state.file_name = "";
   state.column_1_size = 1000 * 100;
+  state.batch_size = 4;
 
   // Parse args
   while (1) {
@@ -79,6 +82,9 @@ void ParseArguments(int argc, char *argv[], configuration &state) {
         break;
       case 'v':
         state.verbose = atoi(optarg);
+        break;
+      case 'b':
+        state.batch_size = atoi(optarg);
         break;
       case 'h':
         Usage();
