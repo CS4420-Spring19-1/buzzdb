@@ -33,6 +33,21 @@ struct dictionary_entry {
 	dictionary_entry* next = nullptr;
 };
 
+struct offset_batch_entry{
+	int offsets[4] = {-1};
+	int offset_batch_size = 4;
+	int next_position = 0;
+	offset_batch_entry* next = nullptr;
+};
+
+struct dictionary_batch_entry {
+	int values[4] = {0};
+	int dictionary_batch_size = 4;
+	int next_position = 0;
+	offset_batch_entry* column_1_offset_array[4] = {nullptr};
+	offset_batch_entry* column_2_offset_array[4] = {nullptr};
+	dictionary_batch_entry* next = nullptr;
+};
 
 unsigned seed = 23;
 std::default_random_engine generator (seed);
@@ -180,6 +195,8 @@ void PrintDictionary(dictionary_entry* dictionary){
 	std::cout << "--------------------------------------------\n\n";
 }
 
+
+
 // Build dictionary for a given pair of columns
 dictionary_entry* BuildDictionary(int* array_1, int array_1_size, int* array_2, int array_2_size){
 
@@ -303,6 +320,192 @@ dictionary_entry* BuildDictionary(int* array_1, int array_1_size, int* array_2, 
 	return dictionary;
 }
 
+
+dictionary_batch_entry* BuildDictionaryWithBatchEntries(int* array_1, int array_1_size, int* array_2, int array_2_size){
+	dictionary_batch_entry* dictionary = nullptr;
+	dictionary_batch_entry* dictionary_last_entry = nullptr;
+	int value_offset_itr = 1;
+	std::map<int, int> value_to_offset_map;
+
+	// Process array 1 data
+	for(int array_1_itr = 0; array_1_itr < array_1_size; array_1_itr++){
+		auto number = array_1[array_1_itr];
+
+		// New entry
+		if(value_to_offset_map.count(number) == 0){ //number is not present in dictionary
+			value_to_offset_map[number] = value_offset_itr;
+
+			if(dictionary_last_entry != nullptr){ //check if last entry in the dicitonary has an empty slot
+
+				if(dictionary_last_entry->next_position!=dictionary_last_entry->dictionary_batch_size){
+					//there is an empty slot in the last dictionary entry
+					dictionary_last_entry->values[dictionary_last_entry->next_position] = number;
+					offset_batch_entry* o = new offset_batch_entry();
+					o->offsets[o->next_position] = array_1_itr;
+					o->next_position++;
+					dictionary_last_entry->column_1_offset_array[dictionary_last_entry->next_position] = o;
+					dictionary_last_entry->next_position++;
+				} else {
+					//no empty slot in last dictionary entry, so create a new entry
+
+					dictionary_batch_entry* e = new dictionary_batch_entry();
+					e->values[e->next_position] = number;
+					offset_batch_entry* o = new offset_batch_entry();
+					o->offsets[o->next_position] = array_1_itr;
+					o->next_position++;
+					e->column_1_offset_array[e->next_position] = o;
+					e->next_position++;
+
+					//update the last entry pointer
+					dictionary_last_entry->next = e;
+					dictionary_last_entry = e;
+
+				}
+			} else {
+				//there is nothing in the dictionary, so create a new Entry
+				dictionary_batch_entry* e = new dictionary_batch_entry();
+				e->values[e->next_position] = number;
+				offset_batch_entry* o = new offset_batch_entry();
+				o->offsets[o->next_position] = array_1_itr;
+				o->next_position++;
+				e->column_1_offset_array[e->next_position] = o;
+				e->next_position++;
+				dictionary_last_entry = e;
+				dictionary = e;
+			}
+
+			value_offset_itr++;
+		}
+		// Update existing entry
+		else{
+			dictionary_batch_entry* dictionary_itr = dictionary;
+
+			int offset_in_value_batch = -1;
+			while(dictionary_itr != nullptr){
+				for (auto value_batch_itr = 0; value_batch_itr < dictionary_itr->dictionary_batch_size; value_batch_itr++) {
+					if(dictionary_itr->values[value_batch_itr] == number){
+						offset_in_value_batch = value_batch_itr;
+						break;
+					}
+				}
+				if(offset_in_value_batch!=-1){
+					break;
+				}
+				dictionary_itr = dictionary_itr->next;
+			}
+
+				offset_batch_entry* offset_itr = dictionary_itr->column_1_offset_array[offset_in_value_batch];
+				//find an empty slot in the offsets list
+				while(offset_itr->next!=nullptr){
+					if(offset_itr->next_position!=offset_itr->offset_batch_size){
+						break;
+					}
+					offset_itr = offset_itr->next;
+				}
+				if(offset_itr->next_position != offset_itr->offset_batch_size){
+					//we found an offset node with space in the array
+					offset_itr->offsets[offset_itr->next_position] = array_1_itr;
+					offset_itr->next_position++;
+				} else {
+					//create a new node
+					offset_batch_entry* o = new offset_batch_entry();
+					o->offsets[o->next_position] = array_1_itr;
+					o->next_position++;
+					offset_itr->next = o;
+				}
+		}
+	}
+
+
+	// Process array 2 data
+	for(int array_2_itr = 0; array_2_itr < array_2_size; array_2_itr++){
+		auto number = array_2[array_2_itr];
+		// New entry
+		if(value_to_offset_map.count(number) == 0){ //number is not present in dictionary
+
+			value_to_offset_map[number] = value_offset_itr;
+			if(dictionary_last_entry != nullptr){ //check if last entry in the dicitonary has an empty slot
+
+				if(dictionary_last_entry->next_position!=dictionary_last_entry->dictionary_batch_size){
+					//there is an empty slot in the last dictionary entry
+					dictionary_last_entry->values[dictionary_last_entry->next_position] = number;
+					offset_batch_entry* o = new offset_batch_entry();
+					o->offsets[o->next_position] = array_2_itr;
+					o->next_position++;
+					dictionary_last_entry->column_2_offset_array[dictionary_last_entry->next_position] = o;
+					dictionary_last_entry->next_position++;
+
+				} else {
+					//no empty slot in last dictionary entry, so create a new entry
+					dictionary_batch_entry* e = new dictionary_batch_entry();
+					e->values[e->next_position] = number;
+					offset_batch_entry* o = new offset_batch_entry();
+					o->offsets[o->next_position] = array_2_itr;
+					o->next_position++;
+					e->column_2_offset_array[e->next_position] = o;
+					e->next_position++;
+
+					//update the last entry pointer
+					dictionary_last_entry->next = e;
+					dictionary_last_entry = e;
+
+				}
+			} 
+			value_offset_itr++;
+		}
+		// Update existing entry
+		else{
+			dictionary_batch_entry* dictionary_itr = dictionary;
+
+			int offset_in_value_batch = -1;
+
+			while(dictionary_itr != nullptr){
+				for (auto value_batch_itr = 0; value_batch_itr < dictionary_itr->dictionary_batch_size; value_batch_itr++) {
+					if(dictionary_itr->values[value_batch_itr] == number){
+						offset_in_value_batch = value_batch_itr;
+						break;
+					}
+				}
+				if(offset_in_value_batch!=-1){
+					break;
+				}
+				dictionary_itr = dictionary_itr->next;
+			}
+
+			if(dictionary_itr->column_2_offset_array[offset_in_value_batch] == nullptr){ //value was added from array 1
+				offset_batch_entry* o = new offset_batch_entry();
+				o->offsets[o->next_position] = array_2_itr;
+				o->next_position++;
+				dictionary_itr->column_2_offset_array[offset_in_value_batch] = o;
+			}
+			else{
+
+				offset_batch_entry* offset_itr = dictionary_itr->column_2_offset_array[offset_in_value_batch];
+				//find an empty slot in the offsets list
+				while(offset_itr->next!=nullptr){
+					if(offset_itr->next_position!=offset_itr->offset_batch_size){
+						break;
+					}
+					offset_itr = offset_itr->next;
+				}
+				if(offset_itr->next_position != offset_itr->offset_batch_size){
+					//we found an offset node with space in the array
+					offset_itr->offsets[offset_itr->next_position] = array_2_itr;
+					offset_itr->next_position++;
+				} else {
+					//create a new node
+					offset_batch_entry* o = new offset_batch_entry();
+					o->offsets[o->next_position] = array_2_itr;
+					o->next_position++;
+					offset_itr->next = o;
+				}
+			}
+		}
+
+	}
+	return dictionary;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 // PRINTERS
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -359,6 +562,47 @@ void PrintArray(int* array, int array_size){
 	std::cout << "\n";
 
 }
+
+//print contents of dictionary which contain batch ENTRIES
+void PrintDictionaryWithBatchEntries(dictionary_batch_entry* dictionary){
+	 dictionary_batch_entry* dictionary_itr = dictionary;
+	 while(dictionary_itr!=nullptr){
+		 auto number_of_values = dictionary_itr->dictionary_batch_size == dictionary_itr->next_position? dictionary_itr->dictionary_batch_size : dictionary_itr-> next_position;
+		 for (auto value_itr = 0; value_itr < number_of_values; value_itr++) {
+			 if (dictionary_itr->column_1_offset_array[value_itr]==nullptr) {
+				 	std::cout << "Value is not present in column 1" << std::endl;
+			 } else {
+				 std::cout << "Printing column 1 offsets for value " << dictionary_itr->values[value_itr] << std::endl;
+				 offset_batch_entry* offset_itr = dictionary_itr->column_1_offset_array[value_itr];
+				 while(offset_itr!=nullptr){
+					 for (auto offset_array_itr = 0; offset_array_itr < (offset_itr->next_position < offset_itr->offset_batch_size ? offset_itr->next_position : offset_itr->offset_batch_size); offset_array_itr++) {
+						 std::cout << offset_itr->offsets[offset_array_itr] << " ";
+					 }
+					 offset_itr=offset_itr->next;
+				 }
+				 std::cout << std::endl;
+			 }
+
+			 if (dictionary_itr->column_2_offset_array[value_itr]==nullptr) {
+			 	 std::cout << "Value is not present in column 2" << std::endl;
+			 } else {
+				 std::cout << "Printing column 2 offsets for value " << dictionary_itr->values[value_itr] << std::endl;
+ 				offset_batch_entry* offset_itr = dictionary_itr->column_2_offset_array[value_itr];
+ 				while(offset_itr!=nullptr){
+ 					for (auto offset_array_itr = 0; offset_array_itr < (offset_itr->next_position < offset_itr->offset_batch_size ? offset_itr->next_position : offset_itr->offset_batch_size); offset_array_itr++) {
+ 						std::cout << offset_itr->offsets[offset_array_itr] << " ";
+ 					}
+ 					offset_itr=offset_itr->next;
+ 				}
+ 				std::cout << std::endl;
+			 }
+
+		 }
+
+		 dictionary_itr = dictionary_itr->next;
+	 }
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // ALGORITHMS
@@ -596,6 +840,52 @@ void RunAlgorithm7(int* column_1, int column_1_size, int* column_2, int column_2
 	PrintMatches(matches, column_1, false);
 }
  */
+void RunAlgorithm8(int* column_1, int column_1_size, int* column_2, int column_2_size){
+	// ALGORITHM 8: VALUE-CENTRIC JOIN (DICTIONARY) (BATCH ENTRIES)
+	std::vector<std::pair<int,int>> matches;
+
+	dictionary_batch_entry* dictionary = BuildDictionaryWithBatchEntries(column_1, column_1_size, column_2, column_2_size);
+
+	auto start = Time::now();
+	dictionary_batch_entry* dictionary_itr = dictionary;
+	while(dictionary_itr!=nullptr){
+		auto number_of_values = dictionary_itr->dictionary_batch_size == dictionary_itr->next_position? dictionary_itr->dictionary_batch_size : dictionary_itr->next_position;
+
+		for (auto value_itr = 0; value_itr < number_of_values; value_itr++) {
+
+			if(dictionary_itr->column_1_offset_array[value_itr]!=nullptr && dictionary_itr->column_2_offset_array[value_itr]!=nullptr){
+
+				//code to find matches
+				offset_batch_entry* column_1_itr = dictionary_itr->column_1_offset_array[value_itr];
+				while (column_1_itr!=nullptr) {
+
+					for (auto offset_1_itr = 0; offset_1_itr < (column_1_itr->next_position < column_1_itr->offset_batch_size ? column_1_itr->next_position : column_1_itr->offset_batch_size); offset_1_itr++) {
+						offset_batch_entry* column_2_itr = dictionary_itr->column_2_offset_array[value_itr];
+						while (column_2_itr!=nullptr) {
+
+							for (auto offset_2_itr = 0; offset_2_itr < (column_2_itr->next_position < column_2_itr->offset_batch_size ? column_2_itr->next_position : column_2_itr->offset_batch_size); offset_2_itr++) {
+								matches.push_back(std::make_pair(column_1_itr->offsets[offset_1_itr], column_2_itr->offsets[offset_2_itr]));
+							}
+							column_2_itr = column_2_itr->next;
+						}
+					}
+					column_1_itr = column_1_itr->next;
+				}
+
+			}
+		}
+		dictionary_itr = dictionary_itr->next;
+
+	}
+	auto stop = Time::now();
+	auto elapsed = stop - start;
+	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
+	std::cout << "VALUE-CENTRIC JOIN (DICTIONARY) (BATCH ENTRY) : " << time_milliseconds.count() << " ms \n";
+
+	PrintMatches(matches, column_1, false);
+
+
+}
 
 void RunJoinBenchmark(){
 
@@ -648,6 +938,8 @@ void RunJoinBenchmark(){
 	RunAlgorithm6(column_1, column_1_size, column_2, column_2_size);
 
 	//RunAlgorithm7(column_1, column_1_size, column_2, column_2_size);
+
+	RunAlgorithm8(column_1, column_1_size, column_2, column_2_size);
 
 	// Clean up arrays
 	delete[] column_1;
