@@ -178,6 +178,42 @@ void PrintArray(int* array, int array_size){
 
 }
 
+void RunJoinBenchmark2(){
+  	
+  	//each column is a 2D array of values and pointers to a dictionary 
+        int** column_1;
+ 	int** column_2;
+
+	int column_1_size = state.column_1_size;
+	int column_2_size = column_1_size/5;
+	
+	//initialize the 2D arrays	
+	int column_1 = new int*[column_1_size];
+	int column_2 = new int*[column_2_size];
+
+	for(int i = 0; i < column_1_size; i++){
+     		column_1[i] = new int[2];
+	}
+   
+	for(int i = 0; i < column_2_size; i++){
+ 		column_2[i] = new int[2];
+	}
+	
+	// Load data into first column
+        for(int column_1_itr = 0; column_1_itr < column_1_size; column_1_itr++){
+                auto number = GenerateNumberColumn1();
+                column_1[column_1_itr][0] = number;
+        }
+
+        // Load data into second column
+        for(int column_2_itr = 0; column_2_itr < column_2_size; column_2_itr++){
+                auto number = GenerateNumberColumn2();
+                column_2[column_2_itr][0] = number;
+        }
+
+	
+}
+
 void RunJoinBenchmark(){
 
 	// Each column contains an array of numbers (table 1 and table 2)
