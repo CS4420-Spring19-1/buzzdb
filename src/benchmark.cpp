@@ -639,38 +639,6 @@ void RunAlgorithm1(int* column_1, int column_1_size, int* column_2, int column_2
 
 }
 
-void RunAlgorithm2(int* column_1, int column_1_size, int* column_2, int column_2_size){
-	std::vector<std::pair<int,int>> matches;
-
-	// ALGORITHM 2: VALUE-CENTRIC JOIN (JOINT HASH TABLE) (TYPE 1)
-
-	// Build hash table for value-centric join
-	auto join_hash_table = BuildJoinHashTable(column_1, column_1_size, column_2, column_2_size);
-
-	auto start = Time::now();
-
-	for(auto entry: join_hash_table){
-
-		auto column_1_offsets = entry.second.first;
-		auto column_2_offsets = entry.second.second;
-
-		for(auto column_1_offset: column_1_offsets){
-			for(auto column_2_offset: column_2_offsets){
-				matches.push_back(std::make_pair(column_1_offset, column_2_offset));
-			}
-		}
-
-	}
-
-	auto stop = Time::now();
-	auto elapsed = stop - start;
-	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
-	std::cout << "VALUE-CENTRIC JOIN (JOINT HASH TABLE) (TYPE 1): " << time_milliseconds.count() << " ms \n";
-
-	PrintMatches(matches, column_1, false);
-
-}
-
 void RunAlgorithm3(int* column_1, int column_1_size, int* column_2, int column_2_size){
 	std::vector<std::pair<int,int>> matches;
 
@@ -699,37 +667,6 @@ void RunAlgorithm3(int* column_1, int column_1_size, int* column_2, int column_2
 	elapsed += stop - start;
 	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
 	std::cout << "TUPLE-CENTRIC JOIN (WITH INVERTED INDEX ON COLUMN_1): " << time_milliseconds.count() << " ms \n";
-
-	PrintMatches(matches, column_1, false);
-
-}
-
-void RunAlgorithm4(int* column_1, int column_1_size, int* column_2, int column_2_size){
-	std::vector<std::pair<int,int>> matches;
-
-	// ALGORITHM 4: TUPLE-CENTRIC JOIN (WITH JOINT INDEX ON BOTH COLUMNS)
-
-	// Build join tree
-	auto join_tree = BuildJoinTree(column_1, column_1_size, column_2, column_2_size);
-
-	//std::cout <<"JOIN TREE SIZE: " << join_tree.size() << "\n";
-
-	auto start = Time::now();
-
-	for(auto entry: join_tree){
-
-		auto match_list = entry.second;
-
-		for(auto pair_itr: match_list){
-			matches.push_back(pair_itr);
-		}
-
-	}
-
-	auto stop = Time::now();
-	auto elapsed = stop - start;
-	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
-	//std::cout << "TUPLE-CENTRIC JOIN (WITH JOINT INDEX ON BOTH COLUMNS): " << time_milliseconds.count() << " ms \n";
 
 	PrintMatches(matches, column_1, false);
 
@@ -804,89 +741,6 @@ void RunAlgorithm6(int* column_1, int column_1_size, int* column_2, int column_2
 
 }
 
-/*
-void RunAlgorithm7(int* column_1, int column_1_size, int* column_2, int column_2_size){
-	std::vector<std::pair<int,int>> matches;
-
-	// ALGORITHM 7: VALUE-CENTRIC JOIN (DICTIONARY) (TYPE 2)
-
-	// Build dictionary for value-centric join
-	std::vector<dictionary_entry> dictionary;
-	std::vector<int> dictionary_map_vector;
-	std::tie(dictionary, dictionary_map_vector) = BuildDictionary(column_1, column_1_size, column_2, column_2_size);
-
-	std::cout << "LIST SIZE: " << dictionary_map_vector.size() << "\n";
-
-	std::chrono::duration<double> elapsed;
-
-	auto start = Time::now();
-
-	for(int column_2_itr = 0; column_2_itr < column_2_size; column_2_itr++){
-
-		auto dictionary_offset = dictionary_map_vector[column_2_itr];
-
-		auto column_1_offsets = dictionary[dictionary_offset].column_1_offset_array;
-
-		for(auto column_1_offset: column_1_offsets){
-			matches.push_back(std::make_pair(column_1_offset, column_2_itr));
-		}
-	}
-
-	auto stop = Time::now();
-	elapsed += stop - start;
-	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
-	std::cout << "VALUE-CENTRIC JOIN (DICTIONARY) (TYPE 2): " << time_milliseconds.count() << " ms \n";
-
-	PrintMatches(matches, column_1, false);
-}
- */
-void RunAlgorithm8(int* column_1, int column_1_size, int* column_2, int column_2_size){
-	// ALGORITHM 8: VALUE-CENTRIC JOIN (DICTIONARY) (BATCH ENTRIES)
-	std::vector<std::pair<int,int>> matches;
-
-	dictionary_batch_entry* dictionary = BuildDictionaryWithBatchEntries(column_1, column_1_size, column_2, column_2_size);
-
-	auto start = Time::now();
-	dictionary_batch_entry* dictionary_itr = dictionary;
-	while(dictionary_itr!=nullptr){
-		auto number_of_values = dictionary_itr->dictionary_batch_size == dictionary_itr->next_position? dictionary_itr->dictionary_batch_size : dictionary_itr->next_position;
-
-		for (auto value_itr = 0; value_itr < number_of_values; value_itr++) {
-
-			if(dictionary_itr->column_1_offset_array[value_itr]!=nullptr && dictionary_itr->column_2_offset_array[value_itr]!=nullptr){
-
-				//code to find matches
-				offset_batch_entry* column_1_itr = dictionary_itr->column_1_offset_array[value_itr];
-				while (column_1_itr!=nullptr) {
-
-					for (auto offset_1_itr = 0; offset_1_itr < (column_1_itr->next_position < column_1_itr->offset_batch_size ? column_1_itr->next_position : column_1_itr->offset_batch_size); offset_1_itr++) {
-						offset_batch_entry* column_2_itr = dictionary_itr->column_2_offset_array[value_itr];
-						while (column_2_itr!=nullptr) {
-
-							for (auto offset_2_itr = 0; offset_2_itr < (column_2_itr->next_position < column_2_itr->offset_batch_size ? column_2_itr->next_position : column_2_itr->offset_batch_size); offset_2_itr++) {
-								matches.push_back(std::make_pair(column_1_itr->offsets[offset_1_itr], column_2_itr->offsets[offset_2_itr]));
-							}
-							column_2_itr = column_2_itr->next;
-						}
-					}
-					column_1_itr = column_1_itr->next;
-				}
-
-			}
-		}
-		dictionary_itr = dictionary_itr->next;
-
-	}
-	auto stop = Time::now();
-	auto elapsed = stop - start;
-	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
-	std::cout << "VALUE-CENTRIC JOIN (DICTIONARY) (BATCH ENTRY) : " << time_milliseconds.count() << " ms \n";
-
-	PrintMatches(matches, column_1, false);
-
-
-}
-
 void RunJoinBenchmark(){
 
 	// Each column contains an array of numbers (table 1 and table 2)
@@ -927,19 +781,11 @@ void RunJoinBenchmark(){
 
 	//RunAlgorithm1(column_1, column_1_size, column_2, column_2_size);
 
-	//RunAlgorithm2(column_1, column_1_size, column_2, column_2_size);
-
 	RunAlgorithm3(column_1, column_1_size, column_2, column_2_size);
 
-	//RunAlgorithm4(column_1, column_1_size, column_2, column_2_size);
-
-	//RunAlgorithm5(column_1, column_1_size, column_2, column_2_size);
+	RunAlgorithm5(column_1, column_1_size, column_2, column_2_size);
 
 	RunAlgorithm6(column_1, column_1_size, column_2, column_2_size);
-
-	//RunAlgorithm7(column_1, column_1_size, column_2, column_2_size);
-
-	RunAlgorithm8(column_1, column_1_size, column_2, column_2_size);
 
 	// Clean up arrays
 	delete[] column_1;
