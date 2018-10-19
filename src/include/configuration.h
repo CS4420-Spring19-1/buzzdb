@@ -26,8 +26,11 @@ class configuration {
   // column_1_size
   size_t column_1_size;
 
-  //batch_size
+  // batch_size
   size_t batch_size;
+
+  // join selectivity threshold
+  int join_selectivity_threshold;
 
   // Verbose output
   bool verbose;

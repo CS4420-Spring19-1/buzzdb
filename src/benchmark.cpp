@@ -51,7 +51,7 @@ struct dictionary_batch_entry {
 
 unsigned seed = 23;
 std::default_random_engine generator (seed);
-std::uniform_int_distribution<int> skew_distribution(1,10);
+std::uniform_real_distribution<double> first_or_second_half_dist(0.0, 1.0);
 std::uniform_int_distribution<int> column_1_first_half_distribution(1,1000);
 std::uniform_int_distribution<int> column_1_second_half_distribution(1000,100000);
 std::uniform_int_distribution<int> column_2_first_half_distribution(1,100000);
@@ -63,11 +63,8 @@ std::uniform_int_distribution<int> column_2_second_half_distribution(100000,1000
 
 int GenerateNumberColumn1(){
 
-	// first or second half?
-	auto number = skew_distribution(generator);
-
 	// generate number using distribution
-	if(number < 5){
+	if(first_or_second_half_dist(generator) < 0.5){
 		return column_1_first_half_distribution(generator);
 	}
 	else {
@@ -76,19 +73,94 @@ int GenerateNumberColumn1(){
 
 }
 
-int GenerateNumberColumn2(){
+std::map<int,int> column_1_frequency_map;
+std::map<int,int> column_2_frequency_map;
 
-	// first or second half?
-	auto number = skew_distribution(generator);
+int GenerateNumberColumn2(std::map<int,int> column_1_frequency_map){
 
 	// generate number using distribution
-	if(number < 5){
-		return column_2_first_half_distribution(generator);
+	if(first_or_second_half_dist(generator) < 0.1){
+
+		while(1){
+			auto sample = column_2_first_half_distribution(generator);
+
+			// number exists in both columns
+			if(column_1_frequency_map.count(sample) && column_2_frequency_map.count(sample)){
+				auto number_count = column_1_frequency_map[sample];
+				auto join_count = number_count * column_2_frequency_map[sample];
+				if(join_count > state.join_selectivity_threshold){
+					std::cout << "join count: " << join_count << "\n";
+					continue;
+				}
+			}
+			// number only exists in column 1
+			else if(column_1_frequency_map.count(sample)){
+				auto number_count = column_1_frequency_map[sample];
+				auto join_count = number_count * 1;
+				if(join_count > state.join_selectivity_threshold){
+					std::cout << "join count: " << join_count << "\n";
+					continue;
+				}
+			}
+			// number does not exist in column 1
+			else{
+				//auto join_count = 0;
+			}
+
+			// number already exists in map
+			if(column_2_frequency_map.count(sample)){
+				column_2_frequency_map[sample]++;
+			}
+			else{
+				column_2_frequency_map[sample] = 1;
+			}
+
+			return sample;
+		}
+
 	}
 	else {
-		return column_2_second_half_distribution(generator);
+
+		while(1){
+			auto sample = column_2_second_half_distribution(generator);
+
+			// number exists in both columns
+			if(column_1_frequency_map.count(sample) && column_2_frequency_map.count(sample)){
+				auto number_count = column_1_frequency_map[sample];
+				auto join_count = number_count * column_2_frequency_map[sample];
+				if(join_count > state.join_selectivity_threshold){
+					std::cout << "join count: " << join_count << "\n";
+					continue;
+				}
+			}
+			// number only exists in column 1
+			else if(column_1_frequency_map.count(sample)){
+				auto number_count = column_1_frequency_map[sample];
+				auto join_count = number_count * 1;
+				if(join_count > state.join_selectivity_threshold){
+					std::cout << "join count: " << join_count << "\n";
+					continue;
+				}
+			}
+			// number does not exist in column 1
+			else{
+				//auto join_count = 0;
+			}
+
+			// number already exists in map
+			if(column_2_frequency_map.count(sample)){
+				column_2_frequency_map[sample]++;
+			}
+			else{
+				column_2_frequency_map[sample] = 1;
+			}
+
+			return sample;
+		}
 	}
 
+	// control should never reach here
+	return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -354,13 +426,24 @@ void RunJoinBenchmark(){
 		auto number = GenerateNumberColumn1();
 		column_1[column_1_itr] = number;
 		column_1_set.insert(number);
+
+		// number already exists in map
+		if(column_1_frequency_map.count(number)){
+			column_1_frequency_map[number]++;
+		}
+		else{
+			column_1_frequency_map[number] = 1;
+		}
 	}
 
 	std::cout << "COLUMN 1 SET SIZE: " << column_1_set.size() << "\n";
 
 	// Load data into second column
 	for(int column_2_itr = 0; column_2_itr < column_2_size; column_2_itr++){
-		auto number = GenerateNumberColumn2();
+		if(column_2_itr % 100 == 0) {
+			std::cout << "column 2: "<< column_2_itr << "\n";
+		}
+		auto number = GenerateNumberColumn2(column_1_frequency_map);
 		column_2[column_2_itr] = number;
 		column_2_set.insert(number);
 	}
