@@ -54,12 +54,12 @@ static void ValidateColumn1Size(const configuration &state){
 }
 
 static void ValidateJoinSelectivityThreshold(const configuration &state){
-	if(state.join_selectivity_threshold <= 0) {
-		printf("Invalid join_selectivity_threshold :: %d\n", state.join_selectivity_threshold);
+	if(state.join_selectivity_threshold <= 0 || state.join_selectivity_threshold > 1) {
+		printf("Invalid join_selectivity_threshold :: %f\n", state.join_selectivity_threshold);
 		exit(EXIT_FAILURE);
 	}
 	else{
-		printf("%30s : %d\n", "join_selectivity_threshold", state.join_selectivity_threshold);
+		printf("%30s : %f\n", "join_selectivity_threshold", state.join_selectivity_threshold);
 	}
 }
 
@@ -73,7 +73,7 @@ void ParseArguments(int argc, char *argv[], configuration &state) {
 	state.file_name = "";
 	state.column_1_size = 1000 * 100;
 	state.batch_size = 4;
-	state.join_selectivity_threshold = 100;
+	state.join_selectivity_threshold = 1;
 
 	// Parse args
 	while (1) {
@@ -92,7 +92,7 @@ void ParseArguments(int argc, char *argv[], configuration &state) {
 			state.file_name = optarg;
 			break;
 		case 'j':
-			state.join_selectivity_threshold = atoi(optarg);
+			state.join_selectivity_threshold = atof(optarg);
 			break;
 		case 'o':
 			state.column_1_size = atoi(optarg);

@@ -10,6 +10,7 @@
 
 #include "benchmark.h"
 #include "configuration.h"
+#include "zipfian.h"
 
 namespace emerald{
 
@@ -51,117 +52,7 @@ struct dictionary_batch_entry {
 
 unsigned seed = 23;
 std::default_random_engine generator (seed);
-std::uniform_real_distribution<double> first_or_second_half_dist(0.0, 1.0);
-std::uniform_int_distribution<int> column_1_first_half_distribution(1,1000);
-std::uniform_int_distribution<int> column_1_second_half_distribution(1000,100000);
-std::uniform_int_distribution<int> column_2_first_half_distribution(1,100000);
-std::uniform_int_distribution<int> column_2_second_half_distribution(100000,1000000);
-
-////////////////////////////////////////////////////////////////////////////////////////////
-// GENERATORS
-////////////////////////////////////////////////////////////////////////////////////////////
-
-int GenerateNumberColumn1(){
-
-	// generate number using distribution
-	if(first_or_second_half_dist(generator) < 0.5){
-		return column_1_first_half_distribution(generator);
-	}
-	else {
-		return column_1_second_half_distribution(generator);
-	}
-
-}
-
-std::map<int,int> column_1_frequency_map;
-std::map<int,int> column_2_frequency_map;
-
-int GenerateNumberColumn2(std::map<int,int> column_1_frequency_map){
-
-	// generate number using distribution
-	if(first_or_second_half_dist(generator) < 0.1){
-
-		while(1){
-			auto sample = column_2_first_half_distribution(generator);
-
-			// number exists in both columns
-			if(column_1_frequency_map.count(sample) && column_2_frequency_map.count(sample)){
-				auto number_count = column_1_frequency_map[sample];
-				auto join_count = number_count * column_2_frequency_map[sample];
-				if(join_count > state.join_selectivity_threshold){
-					std::cout << "join count: " << join_count << "\n";
-					continue;
-				}
-			}
-			// number only exists in column 1
-			else if(column_1_frequency_map.count(sample)){
-				auto number_count = column_1_frequency_map[sample];
-				auto join_count = number_count * 1;
-				if(join_count > state.join_selectivity_threshold){
-					std::cout << "join count: " << join_count << "\n";
-					continue;
-				}
-			}
-			// number does not exist in column 1
-			else{
-				//auto join_count = 0;
-			}
-
-			// number already exists in map
-			if(column_2_frequency_map.count(sample)){
-				column_2_frequency_map[sample]++;
-			}
-			else{
-				column_2_frequency_map[sample] = 1;
-			}
-
-			return sample;
-		}
-
-	}
-	else {
-
-		while(1){
-			auto sample = column_2_second_half_distribution(generator);
-
-			// number exists in both columns
-			if(column_1_frequency_map.count(sample) && column_2_frequency_map.count(sample)){
-				auto number_count = column_1_frequency_map[sample];
-				auto join_count = number_count * column_2_frequency_map[sample];
-				if(join_count > state.join_selectivity_threshold){
-					std::cout << "join count: " << join_count << "\n";
-					continue;
-				}
-			}
-			// number only exists in column 1
-			else if(column_1_frequency_map.count(sample)){
-				auto number_count = column_1_frequency_map[sample];
-				auto join_count = number_count * 1;
-				if(join_count > state.join_selectivity_threshold){
-					std::cout << "join count: " << join_count << "\n";
-					continue;
-				}
-			}
-			// number does not exist in column 1
-			else{
-				//auto join_count = 0;
-			}
-
-			// number already exists in map
-			if(column_2_frequency_map.count(sample)){
-				column_2_frequency_map[sample]++;
-			}
-			else{
-				column_2_frequency_map[sample] = 1;
-			}
-
-			return sample;
-		}
-	}
-
-	// control should never reach here
-	return 0;
-}
+std::uniform_real_distribution<double> distribution(0.0, 1.0);
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // BUILDERS
@@ -199,20 +90,20 @@ std::map<int,std::vector<int>> BuildTree(int* array, int array_size){
 // Build hash table for both columns
 std::unordered_map<int,std::pair<std::vector<int>,std::vector<int>>> BuildJoinHashTable(int* array_1, int array_1_size, int* array_2, int array_2_size){
 
-       std::unordered_map<int,std::pair<std::vector<int>,std::vector<int>>> join_hash_table;
+	std::unordered_map<int,std::pair<std::vector<int>,std::vector<int>>> join_hash_table;
 
-       // Process array data
-       for(int array_1_itr = 0; array_1_itr < array_1_size; array_1_itr++){
-               auto number = array_1[array_1_itr];
-               join_hash_table[number].first.push_back(array_1_itr);
-       }
+	// Process array data
+	for(int array_1_itr = 0; array_1_itr < array_1_size; array_1_itr++){
+		auto number = array_1[array_1_itr];
+		join_hash_table[number].first.push_back(array_1_itr);
+	}
 
-       for(int array_2_itr = 0; array_2_itr < array_2_size; array_2_itr++){
-               auto number = array_2[array_2_itr];
-               join_hash_table[number].second.push_back(array_2_itr);
-       }
+	for(int array_2_itr = 0; array_2_itr < array_2_size; array_2_itr++){
+		auto number = array_2[array_2_itr];
+		join_hash_table[number].second.push_back(array_2_itr);
+	}
 
-       return join_hash_table;
+	return join_hash_table;
 }
 
 
@@ -342,34 +233,34 @@ void RunAlgorithm2(int* column_1, int column_1_size, int* column_2, int column_2
 }
 
 void RunAlgorithm3(int* column_1, int column_1_size, int* column_2, int column_2_size){
-       std::vector<std::pair<int,int>> matches;
+	std::vector<std::pair<int,int>> matches;
 
-       // ALGORITHM 3: VALUE-CENTRIC JOIN (JOINT HASH TABLE) (TYPE 1)
+	// ALGORITHM 3: VALUE-CENTRIC JOIN (JOINT HASH TABLE) (TYPE 1)
 
-       // Build hash table for value-centric join
-       auto join_hash_table = BuildJoinHashTable(column_1, column_1_size, column_2, column_2_size);
+	// Build hash table for value-centric join
+	auto join_hash_table = BuildJoinHashTable(column_1, column_1_size, column_2, column_2_size);
 
-       auto start = Time::now();
+	auto start = Time::now();
 
-       for(auto entry: join_hash_table){
+	for(auto entry: join_hash_table){
 
-               auto column_1_offsets = entry.second.first;
-               auto column_2_offsets = entry.second.second;
+		auto column_1_offsets = entry.second.first;
+		auto column_2_offsets = entry.second.second;
 
-               for(auto column_1_offset: column_1_offsets){
-                       for(auto column_2_offset: column_2_offsets){
-                               matches.push_back(std::make_pair(column_1_offset, column_2_offset));
-                       }
-               }
+		for(auto column_1_offset: column_1_offsets){
+			for(auto column_2_offset: column_2_offsets){
+				matches.push_back(std::make_pair(column_1_offset, column_2_offset));
+			}
+		}
 
-       }
+	}
 
-       auto stop = Time::now();
-       auto elapsed = stop - start;
-       auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
-       std::cout << "VALUE-CENTRIC JOIN (JOINT HASH TABLE) (TYPE 1): " << time_milliseconds.count() << " ms \n";
+	auto stop = Time::now();
+	auto elapsed = stop - start;
+	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
+	std::cout << "VALUE-CENTRIC JOIN (JOINT HASH TABLE) (TYPE 1): " << time_milliseconds.count() << " ms \n";
 
-       PrintMatches(matches, column_1, false);
+	PrintMatches(matches, column_1, false);
 
 }
 
@@ -421,31 +312,25 @@ void RunJoinBenchmark(){
 	std::set<int> column_1_set;
 	std::set<int> column_2_set;
 
+	ZipfDistribution zipf1(10000, 0.9);
+	ZipfDistribution zipf2(10000000, state.join_selectivity_threshold);
+
 	// Load data into first column
 	for(int column_1_itr = 0; column_1_itr < column_1_size; column_1_itr++){
-		auto number = GenerateNumberColumn1();
+		auto number = zipf1.GetNextNumber();
 		column_1[column_1_itr] = number;
 		column_1_set.insert(number);
-
-		// number already exists in map
-		if(column_1_frequency_map.count(number)){
-			column_1_frequency_map[number]++;
-		}
-		else{
-			column_1_frequency_map[number] = 1;
-		}
+		//std::cout << number << " ";
 	}
 
 	std::cout << "COLUMN 1 SET SIZE: " << column_1_set.size() << "\n";
 
 	// Load data into second column
 	for(int column_2_itr = 0; column_2_itr < column_2_size; column_2_itr++){
-		if(column_2_itr % 100 == 0) {
-			std::cout << "column 2: "<< column_2_itr << "\n";
-		}
-		auto number = GenerateNumberColumn2(column_1_frequency_map);
+		auto number = zipf2.GetNextNumber();
 		column_2[column_2_itr] = number;
 		column_2_set.insert(number);
+		//std::cout << number << " ";
 	}
 
 	std::cout << "COLUMN 2 SET SIZE: " << column_2_set.size() << "\n";
