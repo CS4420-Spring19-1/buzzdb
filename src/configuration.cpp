@@ -12,7 +12,7 @@ void Usage() {
   std::cout <<
       "\n"
       "Command line options : machine <options>\n"
-      "   -a --hierarchy_type                 :  hierarchy type\n"
+      "   -a --algorithm_type                 :  algorithm type\n"
       "   -f --file_name                      :  file name\n"
       "   -o --column_1_size                  :  column 1 size\n"
       "   -v --verbose                        :  verbose\n"
@@ -22,7 +22,7 @@ void Usage() {
 }
 
 static struct option opts[] = {
-    {"hierarchy_type", optional_argument, NULL, 'a'},
+    {"algorithm_type", optional_argument, NULL, 'a'},
     {"file_name", optional_argument, NULL, 'f'},
     {"column_1_size", optional_argument, NULL, 'o'},
     {"verbose", optional_argument, NULL, 'v'},
@@ -30,14 +30,14 @@ static struct option opts[] = {
     {NULL, 0, NULL, 0}
 };
 
-__attribute__((unused)) static void ValidateHierarchyType(const configuration &state) {
-  if (state.hierarchy_type < 1 || state.hierarchy_type > HIERARCHY_TYPE_MAX) {
-    printf("Invalid hierarchy_type :: %d\n", state.hierarchy_type);
+static void ValidateAlgorithmType(const configuration &state) {
+  if (state.algorithm_type < 1 || state.algorithm_type > ALGORITHM_TYPE_MAX) {
+    printf("Invalid hierarchy_type :: %d\n", state.algorithm_type);
     exit(EXIT_FAILURE);
   }
   else {
-    printf("%30s : %s\n", "hierarchy_type",
-           HierarchyTypeToString(state.hierarchy_type).c_str());
+    printf("%30s : %s\n", "algorithm_type",
+    		AlgorithmTypeToString(state.algorithm_type).c_str());
   }
 }
 
@@ -56,7 +56,7 @@ void ParseArguments(int argc, char *argv[], configuration &state) {
   // Default Values
   state.verbose = false;
 
-  state.hierarchy_type = HIERARCHY_TYPE_DRAM_NVM_DISK;
+  state.algorithm_type = ALGORITHM_TYPE_TUPLE_CENTRIC_INVERTED_INDEX;
   state.file_name = "";
   state.column_1_size = 1000 * 100;
   state.batch_size = 4;
@@ -72,7 +72,7 @@ void ParseArguments(int argc, char *argv[], configuration &state) {
 
     switch (c) {
       case 'a':
-        state.hierarchy_type = (HierarchyType)atoi(optarg);
+        state.algorithm_type = (AlgorithmType)atoi(optarg);
         break;
       case 'f':
         state.file_name = optarg;
@@ -96,7 +96,7 @@ void ParseArguments(int argc, char *argv[], configuration &state) {
     }
   }
 
-  //ValidateHierarchyType(state);
+  ValidateAlgorithmType(state);
   //ValidateFileName(state);
   ValidateColumn1Size(state);
 

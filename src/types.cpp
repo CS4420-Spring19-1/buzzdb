@@ -4,21 +4,17 @@
 
 namespace emerald {
 
-std::string HierarchyTypeToString(const HierarchyType& hierarchy_type){
+std::string AlgorithmTypeToString(const AlgorithmType& algorithm_type){
 
-  switch (hierarchy_type) {
-    case HIERARCHY_TYPE_NVM:
-      return "NVM";
-    case HIERARCHY_TYPE_DRAM_NVM:
-      return "DRAM-NVM";
-    case HIERARCHY_TYPE_DRAM_DISK:
-      return "DRAM-DISK";
-    case HIERARCHY_TYPE_NVM_DISK:
-      return "NVM-DISK";
-    case HIERARCHY_TYPE_DRAM_NVM_DISK:
-      return "DRAM-NVM-DISK";
+  switch (algorithm_type) {
+    case ALGORITHM_TYPE_TUPLE_CENTRIC_INVERTED_INDEX:
+      return "TUPLE_CENTRIC_INVERTED_INDEX";
+    case ALGORITHM_TYPE_VALUE_CENTRIC_JOIN_1:
+      return "VALUE_CENTRIC_JOIN_1";
+    case ALGORITHM_TYPE_VALUE_CENTRIC_JOIN_2:
+      return "VALUE_CENTRIC_JOIN_2";
     default:
-      return "INVALID";
+      return "INVALID ALGORITHM";
   }
 
 }

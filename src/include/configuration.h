@@ -17,8 +17,8 @@ static const int generator_seed = 50;
 class configuration {
  public:
 
-  // hierarchy type
-  HierarchyType hierarchy_type;
+  // algorithm type
+  AlgorithmType algorithm_type;
 
   // file name
   std::string file_name;
