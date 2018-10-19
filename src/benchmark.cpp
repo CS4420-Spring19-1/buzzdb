@@ -22,34 +22,6 @@ typedef std::map<int,std::vector<int>> tree_type;
 
 typedef std::chrono::high_resolution_clock Time;
 
-struct offset_entry{
-	int offset = INT_MAX;
-	offset_entry* next = nullptr;
-};
-
-struct dictionary_entry {
-	int value = INT_MAX;
-	offset_entry* column_1_offset_array = nullptr;
-	offset_entry* column_2_offset_array = nullptr;
-	dictionary_entry* next = nullptr;
-};
-
-struct offset_batch_entry{
-	int offsets[4] = {-1};
-	int offset_batch_size = 4;
-	int next_position = 0;
-	offset_batch_entry* next = nullptr;
-};
-
-struct dictionary_batch_entry {
-	int values[4] = {0};
-	int dictionary_batch_size = 4;
-	int next_position = 0;
-	offset_batch_entry* column_1_offset_array[4] = {nullptr};
-	offset_batch_entry* column_2_offset_array[4] = {nullptr};
-	dictionary_batch_entry* next = nullptr;
-};
-
 unsigned seed = 23;
 std::default_random_engine generator (seed);
 std::uniform_real_distribution<double> distribution(0.0, 1.0);
