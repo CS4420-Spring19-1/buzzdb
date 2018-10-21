@@ -26,14 +26,15 @@ class configuration {
   // column_1_size
   size_t column_1_size;
 
-  // batch_size
-  size_t batch_size;
-
   // join selectivity threshold
   double join_selectivity_threshold;
 
   // Verbose output
   bool verbose;
+
+  //range of column 1
+  size_t range;
+
 
 };
 

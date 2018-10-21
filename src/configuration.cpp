@@ -17,7 +17,7 @@ void Usage() {
 			"   -j --join_selectivity_threshold     :  join selectivity threshold\n"
 			"   -o --column_1_size                  :  column 1 size\n"
 			"   -v --verbose                        :  verbose\n"
-			"   -b --batch_size                     :  batch size\n"
+      "   -r --range                          :  range\n"
 			;
 	exit(EXIT_FAILURE);
 }
@@ -28,7 +28,7 @@ static struct option opts[] = {
 		{"join_selectivity_threshold", optional_argument, NULL, 'j'},
 		{"column_1_size", optional_argument, NULL, 'o'},
 		{"verbose", optional_argument, NULL, 'v'},
-		{"batch_size", optional_argument, NULL, 'b'},
+    {"range", optional_argument, NULL, 'r'},
 		{NULL, 0, NULL, 0}
 };
 
@@ -72,14 +72,14 @@ void ParseArguments(int argc, char *argv[], configuration &state) {
 	state.algorithm_type = ALGORITHM_TYPE_TUPLE_CENTRIC_INVERTED_INDEX;
 	state.file_name = "";
 	state.column_1_size = 1000 * 100;
-	state.batch_size = 4;
 	state.join_selectivity_threshold = 1;
+  state.range = 10000;
 
 	// Parse args
 	while (1) {
 		int idx = 0;
 		int c = getopt_long(argc, argv,
-				"a:f:o:j:v",
+				"a:f:o:j:v:r:",
 				opts, &idx);
 
 		if (c == -1) break;
@@ -100,24 +100,23 @@ void ParseArguments(int argc, char *argv[], configuration &state) {
 		case 'v':
 			state.verbose = atoi(optarg);
 			break;
-		case 'b':
-			state.batch_size = atoi(optarg);
-			break;
+    case 'r':
+      state.range = atoi(optarg);
+      break;
 		case 'h':
 			Usage();
 			break;
-
 		default:
 			printf("Unknown option: -%c-\n", c);
 			Usage();
 		}
 	}
-
+	printf("//===----------------------------------------------------------------------===//\n");
 	ValidateAlgorithmType(state);
 	ValidateColumn1Size(state);
 	ValidateJoinSelectivityThreshold(state);
 
-	printf("//===----------------------------------------------------------------------===//\n");
+
 
 }
 

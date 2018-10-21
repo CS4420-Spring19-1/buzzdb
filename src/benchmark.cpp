@@ -7,6 +7,8 @@
 #include <chrono>
 #include <set>
 #include <climits>
+#include <fstream>
+#include <iostream>
 
 #include "benchmark.h"
 #include "configuration.h"
@@ -198,6 +200,7 @@ void RunAlgorithm2(int* column_1, int column_1_size, int* column_2, int column_2
 	auto stop = Time::now();
 	elapsed += stop - start;
 	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
+
 	std::cout << "TUPLE-CENTRIC JOIN (WITH INVERTED INDEX ON COLUMN_1): " << time_milliseconds.count() << " ms \n";
 
 	PrintMatches(matches, column_1, false);
@@ -284,7 +287,7 @@ void RunJoinBenchmark(){
 	std::set<int> column_1_set;
 	std::set<int> column_2_set;
 
-	ZipfDistribution zipf1(10000, 0.9);
+	ZipfDistribution zipf1(state.range, 0.9);
 	ZipfDistribution zipf2(10000000, state.join_selectivity_threshold);
 
 	// Load data into first column
@@ -329,7 +332,7 @@ void RunJoinBenchmark(){
 		break;
 	}
 	}
-
+	printf("//===----------------------------------------------------------------------===//\n");
 	// Clean up arrays
 	delete[] column_1;
 	delete[] column_2;
