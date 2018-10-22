@@ -6,18 +6,16 @@
 
 namespace emerald {
 
-enum HierarchyType {
-  HIERARCHY_TYPE_INVALID = 0,
+enum AlgorithmType {
+  ALGORITHM_TYPE_INVALID = 0,
 
-  HIERARCHY_TYPE_NVM = 1,
-  HIERARCHY_TYPE_DRAM_NVM = 2,
-  HIERARCHY_TYPE_DRAM_DISK = 3,
-  HIERARCHY_TYPE_NVM_DISK = 4,
-  HIERARCHY_TYPE_DRAM_NVM_DISK = 5,
+  ALGORITHM_TYPE_TUPLE_CENTRIC_INVERTED_INDEX = 1,
+  ALGORITHM_TYPE_VALUE_CENTRIC_JOIN_1 = 2,
+  ALGORITHM_TYPE_VALUE_CENTRIC_JOIN_2 = 3,
 
-  HIERARCHY_TYPE_MAX = 5
+  ALGORITHM_TYPE_MAX = 4   // for checking out of bounds
 };
 
-std::string HierarchyTypeToString(const HierarchyType& hierarchy_type);
+std::string AlgorithmTypeToString(const AlgorithmType& algorithm_type);
 
 }  // End emerald namespace
