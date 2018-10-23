@@ -12,8 +12,9 @@ enum AlgorithmType {
   ALGORITHM_TYPE_TUPLE_CENTRIC_INVERTED_INDEX = 1,
   ALGORITHM_TYPE_VALUE_CENTRIC_JOIN_1 = 2,
   ALGORITHM_TYPE_VALUE_CENTRIC_JOIN_2 = 3,
-
-  ALGORITHM_TYPE_MAX = 4   // for checking out of bounds
+  ALGORITHM_TYPE_VALUE_CENTRIC_JOIN_3 = 4,
+  ALGORITHM_TYPE_VALUE_CENTRIC_JOIN_4 = 5,
+  ALGORITHM_TYPE_MAX = 6   // for checking out of bounds
 };
 
 std::string AlgorithmTypeToString(const AlgorithmType& algorithm_type);

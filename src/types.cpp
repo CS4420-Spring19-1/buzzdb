@@ -13,6 +13,10 @@ std::string AlgorithmTypeToString(const AlgorithmType& algorithm_type){
       return "VALUE_CENTRIC_JOIN_1";
     case ALGORITHM_TYPE_VALUE_CENTRIC_JOIN_2:
       return "VALUE_CENTRIC_JOIN_2";
+    case ALGORITHM_TYPE_VALUE_CENTRIC_JOIN_3:
+      return "VALUE_CENTRIC_JOIN_3";
+    case ALGORITHM_TYPE_VALUE_CENTRIC_JOIN_4:
+      return "VALUE_CENTRIC_JOIN_4";
     default:
       return "INVALID ALGORITHM";
   }
