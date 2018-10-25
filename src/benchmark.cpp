@@ -282,15 +282,15 @@ void RunAlgorithm5(int* column_1, int column_1_size, int* column_2, int column_2
         	try{
 			auto column_1_offsets = hash_table_1.at(column_2_itr->first);
 			for(auto column_2_offset: column_2_offsets){
-				for(auto column_1_offset: column_1_offsets){ 
+				for(auto column_1_offset: column_1_offsets){
                 			matches.push_back(std::make_pair(column_1_offset, column_2_offset));
 				}
                 	}
 		} catch (const std::out_of_range &e) {
-		
+
 			//do nothing
 		}
-	
+
         }
 
         auto stop = Time::now();
@@ -394,7 +394,7 @@ void RunJoinBenchmark(){
 		RunAlgorithm4(column_1, column_1_size, column_2, column_2_size);
 		break;
 	}
-        case ALGORITHM_TYPE_VALUE_CENTRIC_JOIN_3: {
+  case ALGORITHM_TYPE_VALUE_CENTRIC_JOIN_3: {
 		RunAlgorithm5(column_1, column_1_size, column_2, column_2_size);
 		break;
   	}
