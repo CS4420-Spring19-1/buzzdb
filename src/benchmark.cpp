@@ -312,18 +312,17 @@ void RunAlgorithm6(int* column_1, int column_1_size, int* column_2, int column_2
 
         auto start = Time::now();
         for(auto column_2_itr = tree_2.begin(); column_2_itr != tree_2.end(); ++column_2_itr){
-                auto column_2_offsets = tree_2[column_2_itr->first];
-                try{
-                        auto column_1_offsets = tree_1.at(column_2_itr->first);
-                        for(auto column_2_offset: column_2_offsets){
-                                for(auto column_1_offset: column_1_offsets){
-                                        matches.push_back(std::make_pair(column_1_offset, column_2_offset));
-                                }
-                        }
-                } catch (const std::out_of_range &e) {
+                auto column_2_offsets = column_2_itr->second;
 
-                        //do nothing
-                }
+                        auto column_1_entry = tree_1.find(column_2_itr->first);
+												if ( column_1_entry!= tree_1.end()) {
+													auto column_1_offsets = column_1_entry->second;
+													for(auto column_2_offset: column_2_offsets){
+	                                for(auto column_1_offset: column_1_offsets){
+	                                        matches.push_back(std::make_pair(column_1_offset, column_2_offset));
+	                                }
+	                        }
+												}
 
         }
 
