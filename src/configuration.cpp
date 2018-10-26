@@ -18,6 +18,7 @@ void Usage() {
 			"   -o --column_1_size                  :  column 1 size\n"
 			"   -v --verbose                        :  verbose\n"
       "   -r --range                          :  range\n"
+			"   -s --size_factor                    :  column 2 size factor\n"
 			;
 	exit(EXIT_FAILURE);
 }
@@ -29,6 +30,7 @@ static struct option opts[] = {
 		{"column_1_size", optional_argument, NULL, 'o'},
 		{"verbose", optional_argument, NULL, 'v'},
     {"range", optional_argument, NULL, 'r'},
+		{"size_factor", optional_argument, NULL, 's'},
 		{NULL, 0, NULL, 0}
 };
 
@@ -74,12 +76,13 @@ void ParseArguments(int argc, char *argv[], configuration &state) {
 	state.column_1_size = 1000 * 100;
 	state.join_selectivity_threshold = 1;
   state.range = 10000;
+	state.size_factor = 0.2;
 
 	// Parse args
 	while (1) {
 		int idx = 0;
 		int c = getopt_long(argc, argv,
-				"a:f:o:j:v:r:",
+				"a:f:o:j:v:r:s:",
 				opts, &idx);
 
 		if (c == -1) break;
@@ -103,6 +106,9 @@ void ParseArguments(int argc, char *argv[], configuration &state) {
     case 'r':
       state.range = atoi(optarg);
       break;
+		case 's':
+			state.size_factor = atof(optarg);
+			break;
 		case 'h':
 			Usage();
 			break;
@@ -115,6 +121,7 @@ void ParseArguments(int argc, char *argv[], configuration &state) {
 	ValidateAlgorithmType(state);
 	ValidateColumn1Size(state);
 	ValidateJoinSelectivityThreshold(state);
+ 	printf("%30s : %f\n", "column 2 size factor", state.size_factor);
 
 
 

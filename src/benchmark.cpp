@@ -345,7 +345,7 @@ void RunJoinBenchmark(){
 
 	// Column Sizes
 	int column_1_size = state.column_1_size;
-	int column_2_size = column_1_size/5;
+	int column_2_size = column_1_size * state.size_factor;
 
 	// Initialize arrays
 	column_1 = new int[column_1_size];
@@ -399,7 +399,8 @@ void RunJoinBenchmark(){
 		break;
   	}
 	case ALGORITHM_TYPE_VALUE_CENTRIC_JOIN_4:{
-		RunAlgorithm6(column_1, column_1_size, column_2, column_2_size);		break;
+		RunAlgorithm6(column_1, column_1_size, column_2, column_2_size);
+		break;
 	}
 	default: {
 		std::cout << "Invalid algorithm: " << state.algorithm_type << "\n";
