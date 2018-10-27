@@ -210,39 +210,7 @@ void RunAlgorithm2(int* column_1, int column_1_size, int* column_2, int column_2
 void RunAlgorithm3(int* column_1, int column_1_size, int* column_2, int column_2_size){
 	std::vector<std::pair<int,int>> matches;
 
-	// ALGORITHM 3: VALUE-CENTRIC JOIN (JOINT HASH TABLE) (TYPE 1)
-
-	// Build hash table for value-centric join
-	auto join_hash_table = BuildJoinHashTable(column_1, column_1_size, column_2, column_2_size);
-
-	auto start = Time::now();
-
-	for(auto entry: join_hash_table){
-
-		auto column_1_offsets = entry.second.first;
-		auto column_2_offsets = entry.second.second;
-
-		for(auto column_1_offset: column_1_offsets){
-			for(auto column_2_offset: column_2_offsets){
-				matches.push_back(std::make_pair(column_1_offset, column_2_offset));
-			}
-		}
-
-	}
-
-	auto stop = Time::now();
-	auto elapsed = stop - start;
-	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
-	std::cout << "VALUE-CENTRIC JOIN (JOINT HASH TABLE) (TYPE 1): " << time_milliseconds.count() << " ms \n";
-
-	PrintMatches(matches, column_1, false);
-
-}
-
-void RunAlgorithm4(int* column_1, int column_1_size, int* column_2, int column_2_size){
-	std::vector<std::pair<int,int>> matches;
-
-	// ALGORITHM 4: VALUE-CENTRIC JOIN (SINGLE HASH TABLE) (TYPE 2)
+	// ALGORITHM 3: VALUE-CENTRIC JOIN (SINGLE INVERTED INDEX) (TYPE 2)
 
 	// Build hash table for value-centric join
 	auto hash_table = BuildHashTable(column_1, column_1_size);
@@ -262,76 +230,43 @@ void RunAlgorithm4(int* column_1, int column_1_size, int* column_2, int column_2
 	auto stop = Time::now();
 	auto elapsed = stop - start;
 	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
-	std::cout << "VALUE-CENTRIC JOIN (SINGLE HASH TABLE) (TYPE 2): " << time_milliseconds.count() << " ms \n";
+	std::cout << "VALUE-CENTRIC JOIN (SINGLE INVERTED INDEX) (TYPE 2): " << time_milliseconds.count() << " ms \n";
 
 	PrintMatches(matches, column_1, false);
 
 }
 
-//ALGORITHM 5 - 2 SEPERATE HASH TABLE
-void RunAlgorithm5(int* column_1, int column_1_size, int* column_2, int column_2_size){
-        std::vector<std::pair<int,int>> matches;
+void RunAlgorithm4(int* column_1, int column_1_size, int* column_2, int column_2_size){
+	std::vector<std::pair<int,int>> matches;
 
-        // Build hash table for value-centric join
-        auto hash_table_1 = BuildHashTable(column_1, column_1_size);
-	auto hash_table_2 = BuildHashTable(column_2, column_2_size);
+	// ALGORITHM 4: VALUE-CENTRIC JOIN (TWO INVERTED INDEXES) (TYPE 1)
 
-        auto start = Time::now();
-        for(auto column_2_itr = hash_table_2.begin(); column_2_itr != hash_table_2.end(); ++column_2_itr){
-		auto column_2_offsets = hash_table_2[column_2_itr->first];
-        	try{
-			auto column_1_offsets = hash_table_1.at(column_2_itr->first);
+	// Build tree for value-centric join
+	auto tree_1 = BuildTree(column_1, column_1_size);
+	auto tree_2 = BuildTree(column_2, column_2_size);
+
+	auto start = Time::now();
+	for(auto column_2_itr = tree_2.begin(); column_2_itr != tree_2.end(); ++column_2_itr){
+		auto column_2_offsets = column_2_itr->second;
+
+		auto column_1_entry = tree_1.find(column_2_itr->first);
+		if ( column_1_entry!= tree_1.end()) {
+			auto column_1_offsets = column_1_entry->second;
 			for(auto column_2_offset: column_2_offsets){
 				for(auto column_1_offset: column_1_offsets){
-                			matches.push_back(std::make_pair(column_1_offset, column_2_offset));
+					matches.push_back(std::make_pair(column_1_offset, column_2_offset));
 				}
-                	}
-		} catch (const std::out_of_range &e) {
-
-			//do nothing
+			}
 		}
 
-        }
+	}
 
-        auto stop = Time::now();
-        auto elapsed = stop - start;
-        auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
-        std::cout << "VALUE-CENTRIC JOIN (SEPERATE HASH TABLES): " << time_milliseconds.count() << " ms \n";
+	auto stop = Time::now();
+	auto elapsed = stop - start;
+	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
+	std::cout << "VALUE-CENTRIC JOIN (TWO INVERTED INDEXES): " << time_milliseconds.count() << " ms \n";
 
-        PrintMatches(matches, column_1, false);
-
-}
-
-//ALGORITHM 6 - 2 SEPERATE TREES
-void RunAlgorithm6(int* column_1, int column_1_size, int* column_2, int column_2_size){
-        std::vector<std::pair<int,int>> matches;
-
-        // Build tree for value-centric join
-        auto tree_1 = BuildTree(column_1, column_1_size);
-        auto tree_2 = BuildTree(column_2, column_2_size);
-
-        auto start = Time::now();
-        for(auto column_2_itr = tree_2.begin(); column_2_itr != tree_2.end(); ++column_2_itr){
-                auto column_2_offsets = column_2_itr->second;
-
-                        auto column_1_entry = tree_1.find(column_2_itr->first);
-												if ( column_1_entry!= tree_1.end()) {
-													auto column_1_offsets = column_1_entry->second;
-													for(auto column_2_offset: column_2_offsets){
-	                                for(auto column_1_offset: column_1_offsets){
-	                                        matches.push_back(std::make_pair(column_1_offset, column_2_offset));
-	                                }
-	                        }
-												}
-
-        }
-
-        auto stop = Time::now();
-        auto elapsed = stop - start;
-        auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
-        std::cout << "VALUE-CENTRIC JOIN (SEPERATE TREES): " << time_milliseconds.count() << " ms \n";
-
-        PrintMatches(matches, column_1, false);
+	PrintMatches(matches, column_1, false);
 
 }
 
@@ -385,20 +320,12 @@ void RunJoinBenchmark(){
 		RunAlgorithm2(column_1, column_1_size, column_2, column_2_size);
 		break;
 	}
-	case ALGORITHM_TYPE_VALUE_CENTRIC_JOIN_1: {
+	case ALGORITHM_TYPE_VALUE_CENTRIC_SINGLE_INDEX: {
 		RunAlgorithm3(column_1, column_1_size, column_2, column_2_size);
 		break;
 	}
-	case ALGORITHM_TYPE_VALUE_CENTRIC_JOIN_2: {
+	case ALGORITHM_TYPE_VALUE_CENTRIC_TWO_INDEXES:{
 		RunAlgorithm4(column_1, column_1_size, column_2, column_2_size);
-		break;
-	}
-  case ALGORITHM_TYPE_VALUE_CENTRIC_JOIN_3: {
-		RunAlgorithm5(column_1, column_1_size, column_2, column_2_size);
-		break;
-  	}
-	case ALGORITHM_TYPE_VALUE_CENTRIC_JOIN_4:{
-		RunAlgorithm6(column_1, column_1_size, column_2, column_2_size);
 		break;
 	}
 	default: {
