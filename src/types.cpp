@@ -13,6 +13,8 @@ std::string AlgorithmTypeToString(const AlgorithmType& algorithm_type){
       return "VALUE_CENTRIC_SINGLE_INDEX";
     case ALGORITHM_TYPE_VALUE_CENTRIC_TWO_INDEXES:
       return "VALUE_CENTRIC_TWO_INDEXES";
+    case ALGORITHM_TYPE_VALUE_CENTRIC_TWO_INDEXES_SORT_MERGE:
+      return "VALUE_CENTRIC_TWO_INDEXES_SORT_MERGE";
     default:
       return "INVALID ALGORITHM";
   }
@@ -20,4 +22,3 @@ std::string AlgorithmTypeToString(const AlgorithmType& algorithm_type){
 }
 
 }  // End engine emerald
-

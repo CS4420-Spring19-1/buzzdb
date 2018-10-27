@@ -9,21 +9,17 @@ else:
 	shutil.rmtree('./results')
 	os.mkdir('./results')
 
-for i in range(1,4):
-	filePath = './results'
-	range=10000
-	max_range=10*range
-	os.mkdir('./results/Algorithm'+str(i))
-	filePath = filePath + "/Algorithm" + str(i)
-	while range <= max_range:
-		join_selectivity = 0.1;
-		max_selectivity = 1;
+for range in [10000, 100000]:
+	os.mkdir('./results/range_'+str(range))
+	for i in [2,4]:
+		filePath = "./results/range_"+str(range)
+		os.mkdir(filePath+ '/Algorithm'+str(i))
+		filePath = filePath + "/Algorithm" + str(i)
 		command = ["../build/test/emerald"];
 		command.append("-r " + str(range))
 		file = open(filePath+"/r" + str(range) + ".txt", 'w');
-		while join_selectivity <= max_selectivity:
-				ps = subprocess.call(command+["-j " + str(join_selectivity)]+["-a" + str(i)], stdout=file)
-				join_selectivity+=0.1;
-		range = range + 10000
+		for column_1_size in [10000, 100000]:
+			for size_factor in [0.2, 2]:
+				for join_selectivity in [0.1, 0.3, 0.5, 0.9]:
+						ps = subprocess.call(command+["-j " + str(join_selectivity)]+["-a " + str(i)] + ["-o " + str(column_1_size)] + ["-s " + str(size_factor)], stdout=file)
 		file.close()
-	i=i+1

@@ -12,8 +12,8 @@ enum AlgorithmType {
   ALGORITHM_TYPE_TUPLE_CENTRIC_INVERTED_INDEX = 1,
   ALGORITHM_TYPE_VALUE_CENTRIC_SINGLE_INDEX = 2,
   ALGORITHM_TYPE_VALUE_CENTRIC_TWO_INDEXES = 3,
-
-  ALGORITHM_TYPE_MAX = 4   // for checking out of bounds
+  ALGORITHM_TYPE_VALUE_CENTRIC_TWO_INDEXES_SORT_MERGE=4,
+  ALGORITHM_TYPE_MAX = 5   // for checking out of bounds
 };
 
 std::string AlgorithmTypeToString(const AlgorithmType& algorithm_type);

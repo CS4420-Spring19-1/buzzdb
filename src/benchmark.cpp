@@ -240,6 +240,46 @@ void RunAlgorithm3(int* column_1, int column_1_size, int* column_2, int column_2
 
 }
 
+void RunAlgorithm4(int* column_1, int column_1_size, int* column_2, int column_2_size){
+	std::vector<std::pair<int,int>> matches;
+
+	// ALGORITHM 4: VALUE-CENTRIC JOIN (TWO INVERTED INDEXES) (SORT-MERGE)
+
+	// Build tree for value-centric join
+	auto tree_1 = BuildTree(column_1, column_1_size);
+	auto tree_2 = BuildTree(column_2, column_2_size);
+
+	auto column_1_itr = tree_1.begin();
+	auto column_2_itr = tree_2.begin();
+
+	auto start = Time::now();
+
+	while (column_1_itr != tree_1.end() && column_2_itr != tree_2.end()) {
+		if (column_1_itr->first == column_2_itr->first) {
+			auto column_1_offsets = column_1_itr->second;
+			auto column_2_offsets = column_2_itr->second;
+			for(auto column_2_offset: column_2_offsets){
+				for(auto column_1_offset: column_1_offsets){
+					matches.push_back(std::make_pair(column_1_offset, column_2_offset));
+				}
+			}
+			column_1_itr++;
+			column_2_itr++;
+		} else if(column_1_itr->first < column_2_itr->first){
+			column_1_itr++;
+		} else {
+			column_2_itr++;
+		}
+	}
+
+	auto stop = Time::now();
+	auto elapsed = stop - start;
+	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
+	std::cout << "VALUE-CENTRIC JOIN (TWO INVERTED INDEXES) (SORT-MERGE): " << time_milliseconds.count() << " ms \n";
+
+	PrintMatches(matches, column_1, false);
+}
+
 void RunJoinBenchmark(){
 
 	// Each column contains an array of numbers (table 1 and table 2)
@@ -296,6 +336,10 @@ void RunJoinBenchmark(){
 	}
 	case ALGORITHM_TYPE_VALUE_CENTRIC_TWO_INDEXES:{
 		RunAlgorithm3(column_1, column_1_size, column_2, column_2_size);
+		break;
+	}
+	case ALGORITHM_TYPE_VALUE_CENTRIC_TWO_INDEXES_SORT_MERGE:{
+		RunAlgorithm4(column_1, column_1_size, column_2, column_2_size);
 		break;
 	}
 	default: {
