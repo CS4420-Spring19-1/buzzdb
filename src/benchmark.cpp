@@ -137,7 +137,49 @@ void PrintArray(int* array, int array_size){
 	std::cout << "\n";
 
 }
+////////////////////////////////////////////////////////////////////////////////////////////
+// FILTERS
+////////////////////////////////////////////////////////////////////////////////////////////
 
+int TupleFilter(int *farray){
+  int minrange,maxrange;
+  std::vector<int> foutarray;
+  std::cout <<"Enter the min range:";
+  std::cin>>minrange;
+  std::cout<<"Enter max range:";
+  std::cin>>maxrange;
+  farray_size= farray.size();
+  //Traverse over the vector
+  for(int itr=0, itr<farray_size, itr++){
+    //Find values in the range
+    if(farray[itr]>minrange && farray[itr]<maxrange){
+      foutarray.push_back(farray[itr]);
+    }
+  }
+  return foutarray;
+}
+
+int ValueFilter(std::vector<K> & vec, std::map<K, V> mapOfElemen)
+{
+  std::vector<int> voutarray;
+  int minrange,maxrange;
+  std::cout <<"Enter the min range:";
+  std::cin>>minrange;
+  std::cout<<"Enter max range:";
+  std::cin>>maxrange;
+  auto vitr = mapOfElemen.find(minrange);
+  // Iterate through the map
+  while(vitr != mapOfElemen.find(maxrange))
+  {
+      voutarray.push_back(vitr->first);
+    }
+    // Go to next entry in map
+    vitr++;
+  }
+  return voutarray;
+}
+
+	
 ////////////////////////////////////////////////////////////////////////////////////////////
 // ALGORITHMS
 ////////////////////////////////////////////////////////////////////////////////////////////
