@@ -141,6 +141,7 @@ void PrintArray(int* array, int array_size){
 // FILTERS
 ////////////////////////////////////////////////////////////////////////////////////////////
 
+/*
 int TupleFilter(int *farray){
   int minrange,maxrange;
   std::vector<int> foutarray;
@@ -178,6 +179,7 @@ int ValueFilter(std::vector<K> & vec, std::map<K, V> mapOfElemen)
   }
   return voutarray;
 }
+*/
 
 	
 ////////////////////////////////////////////////////////////////////////////////////////////
