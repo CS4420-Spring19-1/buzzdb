@@ -28,6 +28,7 @@ unsigned seed = 23;
 std::default_random_engine generator (seed);
 std::uniform_real_distribution<double> distribution(0.0, 1.0);
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 // BUILDERS
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -80,6 +81,15 @@ std::unordered_map<int,std::pair<std::vector<int>,std::vector<int>>> BuildJoinHa
 	return join_hash_table;
 }
 
+std::pair<int, int> findFilterRange(int column_range){
+	std::uniform_int_distribution<int> lower_bound(1,column_range/2);
+	int min = lower_bound(generator);
+	std::uniform_int_distribution<int> upper_bound(column_range/2+1, column_range);
+	int max = upper_bound(generator);
+
+	return std::make_pair(min, max);
+
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // PRINTERS
@@ -181,7 +191,7 @@ int ValueFilter(std::vector<K> & vec, std::map<K, V> mapOfElemen)
 }
 */
 
-	
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 // ALGORITHMS
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -324,6 +334,49 @@ void RunAlgorithm4(int* column_1, int column_1_size, int* column_2, int column_2
 	PrintMatches(matches, column_1, false);
 }
 
+void RunAlgorithm5(int * column_1, int column_1_size, std::pair<int, int> range){
+	std::vector<int> matches;
+	auto start = Time::now();
+	//TUPLE CENTRIC FILTER
+	for (auto column_1_itr = 0; column_1_itr < column_1_size; column_1_itr++) {
+		if(column_1[column_1_itr]>=range.first && column_1[column_1_itr]<=range.second){
+			matches.push_back(column_1_itr);
+		}
+	}
+	auto stop = Time::now();
+	auto elapsed = stop - start;
+	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
+	std::cout << "TUPLE CENTRIC FILTER : " << time_milliseconds.count() << " ms \n";
+	std::cout << "MATCHES: " << matches.size() << std::endl;
+}
+
+void RunAlgorithm6(int * column_1, int column_1_size, std::pair<int, int> range){
+	std::vector<int> matches;
+
+	auto tree = BuildTree(column_1, column_1_size);
+
+	auto start = Time::now();
+
+	//VALUE CENTRIC FILTER
+
+	auto lower_bound = tree.lower_bound(range.first);
+	auto upper_bound = tree.upper_bound(range.second);
+
+	while (lower_bound != upper_bound) {
+		auto column_1_offsets = lower_bound->second;
+		for (auto column_1_offset: column_1_offsets) {
+			matches.push_back(column_1_offset);
+		}
+		lower_bound++;
+	}
+
+	auto stop = Time::now();
+	auto elapsed = stop - start;
+	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
+	std::cout << "VALUE CENTRIC FILTER : " << time_milliseconds.count() << " ms \n";
+	std::cout << "MATCHES: " << matches.size() << std::endl;
+}
+
 void RunJoinBenchmark(){
 
 	// Each column contains an array of numbers (table 1 and table 2)
@@ -355,16 +408,18 @@ void RunJoinBenchmark(){
 
 	std::cout << "COLUMN 1 SET SIZE: " << column_1_set.size() << "\n";
 
-	// Load data into second column
-	for(int column_2_itr = 0; column_2_itr < column_2_size; column_2_itr++){
-		auto number = zipf2.GetNextNumber();
-		column_2[column_2_itr] = number;
-		column_2_set.insert(number);
-		//std::cout << number << " ";
+	if (state.algorithm_type >=1 && state.algorithm_type <=4) {  //In order to reduce memory used
+		// Load data into second column
+		for(int column_2_itr = 0; column_2_itr < column_2_size; column_2_itr++){
+			auto number = zipf2.GetNextNumber();
+			column_2[column_2_itr] = number;
+			column_2_set.insert(number);
+			//std::cout << number << " ";
+		}
+		std::cout << "COLUMN 2 SET SIZE: " << column_2_set.size() << "\n";
 	}
 
-	std::cout << "COLUMN 2 SET SIZE: " << column_2_set.size() << "\n";
-
+	std::pair<int, int> range = findFilterRange(state.range);
 	// RUN ALGORITHMS
 
 	//RunAlgorithm1(column_1, column_1_size, column_2, column_2_size);
@@ -384,6 +439,14 @@ void RunJoinBenchmark(){
 	}
 	case ALGORITHM_TYPE_VALUE_CENTRIC_TWO_INDEXES_SORT_MERGE:{
 		RunAlgorithm4(column_1, column_1_size, column_2, column_2_size);
+		break;
+	}
+	case ALGORITHM_TYPE_TUPLE_CENTRIC_FILTER:{
+		RunAlgorithm5(column_1, column_1_size, range);
+		break;
+	}
+	case ALGORITHM_TYPE_VALUE_CENTRIC_FILTER:{
+		RunAlgorithm6(column_1, column_1_size, range);
 		break;
 	}
 	default: {

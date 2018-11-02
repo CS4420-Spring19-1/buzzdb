@@ -15,6 +15,10 @@ std::string AlgorithmTypeToString(const AlgorithmType& algorithm_type){
       return "VALUE_CENTRIC_TWO_INDEXES";
     case ALGORITHM_TYPE_VALUE_CENTRIC_TWO_INDEXES_SORT_MERGE:
       return "VALUE_CENTRIC_TWO_INDEXES_SORT_MERGE";
+    case ALGORITHM_TYPE_TUPLE_CENTRIC_FILTER:
+      return "TUPLE_CENTRIC_FILTER";
+    case ALGORITHM_TYPE_VALUE_CENTRIC_FILTER:
+      return "VALUE_CENTRIC_FILTER";
     default:
       return "INVALID ALGORITHM";
   }
