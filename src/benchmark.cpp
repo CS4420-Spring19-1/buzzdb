@@ -402,24 +402,25 @@ void RunJoinBenchmark(){
 	std::map<int, int>column_1_freq_map;
 	std::map<int, int>column_2_freq_map;
 	
-	// Load data into first column
-	for(int column_1_itr = 0; column_1_itr < column_1_size; column_1_itr++){
-		auto number = zipf1.GetNextNumber();
-		column_1[column_1_itr] = number;
-		column_1_set.insert(number);
-		//std::cout << number << " ";
-		
-		//calculate frequencies 
-                if(column_1_freq_map.count(number)){
-			column_1_freq_map[number]++;
-		}else{
-			column_1_freq_map[number] = 1;
-		}
-	}
+	// Load data into first column--without selectivity for algo 1-4
 
-	std::cout << "COLUMN 1 SET SIZE: " << column_1_set.size() << "\n";
-	
   	if(state.algorithm_type >= 1 && state.algorithm_type <= 4){	
+		for(int column_1_itr = 0; column_1_itr < column_1_size; column_1_itr++){
+	  		auto number = zipf1.GetNextNumber();
+			column_1[column_1_itr] = number;
+			column_1_set.insert(number);
+			//std::cout << number << " ";
+		
+			//calculate frequencies 
+                	if(column_1_freq_map.count(number)){
+				column_1_freq_map[number]++;
+			}else{
+				column_1_freq_map[number] = 1;
+			}
+		}
+
+		std::cout << "COLUMN 1 SET SIZE: " << column_1_set.size() << "\n";
+	
 		//calculate number of matches with selectivity formula -- may be wrong 
 		int num_matches = state.join_selectivity_threshold * (column_1_size + column_2_size);
         	std::default_random_engine generator(seed);
@@ -456,6 +457,27 @@ void RunJoinBenchmark(){
 	
 
 	std::pair<int, int> range = findFilterRange(state.range);
+	if(state.algorithm_type >= 5){
+		int num_matches = state.join_selectivity_threshold * (column_1_size);
+		for(int column_1_itr = 0; column_1_itr < num_matches; column_1_itr++){
+			int number = zipf1.GetNextNumber();
+			while(number < range.first || number > range.second){
+				number = zipf1.GetNextNumber();
+  			}
+			column_1[column_1_itr] = number;
+			column_1_set.insert(number);
+		}
+		for(int column_1_itr = num_matches; column_1_itr < column_1_size; column_1_itr++){
+		        int number = zipf1.GetNextNumber();
+                        while(number >= range.first &&  number <= range.second){
+                                number = zipf1.GetNextNumber();
+                        }
+                        column_1[column_1_itr] = number;
+                        column_1_set.insert(number);
+		}
+		std::cout << "COLUMN 1 SET SIZE: " << column_1_set.size() << "\n";
+	}
+			
 	// RUN ALGORITHMS
 
 	//RunAlgorithm1(column_1, column_1_size, column_2, column_2_size);
