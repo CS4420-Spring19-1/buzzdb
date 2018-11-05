@@ -28,6 +28,7 @@ unsigned seed = 23;
 std::default_random_engine generator (seed);
 std::uniform_real_distribution<double> distribution(0.0, 1.0);
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 // BUILDERS
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -80,6 +81,15 @@ std::unordered_map<int,std::pair<std::vector<int>,std::vector<int>>> BuildJoinHa
 	return join_hash_table;
 }
 
+std::pair<int, int> findFilterRange(int column_range){
+	std::uniform_int_distribution<int> lower_bound(1,column_range/2);
+	int min = lower_bound(generator);
+	std::uniform_int_distribution<int> upper_bound(column_range/2+1, column_range);
+	int max = upper_bound(generator);
+
+	return std::make_pair(min, max);
+
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // PRINTERS
@@ -137,6 +147,50 @@ void PrintArray(int* array, int array_size){
 	std::cout << "\n";
 
 }
+////////////////////////////////////////////////////////////////////////////////////////////
+// FILTERS
+////////////////////////////////////////////////////////////////////////////////////////////
+
+/*
+int TupleFilter(int *farray){
+  int minrange,maxrange;
+  std::vector<int> foutarray;
+  std::cout <<"Enter the min range:";
+  std::cin>>minrange;
+  std::cout<<"Enter max range:";
+  std::cin>>maxrange;
+  farray_size= farray.size();
+  //Traverse over the vector
+  for(int itr=0, itr<farray_size, itr++){
+    //Find values in the range
+    if(farray[itr]>minrange && farray[itr]<maxrange){
+      foutarray.push_back(farray[itr]);
+    }
+  }
+  return foutarray;
+}
+
+int ValueFilter(std::vector<K> & vec, std::map<K, V> mapOfElemen)
+{
+  std::vector<int> voutarray;
+  int minrange,maxrange;
+  std::cout <<"Enter the min range:";
+  std::cin>>minrange;
+  std::cout<<"Enter max range:";
+  std::cin>>maxrange;
+  auto vitr = mapOfElemen.find(minrange);
+  // Iterate through the map
+  while(vitr != mapOfElemen.find(maxrange))
+  {
+      voutarray.push_back(vitr->first);
+    }
+    // Go to next entry in map
+    vitr++;
+  }
+  return voutarray;
+}
+*/
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // ALGORITHMS
@@ -176,32 +230,29 @@ void RunAlgorithm1(int* column_1, int column_1_size, int* column_2, int column_2
 void RunAlgorithm2(int* column_1, int column_1_size, int* column_2, int column_2_size){
 	std::vector<std::pair<int,int>> matches;
 
-	// ALGORITHM 2: TUPLE-CENTRIC JOIN (WITH INVERTED INDEX ON COLUMN_1)
+	// ALGORITHM 2: VALUE-CENTRIC JOIN (SINGLE INVERTED INDEX)
 
-	// Build tree for inverted index
-	auto tree_1 = BuildTree(column_1, column_1_size);
+	// Build tree for value-centric join
+	auto tree = BuildTree(column_1, column_1_size);
 
-	std::chrono::duration<double> elapsed;
-
-	//PrintTree(tree_1);
 	auto start = Time::now();
 
 	for(int column_2_itr = 0; column_2_itr < column_2_size; column_2_itr++){
 		auto value = column_2[column_2_itr];
 
-		auto column_1_offsets = tree_1[value];
-
-		for(auto column_1_offset: column_1_offsets){
-			matches.push_back(std::make_pair(column_1_offset, column_2_itr));
+		auto column_1_entry = tree.find(value);
+		if (column_1_entry!= tree.end()) {
+			auto column_1_offsets = column_1_entry->second;
+			for(auto column_1_offset: column_1_offsets){
+				matches.push_back(std::make_pair(column_1_offset, column_2_itr));
+			}
 		}
-
 	}
 
 	auto stop = Time::now();
-	elapsed += stop - start;
+	auto elapsed = stop - start;
 	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
-
-	std::cout << "TUPLE-CENTRIC JOIN (WITH INVERTED INDEX ON COLUMN_1): " << time_milliseconds.count() << " ms \n";
+	std::cout << "VALUE-CENTRIC JOIN (SINGLE INVERTED INDEX): " << time_milliseconds.count() << " ms \n";
 
 	PrintMatches(matches, column_1, false);
 
@@ -210,30 +261,34 @@ void RunAlgorithm2(int* column_1, int column_1_size, int* column_2, int column_2
 void RunAlgorithm3(int* column_1, int column_1_size, int* column_2, int column_2_size){
 	std::vector<std::pair<int,int>> matches;
 
-	// ALGORITHM 3: VALUE-CENTRIC JOIN (JOINT HASH TABLE) (TYPE 1)
+	// ALGORITHM 3: VALUE-CENTRIC JOIN (TWO INVERTED INDEXES)
 
-	// Build hash table for value-centric join
-	auto join_hash_table = BuildJoinHashTable(column_1, column_1_size, column_2, column_2_size);
+	// Build tree for value-centric join
+	auto tree_1 = BuildTree(column_1, column_1_size);
+	auto tree_2 = BuildTree(column_2, column_2_size);
 
 	auto start = Time::now();
 
-	for(auto entry: join_hash_table){
+	for(auto column_2_itr : tree_2){
+		auto column_2_offsets = column_2_itr.second;
 
-		auto column_1_offsets = entry.second.first;
-		auto column_2_offsets = entry.second.second;
+		auto column_1_entry = tree_1.find(column_2_itr.first);
+		if ( column_1_entry!= tree_1.end()) {
+			auto column_1_offsets = column_1_entry->second;
 
-		for(auto column_1_offset: column_1_offsets){
 			for(auto column_2_offset: column_2_offsets){
-				matches.push_back(std::make_pair(column_1_offset, column_2_offset));
+				for(auto column_1_offset: column_1_offsets){
+					matches.push_back(std::make_pair(column_1_offset, column_2_offset));
+				}
 			}
-		}
 
+		}
 	}
 
 	auto stop = Time::now();
 	auto elapsed = stop - start;
 	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
-	std::cout << "VALUE-CENTRIC JOIN (JOINT HASH TABLE) (TYPE 1): " << time_milliseconds.count() << " ms \n";
+	std::cout << "VALUE-CENTRIC JOIN (TWO INVERTED INDEXES): " << time_milliseconds.count() << " ms \n";
 
 	PrintMatches(matches, column_1, false);
 
@@ -242,98 +297,84 @@ void RunAlgorithm3(int* column_1, int column_1_size, int* column_2, int column_2
 void RunAlgorithm4(int* column_1, int column_1_size, int* column_2, int column_2_size){
 	std::vector<std::pair<int,int>> matches;
 
-	// ALGORITHM 4: VALUE-CENTRIC JOIN (SINGLE HASH TABLE) (TYPE 2)
+	// ALGORITHM 4: VALUE-CENTRIC JOIN (TWO INVERTED INDEXES) (SORT-MERGE)
 
-	// Build hash table for value-centric join
-	auto hash_table = BuildHashTable(column_1, column_1_size);
+	// Build tree for value-centric join
+	auto tree_1 = BuildTree(column_1, column_1_size);
+	auto tree_2 = BuildTree(column_2, column_2_size);
+
+	auto column_1_itr = tree_1.begin();
+	auto column_2_itr = tree_2.begin();
 
 	auto start = Time::now();
 
-	for(int column_2_itr = 0; column_2_itr < column_2_size; column_2_itr++){
-		auto value = column_2[column_2_itr];
-
-		auto column_1_offsets = hash_table[value];
-
-		for(auto column_1_offset: column_1_offsets){
-			matches.push_back(std::make_pair(column_1_offset, column_2_itr));
+	while (column_1_itr != tree_1.end() && column_2_itr != tree_2.end()) {
+		if (column_1_itr->first == column_2_itr->first) {
+			auto column_1_offsets = column_1_itr->second;
+			auto column_2_offsets = column_2_itr->second;
+			for(auto column_2_offset: column_2_offsets){
+				for(auto column_1_offset: column_1_offsets){
+					matches.push_back(std::make_pair(column_1_offset, column_2_offset));
+				}
+			}
+			column_1_itr++;
+			column_2_itr++;
+		} else if(column_1_itr->first < column_2_itr->first){
+			column_1_itr++;
+		} else {
+			column_2_itr++;
 		}
 	}
 
 	auto stop = Time::now();
 	auto elapsed = stop - start;
 	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
-	std::cout << "VALUE-CENTRIC JOIN (SINGLE HASH TABLE) (TYPE 2): " << time_milliseconds.count() << " ms \n";
+	std::cout << "VALUE-CENTRIC JOIN (TWO INVERTED INDEXES) (SORT-MERGE): " << time_milliseconds.count() << " ms \n";
 
 	PrintMatches(matches, column_1, false);
-
 }
 
-//ALGORITHM 5 - 2 SEPERATE HASH TABLE
-void RunAlgorithm5(int* column_1, int column_1_size, int* column_2, int column_2_size){
-        std::vector<std::pair<int,int>> matches;
-
-        // Build hash table for value-centric join
-        auto hash_table_1 = BuildHashTable(column_1, column_1_size);
-	auto hash_table_2 = BuildHashTable(column_2, column_2_size);
-
-        auto start = Time::now();
-        for(auto column_2_itr = hash_table_2.begin(); column_2_itr != hash_table_2.end(); ++column_2_itr){
-		auto column_2_offsets = hash_table_2[column_2_itr->first];
-        	try{
-			auto column_1_offsets = hash_table_1.at(column_2_itr->first);
-			for(auto column_2_offset: column_2_offsets){
-				for(auto column_1_offset: column_1_offsets){ 
-                			matches.push_back(std::make_pair(column_1_offset, column_2_offset));
-				}
-                	}
-		} catch (const std::out_of_range &e) {
-		
-			//do nothing
+void RunAlgorithm5(int * column_1, int column_1_size, std::pair<int, int> range){
+	std::vector<int> matches;
+	auto start = Time::now();
+	//TUPLE CENTRIC FILTER
+	for (auto column_1_itr = 0; column_1_itr < column_1_size; column_1_itr++) {
+		if(column_1[column_1_itr]>=range.first && column_1[column_1_itr]<=range.second){
+			matches.push_back(column_1_itr);
 		}
-	
-        }
-
-        auto stop = Time::now();
-        auto elapsed = stop - start;
-        auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
-        std::cout << "VALUE-CENTRIC JOIN (SEPERATE HASH TABLES): " << time_milliseconds.count() << " ms \n";
-
-        PrintMatches(matches, column_1, false);
-
+	}
+	auto stop = Time::now();
+	auto elapsed = stop - start;
+	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
+	std::cout << "TUPLE CENTRIC FILTER : " << time_milliseconds.count() << " ms \n";
+	std::cout << "MATCHES: " << matches.size() << std::endl;
 }
 
-//ALGORITHM 6 - 2 SEPERATE TREES
-void RunAlgorithm6(int* column_1, int column_1_size, int* column_2, int column_2_size){
-        std::vector<std::pair<int,int>> matches;
+void RunAlgorithm6(int * column_1, int column_1_size, std::pair<int, int> range){
+	std::vector<int> matches;
 
-        // Build tree for value-centric join
-        auto tree_1 = BuildTree(column_1, column_1_size);
-        auto tree_2 = BuildTree(column_2, column_2_size);
+	auto tree = BuildTree(column_1, column_1_size);
 
-        auto start = Time::now();
-        for(auto column_2_itr = tree_2.begin(); column_2_itr != tree_2.end(); ++column_2_itr){
-                auto column_2_offsets = tree_2[column_2_itr->first];
-                try{
-                        auto column_1_offsets = tree_1.at(column_2_itr->first);
-                        for(auto column_2_offset: column_2_offsets){
-                                for(auto column_1_offset: column_1_offsets){
-                                        matches.push_back(std::make_pair(column_1_offset, column_2_offset));
-                                }
-                        }
-                } catch (const std::out_of_range &e) {
+	auto start = Time::now();
 
-                        //do nothing
-                }
+	//VALUE CENTRIC FILTER
 
-        }
+	auto lower_bound = tree.lower_bound(range.first);
+	auto upper_bound = tree.upper_bound(range.second);
 
-        auto stop = Time::now();
-        auto elapsed = stop - start;
-        auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
-        std::cout << "VALUE-CENTRIC JOIN (SEPERATE TREES): " << time_milliseconds.count() << " ms \n";
+	while (lower_bound != upper_bound) {
+		auto column_1_offsets = lower_bound->second;
+		for (auto column_1_offset: column_1_offsets) {
+			matches.push_back(column_1_offset);
+		}
+		lower_bound++;
+	}
 
-        PrintMatches(matches, column_1, false);
-
+	auto stop = Time::now();
+	auto elapsed = stop - start;
+	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
+	std::cout << "VALUE CENTRIC FILTER : " << time_milliseconds.count() << " ms \n";
+	std::cout << "MATCHES: " << matches.size() << std::endl;
 }
 
 void RunJoinBenchmark(){
@@ -345,7 +386,7 @@ void RunJoinBenchmark(){
 
 	// Column Sizes
 	int column_1_size = state.column_1_size;
-	int column_2_size = column_1_size/5;
+	int column_2_size = column_1_size * state.size_factor;
 
 	// Initialize arrays
 	column_1 = new int[column_1_size];
@@ -377,64 +418,72 @@ void RunJoinBenchmark(){
 	}
 
 	std::cout << "COLUMN 1 SET SIZE: " << column_1_set.size() << "\n";
-
-	//calculate number of matches with selectivity formula -- may be wrong 
-	int num_matches = state.join_selectivity_threshold * (column_1_size + column_2_size);
-        std::default_random_engine generator(seed);
-	std::uniform_int_distribution<int> picking_column_2_num(0, column_1_set.size());
-	int cur_matches = 0;
-        //save column 1's set in an array
-        int index = 0;
-        int values_col_1[column_1_set.size()];
-	std::set<int>::iterator itr;
-        for(itr = column_1_set.begin(); itr != column_1_set.end(); ++itr){
-		values_col_1[index] = *itr;
-		index++;
-        }
-	int column_2_index = 0;
-        while((cur_matches < num_matches) && (column_2_index < column_2_size)){
-	 	auto index = picking_column_2_num(generator);
-		int value = values_col_1[index];
-		column_2[column_2_index] = values_col_1[index];
-		cur_matches += column_1_freq_map[value];
-		column_2_index++;
- 		column_2_set.insert(value);
-	}
-	for(int column_2_itr = column_2_index; column_2_itr < column_2_size; column_2_itr++){
-		auto number = zipf2.GetNextNumber();
-		while(column_1_set.find(number) != column_1_set.end()){ // can this every be infinite?
-			number = zipf2.GetNextNumber();
+	
+  	if(state.algorithm_type >= 1 && state.algorithm_type <= 4){	
+		//calculate number of matches with selectivity formula -- may be wrong 
+		int num_matches = state.join_selectivity_threshold * (column_1_size + column_2_size);
+        	std::default_random_engine generator(seed);
+		std::uniform_int_distribution<int> picking_column_2_num(0, column_1_set.size());
+		int cur_matches = 0;
+        	//save column 1's set in an array
+        	int index = 0;
+        	int values_col_1[column_1_set.size()];
+		std::set<int>::iterator itr;
+        	for(itr = column_1_set.begin(); itr != column_1_set.end(); ++itr){
+			values_col_1[index] = *itr;
+			index++;
+        	}
+		int column_2_index = 0;
+        	while((cur_matches < num_matches) && (column_2_index < column_2_size)){
+	 		auto index = picking_column_2_num(generator);
+			int value = values_col_1[index];
+			column_2[column_2_index] = values_col_1[index];
+			cur_matches += column_1_freq_map[value];
+			column_2_index++;
+ 			column_2_set.insert(value);
 		}
-		column_2[column_2_itr] = number;
-		column_2_set.insert(number);
+		for(int column_2_itr = column_2_index; column_2_itr < column_2_size; column_2_itr++){
+			auto number = zipf2.GetNextNumber();
+			while(column_1_set.find(number) != column_1_set.end()){ // can this every be infinite?
+				number = zipf2.GetNextNumber();
+			}
+			column_2[column_2_itr] = number;
+			column_2_set.insert(number);
+			// Load data into second column
+		}
+		std::cout << "COLUMN 2 SET SIZE: " << column_2_set.size() << "\n";
 	}
 	
 
-	std::cout << "COLUMN 2 SET SIZE: " << column_2_set.size() << "\n";
-
+	std::pair<int, int> range = findFilterRange(state.range);
 	// RUN ALGORITHMS
 
 	//RunAlgorithm1(column_1, column_1_size, column_2, column_2_size);
 
 	switch (state.algorithm_type) {
 	case ALGORITHM_TYPE_TUPLE_CENTRIC_INVERTED_INDEX: {
+		RunAlgorithm1(column_1, column_1_size, column_2, column_2_size);
+		break;
+	}
+	case ALGORITHM_TYPE_VALUE_CENTRIC_SINGLE_INDEX: {
 		RunAlgorithm2(column_1, column_1_size, column_2, column_2_size);
 		break;
 	}
-	case ALGORITHM_TYPE_VALUE_CENTRIC_JOIN_1: {
+	case ALGORITHM_TYPE_VALUE_CENTRIC_TWO_INDEXES:{
 		RunAlgorithm3(column_1, column_1_size, column_2, column_2_size);
 		break;
 	}
-	case ALGORITHM_TYPE_VALUE_CENTRIC_JOIN_2: {
+	case ALGORITHM_TYPE_VALUE_CENTRIC_TWO_INDEXES_SORT_MERGE:{
 		RunAlgorithm4(column_1, column_1_size, column_2, column_2_size);
 		break;
 	}
-        case ALGORITHM_TYPE_VALUE_CENTRIC_JOIN_3: {
-		RunAlgorithm5(column_1, column_1_size, column_2, column_2_size);
+	case ALGORITHM_TYPE_TUPLE_CENTRIC_FILTER:{
+		RunAlgorithm5(column_1, column_1_size, range);
 		break;
-  	}
-	case ALGORITHM_TYPE_VALUE_CENTRIC_JOIN_4:{
-		RunAlgorithm6(column_1, column_1_size, column_2, column_2_size);		break;
+	}
+	case ALGORITHM_TYPE_VALUE_CENTRIC_FILTER:{
+		RunAlgorithm6(column_1, column_1_size, range);
+		break;
 	}
 	default: {
 		std::cout << "Invalid algorithm: " << state.algorithm_type << "\n";

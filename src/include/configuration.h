@@ -35,6 +35,7 @@ class configuration {
   //range of column 1
   size_t range;
 
+  double size_factor;
 
 };
 
