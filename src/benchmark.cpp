@@ -83,11 +83,11 @@ std::unordered_map<int,std::pair<std::vector<int>,std::vector<int>>> BuildJoinHa
 
 std::pair<int, int> findFilterRange(int column_range){
 	std::uniform_int_distribution<int> lower_bound(1,column_range/2);
-	int min = lower_bound(generator);
-	std::uniform_int_distribution<int> upper_bound(column_range/2+1, column_range);
-	int max = upper_bound(generator);
+	//int min = lower_bound(generator);
+	//std::uniform_int_distribution<int> upper_bound(column_range/2+1, column_range);
+	//int max = upper_bound(generator);
 
-	return std::make_pair(min, max);
+	return std::make_pair(1000, 2000);
 
 }
 
@@ -364,9 +364,7 @@ void RunAlgorithm6(int * column_1, int column_1_size, std::pair<int, int> range)
 
 	while (lower_bound != upper_bound) {
 		auto column_1_offsets = lower_bound->second;
-		for (auto column_1_offset: column_1_offsets) {
-			matches.push_back(column_1_offset);
-		}
+		matches.insert(matches.end(), column_1_offsets.begin(), column_1_offsets.end());
 		lower_bound++;
 	}
 
