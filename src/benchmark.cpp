@@ -13,6 +13,7 @@
 #include "benchmark.h"
 #include "configuration.h"
 #include "zipfian.h"
+#include "inverted_index.h"
 
 namespace emerald{
 
@@ -355,13 +356,11 @@ void RunAlgorithm6(int * column_1, int column_1_size, std::pair<int, int> range)
 
 	auto tree = BuildTree(column_1, column_1_size);
 
-	auto start = Time::now();
-
 	//VALUE CENTRIC FILTER
 
 	auto lower_bound = tree.lower_bound(range.first);
 	auto upper_bound = tree.upper_bound(range.second);
-
+	auto start = Time::now();
 	while (lower_bound != upper_bound) {
 		auto column_1_offsets = lower_bound->second;
 		matches.insert(matches.end(), column_1_offsets.begin(), column_1_offsets.end());
@@ -373,6 +372,30 @@ void RunAlgorithm6(int * column_1, int column_1_size, std::pair<int, int> range)
 	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
 	std::cout << "VALUE CENTRIC FILTER : " << time_milliseconds.count() << " ms \n";
 	std::cout << "MATCHES: " << matches.size() << std::endl;
+
+	InvertedIndex* inverted_index = new InvertedIndex(column_1, column_1_size);
+	std::map<int, std::vector<std::vector<int>>> index = inverted_index->getInvertedIndex();
+	//inverted_index->print();
+
+	InvertedIndex* result_index = new InvertedIndex();
+
+	//VALUE CENTRIC FILTER
+
+	auto lower_bound1 = index.lower_bound(range.first);
+	auto upper_bound1 = index.upper_bound(range.second);
+	auto start1 = Time::now();
+	while (lower_bound1 != upper_bound1) {
+		auto column_1_offsets = lower_bound1->second;
+		result_index->addToIndex(lower_bound1->first, lower_bound1->second);
+		lower_bound1++;
+	}
+
+	auto stop1 = Time::now();
+	auto elapsed1 = stop1 - start1;
+	auto time_milliseconds1 = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed1);
+	std::cout << "VALUE CENTRIC FILTER : " << time_milliseconds1.count() << " ms \n";
+	//result_index->print();
+	std::cout << "MATCHES: " << result_index->matches() << std::endl;
 }
 
 void RunJoinBenchmark(){
@@ -395,66 +418,67 @@ void RunJoinBenchmark(){
 
 	ZipfDistribution zipf1(state.range, 0.9);
 	ZipfDistribution zipf2(10000000, state.join_selectivity_threshold);
-	
+
 	//frequency maps
 	std::map<int, int>column_1_freq_map;
 	std::map<int, int>column_2_freq_map;
-	
+
 	// Load data into first column--without selectivity for algo 1-4
 
-  	if(state.algorithm_type >= 1 && state.algorithm_type <= 4){	
-		for(int column_1_itr = 0; column_1_itr < column_1_size; column_1_itr++){
-	  		auto number = zipf1.GetNextNumber();
-			column_1[column_1_itr] = number;
-			column_1_set.insert(number);
-			//std::cout << number << " ";
-		
-			//calculate frequencies 
-                	if(column_1_freq_map.count(number)){
-				column_1_freq_map[number]++;
-			}else{
-				column_1_freq_map[number] = 1;
-			}
-		}
+  	if(state.algorithm_type >= 1 && state.algorithm_type <= 4){
+			for(int column_1_itr = 0; column_1_itr < column_1_size; column_1_itr++){
+		  		auto number = zipf1.GetNextNumber();
+				column_1[column_1_itr] = number;
+				column_1_set.insert(number);
+				//std::cout << number << " ";
 
-		std::cout << "COLUMN 1 SET SIZE: " << column_1_set.size() << "\n";
-	
-		//calculate number of matches with selectivity formula -- may be wrong 
-		int num_matches = state.join_selectivity_threshold * (column_1_size + column_2_size);
-        	std::default_random_engine generator(seed);
-		std::uniform_int_distribution<int> picking_column_2_num(0, column_1_set.size());
-		int cur_matches = 0;
-        	//save column 1's set in an array
-        	int index = 0;
-        	int values_col_1[column_1_set.size()];
-		std::set<int>::iterator itr;
-        	for(itr = column_1_set.begin(); itr != column_1_set.end(); ++itr){
-			values_col_1[index] = *itr;
-			index++;
-        	}
-		int column_2_index = 0;
-        	while((cur_matches < num_matches) && (column_2_index < column_2_size)){
-	 		auto index = picking_column_2_num(generator);
-			int value = values_col_1[index];
-			column_2[column_2_index] = values_col_1[index];
-			cur_matches += column_1_freq_map[value];
-			column_2_index++;
- 			column_2_set.insert(value);
-		}
-		for(int column_2_itr = column_2_index; column_2_itr < column_2_size; column_2_itr++){
-			auto number = zipf2.GetNextNumber();
-			while(column_1_set.find(number) != column_1_set.end()){ // can this every be infinite?
-				number = zipf2.GetNextNumber();
+				//calculate frequencies
+	                	if(column_1_freq_map.count(number)){
+					column_1_freq_map[number]++;
+				}else{
+					column_1_freq_map[number] = 1;
+				}
 			}
-			column_2[column_2_itr] = number;
-			column_2_set.insert(number);
-			// Load data into second column
-		}
-		std::cout << "COLUMN 2 SET SIZE: " << column_2_set.size() << "\n";
+
+			std::cout << "COLUMN 1 SET SIZE: " << column_1_set.size() << "\n";
+
+			//calculate number of matches with selectivity formula -- may be wrong
+			int num_matches = state.join_selectivity_threshold * (column_1_size + column_2_size);
+	        	std::default_random_engine generator(seed);
+			std::uniform_int_distribution<int> picking_column_2_num(0, column_1_set.size());
+			int cur_matches = 0;
+	        	//save column 1's set in an array
+	        	int index = 0;
+	        	int values_col_1[column_1_set.size()];
+			std::set<int>::iterator itr;
+	        	for(itr = column_1_set.begin(); itr != column_1_set.end(); ++itr){
+				values_col_1[index] = *itr;
+				index++;
+	        	}
+			int column_2_index = 0;
+	        	while((cur_matches < num_matches) && (column_2_index < column_2_size)){
+		 		auto index = picking_column_2_num(generator);
+				int value = values_col_1[index];
+				column_2[column_2_index] = values_col_1[index];
+				cur_matches += column_1_freq_map[value];
+				column_2_index++;
+	 			column_2_set.insert(value);
+			}
+			for(int column_2_itr = column_2_index; column_2_itr < column_2_size; column_2_itr++){
+				auto number = zipf2.GetNextNumber();
+				while(column_1_set.find(number) != column_1_set.end()){ // can this every be infinite?
+					number = zipf2.GetNextNumber();
+				}
+				column_2[column_2_itr] = number;
+				column_2_set.insert(number);
+				// Load data into second column
+			}
+			std::cout << "COLUMN 2 SET SIZE: " << column_2_set.size() << "\n";
 	}
-	
+
 
 	std::pair<int, int> range = findFilterRange(state.range);
+
 	if(state.algorithm_type >= 5){
 		int num_matches = state.join_selectivity_threshold * (column_1_size);
 		for(int column_1_itr = 0; column_1_itr < num_matches; column_1_itr++){
@@ -474,8 +498,9 @@ void RunJoinBenchmark(){
                         column_1_set.insert(number);
 		}
 		std::cout << "COLUMN 1 SET SIZE: " << column_1_set.size() << "\n";
+	//	PrintArray(column_1, column_1_size);
 	}
-			
+
 	// RUN ALGORITHMS
 
 	//RunAlgorithm1(column_1, column_1_size, column_2, column_2_size);
