@@ -352,15 +352,15 @@ void RunAlgorithm5(int * column_1, int column_1_size, std::pair<int, int> range)
 }
 
 void RunAlgorithm6(int * column_1, int column_1_size, std::pair<int, int> range){
-	std::vector<int> matches;
+	/*std::vector<int> matches;
 
 	auto tree = BuildTree(column_1, column_1_size);
 
 	//VALUE CENTRIC FILTER
-
+	auto start = Time::now();
 	auto lower_bound = tree.lower_bound(range.first);
 	auto upper_bound = tree.upper_bound(range.second);
-	auto start = Time::now();
+
 	while (lower_bound != upper_bound) {
 		auto column_1_offsets = lower_bound->second;
 		matches.insert(matches.end(), column_1_offsets.begin(), column_1_offsets.end());
@@ -371,29 +371,31 @@ void RunAlgorithm6(int * column_1, int column_1_size, std::pair<int, int> range)
 	auto elapsed = stop - start;
 	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
 	std::cout << "VALUE CENTRIC FILTER : " << time_milliseconds.count() << " ms \n";
-	std::cout << "MATCHES: " << matches.size() << std::endl;
+	std::cout << "MATCHES: " << matches.size() << std::endl;*/
 
 	InvertedIndex* inverted_index = new InvertedIndex(column_1, column_1_size);
-	std::map<int, std::vector<std::vector<int>>> index = inverted_index->getInvertedIndex();
+	std::map<KeyVector, std::vector<std::vector<int>>> index = inverted_index->getInvertedIndex();
 	//inverted_index->print();
+
+	auto start = Time::now();
 
 	InvertedIndex* result_index = new InvertedIndex();
 
-	//VALUE CENTRIC FILTER
+	KeyVector lower_bound_key(range.first);
+	KeyVector upper_bound_key(range.second);
+	auto lower_bound = index.lower_bound(lower_bound_key);
+	auto upper_bound = index.upper_bound(upper_bound_key);
 
-	auto lower_bound1 = index.lower_bound(range.first);
-	auto upper_bound1 = index.upper_bound(range.second);
-	auto start1 = Time::now();
-	while (lower_bound1 != upper_bound1) {
-		auto column_1_offsets = lower_bound1->second;
-		result_index->addToIndex(lower_bound1->first, lower_bound1->second);
-		lower_bound1++;
+	while (lower_bound != upper_bound) {
+		auto column_1_offsets = lower_bound->second;
+		result_index->addToIndex(lower_bound->first, lower_bound->second);
+		lower_bound++;
 	}
 
-	auto stop1 = Time::now();
-	auto elapsed1 = stop1 - start1;
-	auto time_milliseconds1 = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed1);
-	std::cout << "VALUE CENTRIC FILTER : " << time_milliseconds1.count() << " ms \n";
+	auto stop = Time::now();
+	auto elapsed = stop - start;
+	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
+	std::cout << "VALUE CENTRIC FILTER : " << time_milliseconds.count() << " ms \n";
 	//result_index->print();
 	std::cout << "MATCHES: " << result_index->matches() << std::endl;
 }
