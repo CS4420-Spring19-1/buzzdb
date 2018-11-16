@@ -20,10 +20,11 @@ namespace emerald {
   void InvertedIndex::print(){
     for (auto it1 = this->inverted_index.begin(); it1 != this->inverted_index.end(); ++it1) {
   		std::vector<int> keys = it1->first.getKeys();
+      std::cout << "Keys " ;
   		for (auto key: keys) {
         std::cout << key;
       }
-      std::cout << std::endl;
+      std::cout << " Offsets ";
   		std::vector<std::vector<int>> offsets = it1->second;
   		for (auto offset_vector : offsets) {
   			for (auto offset : offset_vector) {
@@ -35,7 +36,7 @@ namespace emerald {
   }
   //this function will insert the key if not already present
   // if key is already present, the offsets will be appended
-  void InvertedIndex::addToIndex(KeyVector key, std::vector<std::vector<int>> offsets){
+  void InvertedIndex::insert(KeyVector key, std::vector<std::vector<int>> offsets){
     this->inverted_index[key].insert(this->inverted_index[key].begin(), offsets.begin(), offsets.end());
   }
   long InvertedIndex::size(){

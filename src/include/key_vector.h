@@ -15,5 +15,6 @@ namespace emerald{
       bool operator<(const KeyVector& key_vector) const;
       std::vector<int> getKeys() const;
       int getKeySize() const;
+      void append(KeyVector key_vector);
   };
 }

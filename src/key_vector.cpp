@@ -1,5 +1,6 @@
 #include "key_vector.h"
 #include <map>
+#include<iostream>
 
 namespace emerald{
   KeyVector::KeyVector():size(0){}
@@ -35,6 +36,9 @@ namespace emerald{
         break;
       }
     }
+    if(vector_itr==vector_size){
+      return 0;
+    }
     return key_1[vector_itr] > this->keys[vector_itr];
   }
   std::vector<int> KeyVector::getKeys() const{
@@ -42,5 +46,12 @@ namespace emerald{
   }
   int KeyVector::getKeySize() const {
     return this->size;
+  }
+  void KeyVector::append(KeyVector key_vector){
+    std::vector<int> v = key_vector.getKeys();
+    //this->keys.insert(this->keys.end(), v.begin(), v.end());
+    for (auto key: v) {
+      this->keys.push_back(key);
+    }
   }
 }

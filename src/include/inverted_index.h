@@ -14,8 +14,7 @@ namespace emerald{
       InvertedIndex();
       std::map<KeyVector, std::vector<std::vector<int>>> getInvertedIndex();
       void print();
-    //  void addToIndex(int key, std::vector<int> offsets);
-      void addToIndex(KeyVector key, std::vector<std::vector<int>> offsets);
+      void insert(KeyVector key, std::vector<std::vector<int>> offsets);
       long size();
       long matches();
   };

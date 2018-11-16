@@ -256,74 +256,92 @@ void RunAlgorithm2(int* column_1, int column_1_size, int* column_2, int column_2
 	std::cout << "VALUE-CENTRIC JOIN (SINGLE INVERTED INDEX): " << time_milliseconds.count() << " ms \n";
 
 	PrintMatches(matches, column_1, false);
-
 }
 
 void RunAlgorithm3(int* column_1, int column_1_size, int* column_2, int column_2_size){
-	std::vector<std::pair<int,int>> matches;
 
 	// ALGORITHM 3: VALUE-CENTRIC JOIN (TWO INVERTED INDEXES)
 
-	// Build tree for value-centric join
-	auto tree_1 = BuildTree(column_1, column_1_size);
-	auto tree_2 = BuildTree(column_2, column_2_size);
+	InvertedIndex *inverted_index_1 = new InvertedIndex(column_1, column_1_size);
+	InvertedIndex *inverted_index_2 = new InvertedIndex(column_2, column_2_size);
 
-	auto start = Time::now();
+	auto index_1 = inverted_index_1->getInvertedIndex();
+	auto index_2 = inverted_index_2->getInvertedIndex();
 
-	for(auto column_2_itr : tree_2){
-		auto column_2_offsets = column_2_itr.second;
+		auto start = Time::now();
 
-		auto column_1_entry = tree_1.find(column_2_itr.first);
-		if ( column_1_entry!= tree_1.end()) {
-			auto column_1_offsets = column_1_entry->second;
+		InvertedIndex *result_index = new InvertedIndex();
 
-			for(auto column_2_offset: column_2_offsets){
-				for(auto column_1_offset: column_1_offsets){
-					matches.push_back(std::make_pair(column_1_offset, column_2_offset));
+		for(auto column_2_itr : index_2){
+			auto column_2_offsets = column_2_itr.second;
+
+			auto column_1_entry = index_1.find(column_2_itr.first);
+			if ( column_1_entry!= index_1.end()) {
+				auto column_1_offsets = column_1_entry->second;
+
+				std::vector<std::vector<int>> matched_offsets;
+				for(auto column_2_offset: column_2_offsets){
+					for(auto column_1_offset: column_1_offsets){
+						std::vector<int> match;
+						match.insert(match.end(), column_2_offset.begin(), column_2_offset.end());
+						match.insert(match.end(), column_1_offset.begin(), column_1_offset.end());
+						matched_offsets.push_back(match);
+					}
 				}
+				KeyVector key_vector;
+				key_vector.append(column_2_itr.first);
+				key_vector.append(column_1_entry->first);
+				result_index->insert(key_vector, matched_offsets);
 			}
-
 		}
-	}
 
-	auto stop = Time::now();
-	auto elapsed = stop - start;
-	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
-	std::cout << "VALUE-CENTRIC JOIN (TWO INVERTED INDEXES): " << time_milliseconds.count() << " ms \n";
+		auto stop = Time::now();
+		auto elapsed = stop - start;
+		auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
+		std::cout << "VALUE-CENTRIC JOIN (TWO INVERTED INDEXES): " << time_milliseconds.count() << " ms \n";
+		std::cout << "MATCHES: " << result_index->matches() << " \n";
 
-	PrintMatches(matches, column_1, false);
 
 }
 
 void RunAlgorithm4(int* column_1, int column_1_size, int* column_2, int column_2_size){
-	std::vector<std::pair<int,int>> matches;
 
 	// ALGORITHM 4: VALUE-CENTRIC JOIN (TWO INVERTED INDEXES) (SORT-MERGE)
 
-	// Build tree for value-centric join
-	auto tree_1 = BuildTree(column_1, column_1_size);
-	auto tree_2 = BuildTree(column_2, column_2_size);
+	InvertedIndex *inverted_index_1 = new InvertedIndex(column_1, column_1_size);
+	InvertedIndex *inverted_index_2 = new InvertedIndex(column_2, column_2_size);
 
-	auto column_1_itr = tree_1.begin();
-	auto column_2_itr = tree_2.begin();
+	auto index_1 = inverted_index_1->getInvertedIndex();
+	auto index_2 = inverted_index_2->getInvertedIndex();
+
+	auto index_1_itr = index_1.begin();
+	auto index_2_itr = index_2.begin();
 
 	auto start = Time::now();
-
-	while (column_1_itr != tree_1.end() && column_2_itr != tree_2.end()) {
-		if (column_1_itr->first == column_2_itr->first) {
-			auto column_1_offsets = column_1_itr->second;
-			auto column_2_offsets = column_2_itr->second;
+	InvertedIndex *result_index = new InvertedIndex();
+	while (index_1_itr != index_1.end() && index_2_itr != index_2.end()) {
+		if (index_1_itr->first == index_2_itr->first) {
+			auto column_1_offsets = index_1_itr->second;
+			auto column_2_offsets = index_2_itr->second;
+			std::vector<std::vector<int>> matched_offsets;
 			for(auto column_2_offset: column_2_offsets){
 				for(auto column_1_offset: column_1_offsets){
-					matches.push_back(std::make_pair(column_1_offset, column_2_offset));
+					std::vector<int> match;
+					match.insert(match.end(), column_2_offset.begin(), column_2_offset.end());
+					match.insert(match.end(), column_1_offset.begin(), column_1_offset.end());
+					matched_offsets.push_back(match);
 				}
 			}
-			column_1_itr++;
-			column_2_itr++;
-		} else if(column_1_itr->first < column_2_itr->first){
-			column_1_itr++;
+			KeyVector key_vector;
+			key_vector.append(index_1_itr->first);
+			key_vector.append(index_2_itr->first);
+			result_index->insert(key_vector, matched_offsets);
+			index_1_itr++;
+			index_2_itr++;
+		} else if(index_1_itr->first < index_2_itr->first){
+			index_1_itr++;
 		} else {
-			column_2_itr++;
+			index_2_itr++;
 		}
 	}
 
@@ -331,8 +349,8 @@ void RunAlgorithm4(int* column_1, int column_1_size, int* column_2, int column_2
 	auto elapsed = stop - start;
 	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
 	std::cout << "VALUE-CENTRIC JOIN (TWO INVERTED INDEXES) (SORT-MERGE): " << time_milliseconds.count() << " ms \n";
+	std::cout << "MATCHES: " << result_index->matches() << " \n";
 
-	PrintMatches(matches, column_1, false);
 }
 
 void RunAlgorithm5(int * column_1, int column_1_size, std::pair<int, int> range){
@@ -388,7 +406,7 @@ void RunAlgorithm6(int * column_1, int column_1_size, std::pair<int, int> range)
 
 	while (lower_bound != upper_bound) {
 		auto column_1_offsets = lower_bound->second;
-		result_index->addToIndex(lower_bound->first, lower_bound->second);
+		result_index->insert(lower_bound->first, lower_bound->second);
 		lower_bound++;
 	}
 
