@@ -84,11 +84,11 @@ std::unordered_map<int,std::pair<std::vector<int>,std::vector<int>>> BuildJoinHa
 
 std::pair<int, int> findFilterRange(int column_range){
 	std::uniform_int_distribution<int> lower_bound(1,column_range/2);
-	//int min = lower_bound(generator);
-	//std::uniform_int_distribution<int> upper_bound(column_range/2+1, column_range);
-	//int max = upper_bound(generator);
+	int min = lower_bound(generator);
+	std::uniform_int_distribution<int> upper_bound(column_range/2+1, column_range);
+	int max = upper_bound(generator);
 
-	return std::make_pair(1000, 2000);
+	return std::make_pair(min, max);
 
 }
 
@@ -191,11 +191,9 @@ void RunAlgorithm1(int* column_1, int column_1_size, int* column_2, int column_2
 
 }
 
-void RunAlgorithm2(int* column_1, int column_1_size, int* column_2, int column_2_size){
+void RunAlgorithm2(InvertedIndex *inverted_index, int* column_2, int column_2_size){
 	// ALGORITHM 2: VALUE-CENTRIC JOIN (SINGLE INVERTED INDEX)
 
-	// Build tree for value-centric join
-	InvertedIndex *inverted_index = new InvertedIndex(column_1, column_1_size);
 	auto index = inverted_index->getInvertedIndex();
 
 	auto start = Time::now();
@@ -224,12 +222,9 @@ void RunAlgorithm2(int* column_1, int column_1_size, int* column_2, int column_2
 	std::cout << "MATCHES: " << result_index->matches() << "\n";
 }
 
-void RunAlgorithm3(int* column_1, int column_1_size, int* column_2, int column_2_size){
+void RunAlgorithm3(InvertedIndex *inverted_index_1, InvertedIndex *inverted_index_2){
 
 	// ALGORITHM 3: VALUE-CENTRIC JOIN (TWO INVERTED INDEXES)
-
-	InvertedIndex *inverted_index_1 = new InvertedIndex(column_1, column_1_size);
-	InvertedIndex *inverted_index_2 = new InvertedIndex(column_2, column_2_size);
 
 	auto index_1 = inverted_index_1->getInvertedIndex();
 	auto index_2 = inverted_index_2->getInvertedIndex();
@@ -270,12 +265,9 @@ void RunAlgorithm3(int* column_1, int column_1_size, int* column_2, int column_2
 
 }
 
-void RunAlgorithm4(int* column_1, int column_1_size, int* column_2, int column_2_size){
+void RunAlgorithm4(InvertedIndex *inverted_index_1, InvertedIndex *inverted_index_2){
 
 	// ALGORITHM 4: VALUE-CENTRIC JOIN (TWO INVERTED INDEXES) (SORT-MERGE)
-
-	InvertedIndex *inverted_index_1 = new InvertedIndex(column_1, column_1_size);
-	InvertedIndex *inverted_index_2 = new InvertedIndex(column_2, column_2_size);
 
 	auto index_1 = inverted_index_1->getInvertedIndex();
 	auto index_2 = inverted_index_2->getInvertedIndex();
@@ -317,9 +309,10 @@ void RunAlgorithm4(int* column_1, int column_1_size, int* column_2, int column_2
 	std::cout << "VALUE-CENTRIC JOIN (TWO INVERTED INDEXES) (SORT-MERGE): " << time_milliseconds.count() << " ms \n";
 	std::cout << "MATCHES: " << result_index->matches() << " \n";
 
+
 }
 
-void RunAlgorithm5(int * column_1, int column_1_size, std::pair<int, int> range){
+InvertedIndex* RunAlgorithm5(int * column_1, int column_1_size, std::pair<int, int> range){
 	InvertedIndex *result_index = new InvertedIndex();
 	auto start = Time::now();
 	//TUPLE CENTRIC FILTER
@@ -338,9 +331,10 @@ void RunAlgorithm5(int * column_1, int column_1_size, std::pair<int, int> range)
 	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
 	std::cout << "TUPLE CENTRIC FILTER : " << time_milliseconds.count() << " ms \n";
 	std::cout << "MATCHES: " << result_index->matches() << std::endl;
+	return result_index;
 }
 
-void RunAlgorithm6(int * column_1, int column_1_size, std::pair<int, int> range){
+InvertedIndex* RunAlgorithm6(int * column_1, int column_1_size, std::pair<int, int> range){
 	InvertedIndex *inverted_index = new InvertedIndex(column_1, column_1_size);
 	auto index = inverted_index->getInvertedIndex();
 
@@ -363,6 +357,8 @@ void RunAlgorithm6(int * column_1, int column_1_size, std::pair<int, int> range)
 	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
 	std::cout << "VALUE CENTRIC FILTER : " << time_milliseconds.count() << " ms \n";
 	std::cout << "MATCHES: " << result_index->matches() << std::endl;
+
+	return result_index;
 
 }
 
@@ -411,7 +407,7 @@ void RunJoinBenchmark(){
 			std::cout << "COLUMN 1 SET SIZE: " << column_1_set.size() << "\n";
 
 			//calculate number of matches with selectivity formula -- may be wrong
-			int num_matches = state.join_selectivity_threshold * (column_1_size + column_2_size);
+			int num_matches = state.join_selectivity_threshold * (column_1_size * column_2_size);
 	        	std::default_random_engine generator(seed);
 			std::uniform_int_distribution<int> picking_column_2_num(0, column_1_set.size());
 			int cur_matches = 0;
@@ -445,13 +441,14 @@ void RunJoinBenchmark(){
 	}
 
 
-	std::pair<int, int> range = findFilterRange(state.range);
+	std::pair<int, int> range_1 = findFilterRange(state.range);
+	std::pair<int, int> range_2 = findFilterRange(state.range);
 
 	if(state.algorithm_type >= 5){
 		int num_matches = state.join_selectivity_threshold * (column_1_size);
 		for(int column_1_itr = 0; column_1_itr < num_matches; column_1_itr++){
 			int number = zipf1.GetNextNumber();
-			while(number < range.first || number > range.second){
+			while(number < range_1.first || number > range_1.second){
 				number = zipf1.GetNextNumber();
   			}
 			column_1[column_1_itr] = number;
@@ -459,14 +456,32 @@ void RunJoinBenchmark(){
 		}
 		for(int column_1_itr = num_matches; column_1_itr < column_1_size; column_1_itr++){
 		        int number = zipf1.GetNextNumber();
-                        while(number >= range.first &&  number <= range.second){
+                        while(number >= range_1.first &&  number <= range_1.second){
                                 number = zipf1.GetNextNumber();
                         }
                         column_1[column_1_itr] = number;
                         column_1_set.insert(number);
 		}
 		std::cout << "COLUMN 1 SET SIZE: " << column_1_set.size() << "\n";
-	//	PrintArray(column_1, column_1_size);
+
+		num_matches = state.join_selectivity_threshold * (column_2_size);
+		for(int column_2_itr = 0; column_2_itr < num_matches; column_2_itr++){
+			int number = zipf1.GetNextNumber();
+			while(number < range_2.first || number > range_2.second){
+				number = zipf1.GetNextNumber();
+  			}
+			column_2[column_2_itr] = number;
+			column_2_set.insert(number);
+		}
+		for(int column_2_itr = num_matches; column_2_itr < column_2_size; column_2_itr++){
+		        int number = zipf1.GetNextNumber();
+                        while(number >= range_2.first &&  number <= range_2.second){
+                                number = zipf1.GetNextNumber();
+                        }
+                        column_2[column_2_itr] = number;
+                        column_2_set.insert(number);
+		}
+		std::cout << "COLUMN 2 SET SIZE: " << column_2_set.size() << "\n";
 	}
 
 	// RUN ALGORITHMS
@@ -479,23 +494,62 @@ void RunJoinBenchmark(){
 		break;
 	}
 	case ALGORITHM_TYPE_VALUE_CENTRIC_SINGLE_INDEX: {
-		RunAlgorithm2(column_1, column_1_size, column_2, column_2_size);
+		InvertedIndex *index_1 = new InvertedIndex(column_1, column_1_size);
+		RunAlgorithm2(index_1, column_2, column_2_size);
 		break;
 	}
 	case ALGORITHM_TYPE_VALUE_CENTRIC_TWO_INDEXES:{
-		RunAlgorithm3(column_1, column_1_size, column_2, column_2_size);
+		InvertedIndex *index_1 = new InvertedIndex(column_1, column_1_size);
+		InvertedIndex *index_2 = new InvertedIndex(column_2, column_2_size);
+		RunAlgorithm3(index_1, index_2);
 		break;
 	}
 	case ALGORITHM_TYPE_VALUE_CENTRIC_TWO_INDEXES_SORT_MERGE:{
-		RunAlgorithm4(column_1, column_1_size, column_2, column_2_size);
+		InvertedIndex *index_1 = new InvertedIndex(column_1, column_1_size);
+		InvertedIndex *index_2 = new InvertedIndex(column_2, column_2_size);
+		RunAlgorithm4(index_1, index_2);
 		break;
 	}
 	case ALGORITHM_TYPE_TUPLE_CENTRIC_FILTER:{
-		RunAlgorithm5(column_1, column_1_size, range);
+		RunAlgorithm5(column_1, column_1_size, range_1);
 		break;
 	}
 	case ALGORITHM_TYPE_VALUE_CENTRIC_FILTER:{
-		RunAlgorithm6(column_1, column_1_size, range);
+		RunAlgorithm6(column_1, column_1_size, range_1);
+		break;
+	}
+	case ALGORITHM_TYPE_TUPLE_CENTRIC_FILTER_SINGLE_INDEX_JOIN:{
+		InvertedIndex *intermediate_index_1 = RunAlgorithm5(column_1, column_1_size, range_1);
+		RunAlgorithm2(intermediate_index_1, column_2, column_2_size);
+		break;
+	}
+	case ALGORITHM_TYPE_TUPLE_CENTRIC_FILTER_TWO_INDEXES_JOIN:{
+		InvertedIndex *intermediate_index_1 = RunAlgorithm5(column_1, column_1_size, range_1);
+		InvertedIndex *intermediate_index_2 = RunAlgorithm5(column_2, column_2_size, range_2);
+		RunAlgorithm3(intermediate_index_1, intermediate_index_2);
+		break;
+	}
+	case ALGORITHM_TYPE_TUPLE_CENTRIC_FILTER_TWO_INDEXES_SORT_MERGE:{
+		InvertedIndex *intermediate_index_1 = RunAlgorithm5(column_1, column_1_size, range_1);
+		InvertedIndex *intermediate_index_2 = RunAlgorithm5(column_2, column_2_size, range_2);
+		RunAlgorithm4(intermediate_index_1, intermediate_index_2);
+		break;
+	}
+	case ALGORITHM_TYPE_VALUE_CENTRIC_FILTER_SINGLE_INDEX_JOIN:{
+		InvertedIndex *intermediate_index_1 = RunAlgorithm6(column_1, column_1_size, range_1);
+		RunAlgorithm2(intermediate_index_1, column_2, column_2_size);
+		break;
+	}
+	case ALGORITHM_TYPE_VALUE_CENTRIC_FILTER_TWO_INDEXES_JOIN:{
+		InvertedIndex *intermediate_index_1 = RunAlgorithm6(column_1, column_1_size, range_1);
+		InvertedIndex *intermediate_index_2 = RunAlgorithm6(column_2, column_2_size, range_1);
+		RunAlgorithm3(intermediate_index_1, intermediate_index_2);
+		break;
+	}
+	case ALGORITHM_TYPE_VALUE_CENTRIC_FILTER_TWO_INDEXES_SORT_MERGE:{
+		InvertedIndex *intermediate_index_1 = RunAlgorithm6(column_1, column_1_size, range_1);
+		InvertedIndex *intermediate_index_2 = RunAlgorithm6(column_2, column_2_size, range_2);
+		RunAlgorithm4(intermediate_index_1, intermediate_index_2);
 		break;
 	}
 	default: {
