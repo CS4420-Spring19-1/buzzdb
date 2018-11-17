@@ -156,23 +156,30 @@ void PrintArray(int* array, int array_size){
 
 void RunAlgorithm1(int* column_1, int column_1_size, int* column_2, int column_2_size){
 
-	std::vector<std::pair<int,int>> matches;
-
 	// ALGORITHM 1: TUPLE-CENTRIC JOIN (NO INDEX)
 
 	auto start = Time::now();
+	InvertedIndex *result_index = new InvertedIndex();
 
 	for(int column_1_itr = 0; column_1_itr < column_1_size; column_1_itr++){
 		auto column_1_number = column_1[column_1_itr];
 
+		std::vector<std::vector<int>> matched_offsets;
 		for(int column_2_itr = 0; column_2_itr < column_2_size; column_2_itr++){
 			auto column_2_number = column_2[column_2_itr];
 
 			// Check if numbers match
 			if(column_1_number == column_2_number){
 				// Add to match list
-				matches.push_back(std::make_pair(column_1_itr, column_2_itr));
+				std::vector<int> pair;
+				pair.push_back(column_1_itr);
+				pair.push_back(column_2_itr);
+				matched_offsets.push_back(pair);
 			}
+		}
+		if (matched_offsets.size()>0) {
+			KeyVector key(column_1_number);
+			result_index->insert(key, matched_offsets);
 		}
 	}
 
@@ -180,30 +187,33 @@ void RunAlgorithm1(int* column_1, int column_1_size, int* column_2, int column_2
 	std::chrono::duration<double> elapsed = stop - start;
 	std::chrono::milliseconds time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
 	std::cout << "TUPLE-CENTRIC JOIN (NO INDEX): " << time_milliseconds.count() << " ms \n";
-
-	PrintMatches(matches, column_1, false);
+	std::cout << "MATCHES: " << result_index->matches() << "\n";
 
 }
 
 void RunAlgorithm2(int* column_1, int column_1_size, int* column_2, int column_2_size){
-	std::vector<std::pair<int,int>> matches;
-
 	// ALGORITHM 2: VALUE-CENTRIC JOIN (SINGLE INVERTED INDEX)
 
 	// Build tree for value-centric join
-	auto tree = BuildTree(column_1, column_1_size);
+	InvertedIndex *inverted_index = new InvertedIndex(column_1, column_1_size);
+	auto index = inverted_index->getInvertedIndex();
 
 	auto start = Time::now();
+	InvertedIndex *result_index = new InvertedIndex();
 
 	for(int column_2_itr = 0; column_2_itr < column_2_size; column_2_itr++){
 		auto value = column_2[column_2_itr];
 
-		auto column_1_entry = tree.find(value);
-		if (column_1_entry!= tree.end()) {
+		KeyVector key(value);
+		auto column_1_entry = index.find(key);
+		if (column_1_entry!= index.end()) {
 			auto column_1_offsets = column_1_entry->second;
+			std::vector<std::vector<int>> matched_offsets;
 			for(auto column_1_offset: column_1_offsets){
-				matches.push_back(std::make_pair(column_1_offset, column_2_itr));
+				column_1_offset.push_back(column_2_itr);
+				matched_offsets.push_back(column_1_offset);
 			}
+			result_index->insert(key, matched_offsets);
 		}
 	}
 
@@ -211,8 +221,7 @@ void RunAlgorithm2(int* column_1, int column_1_size, int* column_2, int column_2
 	auto elapsed = stop - start;
 	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
 	std::cout << "VALUE-CENTRIC JOIN (SINGLE INVERTED INDEX): " << time_milliseconds.count() << " ms \n";
-
-	PrintMatches(matches, column_1, false);
+	std::cout << "MATCHES: " << result_index->matches() << "\n";
 }
 
 void RunAlgorithm3(int* column_1, int column_1_size, int* column_2, int column_2_size){
@@ -311,51 +320,33 @@ void RunAlgorithm4(int* column_1, int column_1_size, int* column_2, int column_2
 }
 
 void RunAlgorithm5(int * column_1, int column_1_size, std::pair<int, int> range){
-	std::vector<int> matches;
+	InvertedIndex *result_index = new InvertedIndex();
 	auto start = Time::now();
 	//TUPLE CENTRIC FILTER
 	for (auto column_1_itr = 0; column_1_itr < column_1_size; column_1_itr++) {
 		if(column_1[column_1_itr]>=range.first && column_1[column_1_itr]<=range.second){
-			matches.push_back(column_1_itr);
+			std::vector<int> offset;
+			offset.push_back(column_1_itr);
+			std::vector<std::vector<int>> offset_vector;
+			offset_vector.push_back(offset);
+			KeyVector key(column_1[column_1_itr]);
+			result_index->insert(key, offset_vector);
 		}
 	}
 	auto stop = Time::now();
 	auto elapsed = stop - start;
 	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
 	std::cout << "TUPLE CENTRIC FILTER : " << time_milliseconds.count() << " ms \n";
-	std::cout << "MATCHES: " << matches.size() << std::endl;
+	std::cout << "MATCHES: " << result_index->matches() << std::endl;
 }
 
 void RunAlgorithm6(int * column_1, int column_1_size, std::pair<int, int> range){
-	/*std::vector<int> matches;
-
-	auto tree = BuildTree(column_1, column_1_size);
+	InvertedIndex *inverted_index = new InvertedIndex(column_1, column_1_size);
+	auto index = inverted_index->getInvertedIndex();
 
 	//VALUE CENTRIC FILTER
 	auto start = Time::now();
-	auto lower_bound = tree.lower_bound(range.first);
-	auto upper_bound = tree.upper_bound(range.second);
-
-	while (lower_bound != upper_bound) {
-		auto column_1_offsets = lower_bound->second;
-		matches.insert(matches.end(), column_1_offsets.begin(), column_1_offsets.end());
-		lower_bound++;
-	}
-
-	auto stop = Time::now();
-	auto elapsed = stop - start;
-	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
-	std::cout << "VALUE CENTRIC FILTER : " << time_milliseconds.count() << " ms \n";
-	std::cout << "MATCHES: " << matches.size() << std::endl;*/
-
-	InvertedIndex* inverted_index = new InvertedIndex(column_1, column_1_size);
-	std::map<KeyVector, std::vector<std::vector<int>>> index = inverted_index->getInvertedIndex();
-	//inverted_index->print();
-
-	auto start = Time::now();
-
-	InvertedIndex* result_index = new InvertedIndex();
-
+	InvertedIndex *result_index = new InvertedIndex();
 	KeyVector lower_bound_key(range.first);
 	KeyVector upper_bound_key(range.second);
 	auto lower_bound = index.lower_bound(lower_bound_key);
@@ -371,8 +362,8 @@ void RunAlgorithm6(int * column_1, int column_1_size, std::pair<int, int> range)
 	auto elapsed = stop - start;
 	auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
 	std::cout << "VALUE CENTRIC FILTER : " << time_milliseconds.count() << " ms \n";
-	//result_index->print();
 	std::cout << "MATCHES: " << result_index->matches() << std::endl;
+
 }
 
 void RunJoinBenchmark(){
