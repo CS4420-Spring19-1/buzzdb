@@ -243,10 +243,9 @@ void RunAlgorithm3(InvertedIndex *inverted_index_1, InvertedIndex *inverted_inde
 				std::vector<std::vector<int>> matched_offsets;
 				for(auto column_2_offset: column_2_offsets){
 					for(auto column_1_offset: column_1_offsets){
-						std::vector<int> match;
-						match.insert(match.end(), column_2_offset.begin(), column_2_offset.end());
-						match.insert(match.end(), column_1_offset.begin(), column_1_offset.end());
-						matched_offsets.push_back(match);
+					//	match.insert(match.end(), column_2_offset.begin(), column_2_offset.end());
+						column_1_offset.insert(column_1_offset.end(), column_2_offset.begin(), column_2_offset.end());
+						matched_offsets.push_back(column_1_offset);
 					}
 				}
 				KeyVector key_vector;

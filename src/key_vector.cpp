@@ -52,6 +52,7 @@ namespace emerald{
     //this->keys.insert(this->keys.end(), v.begin(), v.end());
     for (auto key: v) {
       this->keys.push_back(key);
+      this->size++;
     }
   }
 }
