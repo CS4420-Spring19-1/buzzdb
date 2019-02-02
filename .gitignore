@@ -221,33 +221,27 @@ io_file
 *.slo
 *.lo
 *.o
-<<<<<<< HEAD
 *.cuo
-=======
 *.obj
 
 # Precompiled Headers
 *.gch
 *.pch
->>>>>>> 311aaf041e5da2c600f08a1c718fef19a9c775b6
 
 # Compiled Dynamic libraries
 *.so
 *.dylib
-<<<<<<< HEAD
-=======
 *.dll
 
 # Fortran module files
 *.mod
 *.smod
->>>>>>> 311aaf041e5da2c600f08a1c718fef19a9c775b6
 
 # Compiled Static libraries
 *.lai
 *.la
 *.a
-<<<<<<< HEAD
+
 
 # Compiled protocol buffers
 *.pb.h
@@ -337,6 +331,7 @@ machine.txt
 tmp*
 *.txt
 *.csv
+.vscode/*
 
 # Traces
 traces/*
