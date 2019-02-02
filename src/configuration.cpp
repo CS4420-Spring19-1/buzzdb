@@ -75,14 +75,15 @@ void ParseArguments(int argc, char *argv[], configuration &state) {
 	state.file_name = "";
 	state.column_1_size = 1000 * 100;
 	state.join_selectivity_threshold = 1;
-  state.range = 10000;
+    state.range = 10000;
 	state.size_factor = 0.2;
+	state.data_dir="";
 
 	// Parse args
 	while (1) {
 		int idx = 0;
 		int c = getopt_long(argc, argv,
-				"a:f:o:j:v:r:s:",
+				"a:f:o:j:v:r:s:d:",
 				opts, &idx);
 
 		if (c == -1) break;
@@ -103,14 +104,17 @@ void ParseArguments(int argc, char *argv[], configuration &state) {
 		case 'v':
 			state.verbose = atoi(optarg);
 			break;
-    case 'r':
-      state.range = atoi(optarg);
-      break;
+    	case 'r':
+      		state.range = atoi(optarg);
+      		break;
 		case 's':
 			state.size_factor = atof(optarg);
 			break;
 		case 'h':
 			Usage();
+			break;
+		case 'd':
+			state.data_dir = optarg;
 			break;
 		default:
 			printf("Unknown option: -%c-\n", c);

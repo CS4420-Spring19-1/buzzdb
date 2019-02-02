@@ -10,6 +10,7 @@
 #include "benchmark.h"
 #include "macros.h"
 #include "configuration.h"
+#include "emerald_db.h"
 
 namespace emerald {
 
@@ -18,7 +19,8 @@ extern configuration state;
 // Main Entry Point
 void RunBenchmark() {
 
-	RunJoinBenchmark();
+	//RunJoinBenchmark();
+  RunDB();
 
 }
 
@@ -29,8 +31,7 @@ int main(int argc, char **argv) {
   // Initialize Google's logging library.
   google::InitGoogleLogging(argv[0]);
 
-  emerald::ParseArguments(
-      argc, argv, emerald::state);
+  emerald::ParseArguments(argc, argv, emerald::state);
 
   emerald::RunBenchmark();
 

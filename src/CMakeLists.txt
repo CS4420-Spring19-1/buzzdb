@@ -2,8 +2,15 @@
 
 # --[ Emerald library
 
+file(GLOB SRC_FILES
+    "database/*.cpp"
+    "emerald_db.cpp"
+    "configuration.cpp"
+    "types.cpp"
+)
+
 # Create our library
-add_library (emerald_library benchmark.cpp configuration.cpp types.cpp zipfian.cpp key_vector.cpp inverted_index.cpp)
+add_library (emerald_library ${SRC_FILES})
 
 # Make sure the compiler can find include files for our machine library
 # when other libraries or executables link to machine

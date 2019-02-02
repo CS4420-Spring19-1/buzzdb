@@ -37,6 +37,9 @@ class configuration {
 
   double size_factor;
 
+  //path to data
+  std::string data_dir;
+
 };
 
 void Usage(FILE *out);
