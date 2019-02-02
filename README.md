@@ -17,6 +17,11 @@ b) Run Emerald
 ./test/emerald
 ```
 
+  To create tables and load data into them, use the following command
+    ```./test/emerald -f "../config/catalog.txt" -d "../data"```
+    
+  New tables can be added by updating catalog file with the table schema. A corresponding csv file (with the same name as the table) needs to be present in the data directory. 
+
 c) Debugging (Optional)
 
 ```
