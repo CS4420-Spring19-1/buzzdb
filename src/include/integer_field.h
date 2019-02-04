@@ -10,5 +10,7 @@ namespace emerald
         public:
             IntegerField(int v);
             void print();
+            bool filter(Predicate::opType op, Field* value);
+            int getValue();
    }; 
 } // emerald

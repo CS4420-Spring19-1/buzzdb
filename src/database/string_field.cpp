@@ -7,4 +7,34 @@ namespace emerald
     void StringField::print(){
         std::cout << value << " ";
     }
+    bool StringField::filter(Predicate::opType op, Field* value){
+        StringField* str_value = static_cast<StringField*>(value);
+        switch (op)
+        {
+            case Predicate::opType::EQ :
+                return this->value.compare(str_value->getValue())==0;
+                break;
+            case Predicate::opType::NE :
+                return this->value.compare(str_value->getValue())!=0;
+                break;
+            case Predicate::opType::GT :
+                return this->value.compare(str_value->getValue())>0;
+                break;
+            case Predicate::opType::LT :
+                return this->value.compare(str_value->getValue())<0;
+                break;
+            case Predicate::opType::GE :
+                return this->value.compare(str_value->getValue())>=0;
+                break;
+            case Predicate::opType::LE :
+                return this->value.compare(str_value->getValue())<=0;
+                break;
+            default:
+                return false;
+                break;
+        } 
+    }
+    std::string StringField::getValue(){
+        return this->value;
+    }
 } // emerald

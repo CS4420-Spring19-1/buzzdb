@@ -10,5 +10,7 @@ namespace emerald
         public:
             DoubleField(double v);
             void print();
+            bool filter(Predicate::opType op, Field* value);
+            double getValue();
     };
 } // emerald

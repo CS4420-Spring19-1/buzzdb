@@ -25,4 +25,10 @@ namespace emerald
     std::unordered_map<std::string, int> Database::getTableIds(){
         return this->tableIds;
     }
+    void Database::printTable(std::string table_name){
+        this->tables[this->tableIds[table_name]]->print();
+    }
+    Table* Database::getTableRef(std::string table_name){
+        return this->tables[this->tableIds[table_name]];
+    }
 } // emerald

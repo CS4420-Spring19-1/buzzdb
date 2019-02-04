@@ -15,5 +15,7 @@ namespace emerald {
             Table* getTable(int index);
             std::vector<Table*> getTables();
             std::unordered_map<std::string, int> getTableIds();
+            void printTable(std::string table_name);
+            Table* getTableRef(std::string table_name);
     };
 };

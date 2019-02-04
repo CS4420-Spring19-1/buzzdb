@@ -29,4 +29,28 @@ namespace emerald
    std::vector<field_type> TableDescriptor::getColumnTypes(){
        return column_types;
    };
+   int TableDescriptor::getColumnId(std::string column_name){
+       for(size_t i=0; i<column_names.size(); i++){
+           if(column_name.compare(column_names[i])==0){
+               return i;
+           }
+       }
+       return -1;
+   };
+   field_type TableDescriptor::getColumnType(int index){
+       return this->column_types[index];
+   }
+   std::vector<std::string> TableDescriptor::getColumnNames(){
+       return this->column_names;
+   }
+   void TableDescriptor::setColumnNames(std::vector<std::string> column_names){
+       this->column_names = column_names;
+   }
+    void TableDescriptor::setColumnTypes(std::vector<field_type> column_types){
+        this->column_types = column_types;
+    }
+    TableDescriptor::TableDescriptor(const TableDescriptor &tableDesc){
+        this->column_names = tableDesc.column_names;
+        this->column_types = tableDesc.column_types;
+    }
 } // emerald

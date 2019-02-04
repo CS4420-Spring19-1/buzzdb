@@ -18,4 +18,7 @@ namespace emerald
     Table::storageType Table::getStorageType(){
         return type;
     }
+    void Table::copyTableDesc(TableDescriptor* tableDesc){
+        this->tableDesc = tableDesc;
+    }
 } // emerald

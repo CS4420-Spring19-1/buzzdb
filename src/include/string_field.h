@@ -11,5 +11,7 @@ namespace emerald
         public:
             StringField(std::string v);
             void print();
+            bool filter(Predicate::opType op, Field* value);
+            std::string getValue();
     };
 } // emerald

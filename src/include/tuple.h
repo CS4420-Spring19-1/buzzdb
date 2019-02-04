@@ -11,5 +11,6 @@ namespace emerald{
             Tuple();
             Tuple(std::vector<Field*> fields);
             void print();
+            Field* getField(int index);
     };
 };

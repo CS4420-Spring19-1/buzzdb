@@ -15,10 +15,11 @@ namespace emerald{
             Table(storageType type);
             void setTableDesc(std::vector<std::string> column_names, std::vector<std::string> column_types);
             void printTableDesc();
-            virtual void printTable(){};
+            virtual void print(){};
             void insertTuple(Tuple* tuple);
             TableDescriptor* getTableDescriptor();
             Table::storageType getStorageType();
+            void copyTableDesc(TableDescriptor* tableDesc);
         private:
             TableDescriptor* tableDesc;
             storageType type;        

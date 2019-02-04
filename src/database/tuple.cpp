@@ -13,4 +13,7 @@ namespace emerald
         }
         std::cout << std::endl;
     }
+    Field* Tuple::getField(int index){
+        return this->fields[index];
+    }
 } // emerald

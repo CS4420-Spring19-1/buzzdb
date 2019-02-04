@@ -1,6 +1,7 @@
 #pragma once
 
 #include "field_type.h"
+#include "predicate.h"
 
 namespace emerald
 {
@@ -11,7 +12,9 @@ namespace emerald
     public:
       Field();
       Field(field_type type);
-      virtual void print(){};
+      virtual void print()=0;
+      // if filter returns true, the tuple/attribute value needs to be included in the result
+      virtual bool filter(Predicate::opType op, Field* value)=0;
   };
   
   

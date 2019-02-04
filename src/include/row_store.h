@@ -12,6 +12,7 @@ namespace emerald
         public:
             RowStore();
             void insertTuple(Tuple* tuple);
-            void printTable();
+            void print();
+            std::vector<Tuple*> getTuples();
     };
 }; // emerald
