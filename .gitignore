@@ -329,8 +329,6 @@ test.txt
 machine.txt
 *.summary
 tmp*
-*.txt
-*.csv
 .vscode/*
 
 # Traces
