@@ -21,36 +21,54 @@ namespace emerald
            } 
        }
    };
-   void TableDescriptor::print(){
+
+   void TableDescriptor::print() const{
        for(size_t i=0; i<column_names.size(); i++){
            std::cout << column_names[i] << " : " << static_cast<std::underlying_type<field_type>::type>(column_types[i]) << '\n';
        }
    };
-   std::vector<field_type> TableDescriptor::getColumnTypes(){
+
+   std::vector<field_type> TableDescriptor::getColumnTypes() const{
        return column_types;
    };
-   int TableDescriptor::getColumnId(std::string column_name){
+
+    int TableDescriptor::getColumnId(std::string column_name) const{
        for(size_t i=0; i<column_names.size(); i++){
            if(column_name.compare(column_names[i])==0){
                return i;
            }
        }
        return -1;
-   };
-   field_type TableDescriptor::getColumnType(int index){
+    };
+
+    field_type TableDescriptor::getColumnType(int index) const{
        return this->column_types[index];
-   }
-   std::vector<std::string> TableDescriptor::getColumnNames(){
+    };
+
+    std::vector<std::string> TableDescriptor::getColumnNames() const{
        return this->column_names;
-   }
-   void TableDescriptor::setColumnNames(std::vector<std::string> column_names){
+    };
+
+    void TableDescriptor::setColumnNames(std::vector<std::string> column_names){
        this->column_names = column_names;
-   }
+    };
+
     void TableDescriptor::setColumnTypes(std::vector<field_type> column_types){
         this->column_types = column_types;
-    }
+    };
+
     TableDescriptor::TableDescriptor(const TableDescriptor &tableDesc){
         this->column_names = tableDesc.column_names;
         this->column_types = tableDesc.column_types;
-    }
+    };
+
+    //Appends the given array of column names to the existing column_names array
+    void TableDescriptor::AppendColumnNames(std::vector<std::string> column_names){
+        this->column_names.insert(this->column_names.end(), column_names.begin(), column_names.end());
+    };
+
+    //Appends the given array of column types to the existing column_types array
+    void TableDescriptor::AppendColumnTypes(std::vector<field_type> column_types){
+        this->column_types.insert(this->column_types.end(), column_types.begin(), column_types.end());
+    };
 } // emerald

@@ -4,9 +4,11 @@
 namespace emerald
 {
     StringField::StringField(std::string v):Field(field_type::STRING),value(v){};
-    void StringField::print(){
+
+    void StringField::print() const{
         std::cout << value << " ";
-    }
+    };
+
     bool StringField::filter(Predicate::opType op, Field* value){
         StringField* str_value = static_cast<StringField*>(value);
         switch (op)
@@ -33,8 +35,13 @@ namespace emerald
                 return false;
                 break;
         } 
-    }
-    std::string StringField::getValue(){
+    };
+
+    std::string StringField::getValue() const{
         return this->value;
-    }
+    };
+
+    StringField::StringField(const StringField& field){
+        value = field.getValue();
+    };
 } // emerald

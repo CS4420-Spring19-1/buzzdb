@@ -11,16 +11,19 @@ namespace emerald
         std::tm dt;
         ss >> std::get_time(&dt, date_format.c_str());
         this->value = std::mktime(&dt);
-    }
-    void DateField::print(){
+    };
+
+    void DateField::print() const{
         std::tm dt = *std::localtime(&value);
         std::stringstream wss;
         wss << (std::put_time(&dt, "%m/%d/%y"));
         std::cout << wss.str() << " ";
-    }
-    std::time_t DateField::getValue(){
+    };
+
+    std::time_t DateField::getValue() const{
         return this->value;
-    }
+    };
+
     bool DateField::filter(Predicate::opType op, Field* value){
         DateField* date_value = static_cast<DateField*>(value);
         switch (op)
@@ -47,5 +50,9 @@ namespace emerald
                 return false;
                 break;
         } 
-    }
+    };
+
+    DateField::DateField(const DateField& field){
+        value = field.getValue();
+    };
 } // emerald

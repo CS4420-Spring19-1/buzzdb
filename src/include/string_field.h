@@ -10,8 +10,9 @@ namespace emerald
             std::string value;
         public:
             StringField(std::string v);
-            void print();
+            void print() const;
             bool filter(Predicate::opType op, Field* value);
-            std::string getValue();
+            std::string getValue() const;
+            StringField(const StringField& field);
     };
 } // emerald

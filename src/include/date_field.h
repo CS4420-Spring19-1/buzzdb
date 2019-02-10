@@ -11,8 +11,9 @@ namespace emerald
             std::time_t value;
         public:
             DateField(std::string v);
-            void print();
+            void print() const;
             bool filter(Predicate::opType op, Field* value);
-            std::time_t getValue();
+            std::time_t getValue() const;
+            DateField(const DateField& field);
     };
 } // emerald

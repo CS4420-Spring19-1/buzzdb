@@ -17,5 +17,6 @@ namespace emerald {
             std::unordered_map<std::string, int> getTableIds();
             void printTable(std::string table_name);
             Table* getTableRef(std::string table_name);
+            int getTableId(std::string table_name);
     };
 };

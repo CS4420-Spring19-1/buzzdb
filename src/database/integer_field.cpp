@@ -4,9 +4,11 @@
 namespace emerald
 {
     IntegerField::IntegerField(int v):Field(field_type::INTEGER),value(v){};
-    void IntegerField::print(){
+
+    void IntegerField::print() const{
         std::cout << value << " ";
-    }
+    };
+
     bool IntegerField::filter(Predicate::opType op, Field* value){
         IntegerField* int_value = static_cast<IntegerField*>(value);
         switch (op)
@@ -33,8 +35,13 @@ namespace emerald
                 return false;
                 break;
         } 
-    }
-    int IntegerField::getValue(){
+    };
+
+    int IntegerField::getValue() const{
         return this->value;
-    }
+    };
+
+    IntegerField::IntegerField(const IntegerField& field){
+        value = field.getValue();
+    };
 } // emerald

@@ -4,16 +4,31 @@
 namespace emerald
 {
     Tuple::Tuple(std::vector<Field*> fields){
-        this->fields = fields;
-    }
-    void Tuple::print(){
-        for(size_t i = 0; i < fields.size(); i++)
+        fields_ = fields;
+    };
+
+    void Tuple::print() const{
+        for(auto &field : fields_)
         {
-            fields[i]->print();
+            field->print();
         }
         std::cout << std::endl;
-    }
-    Field* Tuple::getField(int index){
-        return this->fields[index];
-    }
+    };
+
+    Field* Tuple::getField(int index) const{
+        return fields_[index];
+    };
+
+    // Copy constructor for Tuple class
+    Tuple::Tuple(const Tuple& tuple){
+        fields_ = tuple.get_fields();
+    };
+
+    std::vector<Field*> Tuple::get_fields() const{
+        return fields_;
+    };
+
+    void Tuple::append_fields(std::vector<Field*> fields){
+        fields_.insert(fields_.end(), fields.begin(), fields.end());
+    };
 } // emerald

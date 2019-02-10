@@ -16,19 +16,23 @@ namespace emerald
         } else {
             return Predicate::opType::LE;
         }
-    }
+    };
+
     Predicate::Predicate(std::string column_name, std::string op, std::string value){
         this->column = column_name;
         this->op = toOpType(op);
         this->value = value;
-    }
+    };
+
     std::string Predicate::getColumn(){
         return this->column;
-    }
+    };
+
     std::string Predicate::getValue(){
         return this->value;
-    }
+    };
+
     Predicate::opType Predicate::getOp(){
         return this->op;
-    }
+    };
 } // emerald

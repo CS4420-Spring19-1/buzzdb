@@ -5,9 +5,11 @@
 namespace emerald
 {
     DoubleField::DoubleField(double v):Field(field_type::DOUBLE),value(v){};
-    void DoubleField::print(){
+
+    void DoubleField::print() const{
         std::cout << std::fixed << value << " ";
     };
+
     bool DoubleField::filter(Predicate::opType op, Field* value){
         DoubleField* double_value = static_cast<DoubleField*>(value);
         switch (op)
@@ -34,8 +36,13 @@ namespace emerald
                 return false;
                 break;
         } 
-    }
-    double DoubleField::getValue(){
+    };
+
+    double DoubleField::getValue() const{
         return this->value;
-    }
+    };
+
+    DoubleField::DoubleField(const DoubleField& field){
+        value = field.getValue();
+    };
 } // emerald

@@ -9,8 +9,9 @@ namespace emerald
             int value;
         public:
             IntegerField(int v);
-            void print();
+            void print() const;
             bool filter(Predicate::opType op, Field* value);
-            int getValue();
+            int getValue() const;
+            IntegerField(const IntegerField& field);
    }; 
 } // emerald
