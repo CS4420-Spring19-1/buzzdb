@@ -37,7 +37,7 @@ namespace emerald
         return is_less;
     };
 
-    int Dimension::size() const {
+    size_t Dimension::size() const {
         return fields_.size();
     };
 

@@ -41,7 +41,7 @@ namespace emerald
         return this->value;
     };
 
-    StringField::StringField(const StringField& field){
+    StringField::StringField(const StringField& field):Field(field_type::STRING){
         value = field.getValue();
     };
 } // emerald

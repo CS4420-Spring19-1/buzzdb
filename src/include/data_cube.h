@@ -1,11 +1,11 @@
 #pragma once
-#include "table.h"
 #include "column_descriptor.h"
 #include <vector>
 #include <map>
 #include "dimension.h"
 #include "summary.h"
 #include "join_condition.h"
+#include "database.h"
 
 namespace emerald
 {
@@ -22,9 +22,8 @@ namespace emerald
         public:
             DataCube();
 
-            DataCube(Database* db, std::vector<int> table_ids, 
-                        std::vector<std::string> group_by_columns, 
-                        std::vector<ColumnDescriptor*> predicate_columns, 
+            DataCube(Database* db,
+                        std::vector<std::string> group_by_columns,  
                         std::vector<JoinCondition*> join_conditions);
     };
 } // emerald

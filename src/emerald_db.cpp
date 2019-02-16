@@ -35,17 +35,13 @@ namespace emerald
         std::vector<std::string> group_by_columns;
         group_by_columns.push_back("O_ORDERDATE");
         group_by_columns.push_back("O_SHIPPRIORITY");
-       
-        std::vector<ColumnDescriptor*> predicate_columns;
-        predicate_columns.push_back(new ColumnDescriptor(db, "Customer", "C_MKTSEGMENT"));
-        predicate_columns.push_back(new ColumnDescriptor(db, "Orders", "O_ORDERDATE"));
 
         std::vector<JoinCondition*> join_conditions;
         join_conditions.push_back(new JoinCondition(db->getTableRef("Orders"), 
                                                     db->getTableRef("Customer"), 
                                                     new Predicate("O_CUSTKEY", "=", "C_CUSTKEY")));
 
-        DataCube* datacube = new DataCube(db, table_ids, group_by_columns, predicate_columns, join_conditions);
+        DataCube* datacube = new DataCube(db, group_by_columns, join_conditions);
         if(datacube!=nullptr){
             std::cout << "Yay";
         }

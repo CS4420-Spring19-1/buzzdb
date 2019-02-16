@@ -9,12 +9,12 @@ namespace emerald
     }
 
     void Database::createTable(std::string table_name, std::vector<std::string> column_names, std::vector<std::string> column_types, Table::storageType type){
-        this->tableIds.insert(std::pair<std::string, int>(table_name, tableIds.size()));
+        tableIds.insert(std::pair<std::string, int>(table_name, tableIds.size()));
         //schema contains column name mapped to column's data type
         if(type == Table::ROW_STORE){
-            RowStore* rowStoreTable = new RowStore();
-            rowStoreTable->setTableDesc(column_names, column_types);
-            this->tables.push_back(rowStoreTable);
+            RowStore* rowStoreTable = new RowStore(tableIds.size()-1);
+            rowStoreTable->setTableDesc(rowStoreTable->get_table_id(), column_names, column_types);
+            tables.push_back(rowStoreTable);
         }
     }
 
@@ -40,5 +40,13 @@ namespace emerald
 
     int Database::getTableId(std::string table_name){
         return tableIds[table_name];
+    }
+
+    Field* Database::get_field(int table_id, int tuple_id, int column_id){
+        Table* table = tables[table_id];
+        if (table->getStorageType()==Table::ROW_STORE) {
+            return static_cast<RowStore*>(table)->get_tuple(tuple_id)->getField(column_id);
+        }
+        return nullptr;
     }
 } // emerald

@@ -10,7 +10,7 @@ namespace emerald
             std::vector<TupleSet*> tuple_set_list_;
         public:
             SummaryList();
-
+            void add_tuple_set(TupleSet* tuple_set);
 
     };
 } // emerald

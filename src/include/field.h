@@ -12,7 +12,7 @@ namespace emerald
     public:
       Field();
       Field(field_type type);
-      virtual void print()=0;
+      virtual void print() const=0;
       // if filter returns true, the tuple/attribute value needs to be included in the result
       virtual bool filter(Predicate::opType op, Field* value)=0;
   };

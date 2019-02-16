@@ -42,7 +42,7 @@ namespace emerald
         return this->value;
     };
 
-    DoubleField::DoubleField(const DoubleField& field){
+    DoubleField::DoubleField(const DoubleField& field):Field(field_type::DOUBLE){
         value = field.getValue();
     };
 } // emerald

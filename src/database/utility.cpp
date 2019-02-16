@@ -48,8 +48,7 @@ namespace emerald
     Field* constructField(std::string field_value, field_type type){
         Field* field = nullptr;
 
-        if(type==field_type::INTEGER){
-            
+        if(type==field_type::INTEGER){   
             field = new IntegerField(atoi(field_value.c_str()));
         } else if(type==field_type::STRING){
             field = new StringField(field_value); 
@@ -71,7 +70,7 @@ namespace emerald
             file.open(data_dir+"/"+table_name+".csv");
             
             Table* table = db->getTable(x.second);
-            std::vector<field_type> column_types = table->getTableDescriptor()->getColumnTypes();
+            std::vector<ColumnDescriptor*> columns = table->getTableDescriptor()->get_columns();
             if(file.is_open()){
                 std::string line;
                 while(getline(file, line)){
@@ -80,7 +79,7 @@ namespace emerald
                     std::string field_value;
                     int index = 0;
                     while(getline(ss, field_value, ',')){
-                         fields.push_back(constructField(field_value, column_types[index]));
+                         fields.push_back(constructField(field_value, columns[index]->get_column_type()));
                          index++;
                     }
                     Tuple* tuple = new Tuple(fields);

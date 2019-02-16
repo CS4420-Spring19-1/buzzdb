@@ -41,7 +41,8 @@ namespace emerald
         return this->value;
     };
 
-    IntegerField::IntegerField(const IntegerField& field){
+    /*copy constructor for integer field*/
+    IntegerField::IntegerField(const IntegerField& field):Field(field_type::INTEGER){
         value = field.getValue();
     };
 } // emerald

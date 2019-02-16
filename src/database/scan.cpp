@@ -7,7 +7,7 @@ namespace emerald
     Table* seqScanRowStore(RowStore* table, int columnIndex, Predicate::opType op, Field* value){
         
         std::vector<Tuple*> tuples = table->getTuples();
-        RowStore* result = new RowStore();
+        RowStore* result = new RowStore(table->get_table_id());
         //new table will have the same descriptor as the input table
         result->copyTableDesc(table->getTableDescriptor());
         for(size_t i = 0; i < tuples.size(); i++)

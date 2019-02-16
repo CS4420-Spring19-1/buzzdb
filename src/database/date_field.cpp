@@ -52,7 +52,7 @@ namespace emerald
         } 
     };
 
-    DateField::DateField(const DateField& field){
+    DateField::DateField(const DateField& field):Field(field_type::DATE){
         value = field.getValue();
     };
 } // emerald

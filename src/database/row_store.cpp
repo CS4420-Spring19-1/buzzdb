@@ -4,7 +4,7 @@
 
 namespace emerald {
     
-    RowStore::RowStore(): Table(Table::ROW_STORE){};
+    RowStore::RowStore(int table_id): Table(table_id, Table::ROW_STORE){};
     
     void RowStore::insertTuple(Tuple* tuple){
         tuples_.push_back(tuple);
@@ -21,7 +21,7 @@ namespace emerald {
     };
 
     // Returns size of the table
-    int RowStore::size() const{
+    size_t RowStore::size() const{
         return tuples_.size();
     };
 
@@ -43,4 +43,8 @@ namespace emerald {
         result->append_fields(tuple_2->get_fields()); // this appends the rest of the fields to the result
         insertTuple(result);
     };
+
+    Tuple* RowStore::get_tuple(int index) const{
+        return tuples_[index];
+    }
 };

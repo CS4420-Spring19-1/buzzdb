@@ -1,40 +1,38 @@
 #include "table_descriptor.h"
 #include <string>
 #include "field_type.h"
+#include <iostream>
 
 namespace emerald
 {
-    TableDescriptor::TableDescriptor(std::vector<std::string> column_names, std::vector<std::string> column_types){
+    TableDescriptor::TableDescriptor(int table_id, std::vector<std::string> column_names, std::vector<std::string> column_types){
        for(size_t i = 0; i < column_names.size(); i++)
        {
-           this->column_names.push_back(column_names[i]);
+           field_type type;
            if(column_types[i].compare("INTEGER")==0){
-               this->column_types.push_back(field_type::INTEGER);
+               type = field_type::INTEGER;
            } else if(column_types[i].compare("STRING")==0){
-               this->column_types.push_back(field_type::STRING);
+               type = field_type::STRING;
            } else if(column_types[i].compare("BOOLEAN")==0){
-               this->column_types.push_back(field_type::BOOLEAN);
+               type = field_type::BOOLEAN;
            } else if(column_types[i].compare("DOUBLE")==0){
-               this->column_types.push_back(field_type::DOUBLE);
+               type = field_type::DOUBLE;
            } else {
-               this->column_types.push_back(field_type::DATE);
-           } 
+               type = field_type::DATE;
+           }
+           columns_.push_back(new ColumnDescriptor(table_id, i, column_names[i], type)); 
        }
    };
 
    void TableDescriptor::print() const{
-       for(size_t i=0; i<column_names.size(); i++){
-           std::cout << column_names[i] << " : " << static_cast<std::underlying_type<field_type>::type>(column_types[i]) << '\n';
+       for(auto &column : columns_){
+           std::cout << column->get_column_name() << " : " << static_cast<std::underlying_type<field_type>::type>(column->get_column_type()) << '\n';
        }
    };
 
-   std::vector<field_type> TableDescriptor::getColumnTypes() const{
-       return column_types;
-   };
-
     int TableDescriptor::getColumnId(std::string column_name) const{
-       for(size_t i=0; i<column_names.size(); i++){
-           if(column_name.compare(column_names[i])==0){
+       for(size_t i = 0; i<columns_.size(); i++){
+           if(column_name.compare(columns_[i]->get_column_name())==0){
                return i;
            }
        }
@@ -42,33 +40,29 @@ namespace emerald
     };
 
     field_type TableDescriptor::getColumnType(int index) const{
-       return this->column_types[index];
+       return columns_[index]->get_column_type();
     };
 
-    std::vector<std::string> TableDescriptor::getColumnNames() const{
-       return this->column_names;
-    };
-
-    void TableDescriptor::setColumnNames(std::vector<std::string> column_names){
-       this->column_names = column_names;
-    };
-
-    void TableDescriptor::setColumnTypes(std::vector<field_type> column_types){
-        this->column_types = column_types;
-    };
 
     TableDescriptor::TableDescriptor(const TableDescriptor &tableDesc){
-        this->column_names = tableDesc.column_names;
-        this->column_types = tableDesc.column_types;
+        columns_ = tableDesc.columns_;
     };
 
-    //Appends the given array of column names to the existing column_names array
-    void TableDescriptor::AppendColumnNames(std::vector<std::string> column_names){
-        this->column_names.insert(this->column_names.end(), column_names.begin(), column_names.end());
+    //Appends the given array of columns to the existing columns array
+    void TableDescriptor::AppendColumns(std::vector<ColumnDescriptor*> columns){
+        columns_.insert(columns_.end(), columns.begin(), columns.end());
     };
 
-    //Appends the given array of column types to the existing column_types array
-    void TableDescriptor::AppendColumnTypes(std::vector<field_type> column_types){
-        this->column_types.insert(this->column_types.end(), column_types.begin(), column_types.end());
-    };
+    std::vector<ColumnDescriptor*> TableDescriptor::get_columns() const{
+        return columns_;
+    }
+
+    ColumnDescriptor* TableDescriptor::get_column(std::string name) const{
+        for(auto &column : columns_){
+           if(name.compare(column->get_column_name())==0){
+               return column;
+           }
+        }
+        return nullptr;
+    }
 } // emerald

@@ -1,7 +1,8 @@
 #pragma once
 
-#include<unordered_map>
-#include<vector>
+#include <unordered_map>
+#include <vector>
+#include "field.h"
 #include "table.h"
 
 namespace emerald {
@@ -18,5 +19,6 @@ namespace emerald {
             void printTable(std::string table_name);
             Table* getTableRef(std::string table_name);
             int getTableId(std::string table_name);
+            Field* get_field(int table_id, int tuple_id, int column_id);
     };
 };
