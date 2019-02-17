@@ -2,17 +2,40 @@
 
 ## TESTS
 
-# ---[ BASIC TEST
-add_executable(basic_test basic_test.cpp)
-target_link_libraries(basic_test emerald_library
+# ---[ SETUP TEST
+add_executable(setup_db_test setup_db_test.cpp)
+target_link_libraries(setup_db_test emerald_library
 ${GTEST_BOTH_LIBRARIES} 
 ${GLOG_LIBRARIES} 
 ${CMAKE_THREAD_LIBS_INIT}
 )
-add_test(NAME BasicTest COMMAND basic_test)
+add_test(NAME SetupDBTestSuite COMMAND setup_db_test "../../data/schema/catalog.txt" "../../data/database")
+
+# ---[ JOIN TEST
+add_executable(join_test join_test.cpp)
+target_link_libraries(join_test emerald_library
+${GTEST_BOTH_LIBRARIES} 
+${GLOG_LIBRARIES} 
+${CMAKE_THREAD_LIBS_INIT}
+)
+add_test(NAME JoinTestSuite COMMAND join_test "../../data/schema/catalog.txt" "../../data/database")
+
+
+
+# ---[ DATACUBE TEST
+add_executable(datacube_test datacube_test.cpp)
+target_link_libraries(datacube_test emerald_library
+${GTEST_BOTH_LIBRARIES} 
+${GLOG_LIBRARIES} 
+${CMAKE_THREAD_LIBS_INIT}
+)
+add_test(NAME DatacubeTestSuite COMMAND datacube_test "../../data/schema/catalog.txt" "../../data/database")
+
+
+
 
 ## MAIN 
-
+#[[
 # ---[ MAIN
 add_executable(emerald emerald.cpp)
 target_link_libraries(emerald emerald_library 
@@ -21,7 +44,7 @@ ${GLOG_LIBRARIES}
 ${CMAKE_THREAD_LIBS_INIT}
 )
 add_test(NAME Emerald COMMAND emerald)
-
+]]
 # --[ Add "make check" target
 
 set(CTEST_FLAGS "")

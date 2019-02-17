@@ -20,6 +20,7 @@ extern configuration state;
 void RunBenchmark() {
 
 	//RunJoinBenchmark();
+  
   RunDB();
 
 }
@@ -29,6 +30,7 @@ void RunBenchmark() {
 int main(int argc, char **argv) {
 
   // Initialize Google's logging library.
+  
   google::InitGoogleLogging(argv[0]);
 
   emerald::ParseArguments(argc, argv, emerald::state);

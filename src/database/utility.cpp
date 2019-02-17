@@ -11,6 +11,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <iostream>
 
 namespace emerald
 {
@@ -22,7 +23,7 @@ namespace emerald
         }
     }
     void createTables(Database* db, std::string catalogFile){
-        
+
         std::ifstream catalog;
         catalog.open(catalogFile, std::ifstream::in);
 
@@ -62,16 +63,18 @@ namespace emerald
         return field;
     }
     void loadData(Database* db, std::string data_dir){
-        
+
         for(auto &x : db->getTableIds()){
+
             std::string table_name = x.first;
             //data files need to the same name as the tables
             std::ifstream file;
             file.open(data_dir+"/"+table_name+".csv");
-            
+
             Table* table = db->getTable(x.second);
             std::vector<ColumnDescriptor*> columns = table->getTableDescriptor()->get_columns();
             if(file.is_open()){
+                
                 std::string line;
                 while(getline(file, line)){
                     std::istringstream ss(line);

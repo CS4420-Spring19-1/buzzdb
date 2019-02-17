@@ -2,7 +2,7 @@
 
 namespace emerald
 {
-    enum class field_type{
+    enum field_type{
         INTEGER,
         STRING,
         BOOLEAN,

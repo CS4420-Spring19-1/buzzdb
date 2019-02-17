@@ -1,4 +1,5 @@
 #include "column_descriptor.h"
+#include <iostream>
 
 namespace emerald
 {

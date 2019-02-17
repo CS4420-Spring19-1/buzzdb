@@ -1,6 +1,7 @@
 #include "database.h"
 #include "table.h"
 #include "row_store.h"
+#include <iostream>
 
 namespace emerald
 {

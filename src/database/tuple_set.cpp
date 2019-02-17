@@ -19,4 +19,6 @@ namespace emerald
         return -1;
     }
 
+    TupleSet::TupleSet(){}
+
 } // emerald

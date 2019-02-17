@@ -1,6 +1,8 @@
 #include "join.h"
 #include "row_store.h"
 #include "join_result.h"
+#include "tuple_set.h"
+#include <iostream>
 
 namespace emerald
 {
@@ -41,8 +43,7 @@ namespace emerald
                     }
                 }
                 
-            }
-            
+            }            
         } else {
             RowStore* table_1 = static_cast<RowStore*>(join_condition->get_table_1());
             RowStore* table_2 = static_cast<RowStore*>(join_condition->get_table_2());
@@ -68,7 +69,7 @@ namespace emerald
 
     Table* NestedLoopJoin(Database* db, std::vector<JoinCondition*> join_conditions){
         Table* joined_table = new JoinResult(-1);
-
+        std::cout  << "Before looping\n";
         /*
            Loop through the join conditions and join the tables
            If there are more than two tables, invoke NestedLoopJoin() with the result of the previous join results
@@ -77,8 +78,8 @@ namespace emerald
         {
             /* Get the table descriptors from both the tables and merge them*/
             joined_table->merge_table_desc(join_condition->get_table_1()->getTableDescriptor());
-            joined_table->merge_table_desc(join_condition->get_table_2()->getTableDescriptor());
-            
+            //joined_table->merge_table_desc(join_condition->get_table_2()->getTableDescriptor());
+            std::cout << "Merged table_des\n";
             if (joined_table->size()==0) {
                 /* This is the first join. Join the two table references and store the result in joined_table */
                 joined_table = NestedLoopJoinHelper(db, join_condition);

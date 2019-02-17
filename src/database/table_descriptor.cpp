@@ -5,6 +5,10 @@
 
 namespace emerald
 {
+    TableDescriptor::TableDescriptor(){
+        columns_.clear();
+    }
+
     TableDescriptor::TableDescriptor(int table_id, std::vector<std::string> column_names, std::vector<std::string> column_types){
        for(size_t i = 0; i < column_names.size(); i++)
        {
@@ -25,6 +29,7 @@ namespace emerald
    };
 
    void TableDescriptor::print() const{
+       std::cout << "Inside Table Descriptor print\n";
        for(auto &column : columns_){
            std::cout << column->get_column_name() << " : " << static_cast<std::underlying_type<field_type>::type>(column->get_column_type()) << '\n';
        }
@@ -50,7 +55,17 @@ namespace emerald
 
     //Appends the given array of columns to the existing columns array
     void TableDescriptor::AppendColumns(std::vector<ColumnDescriptor*> columns){
-        columns_.insert(columns_.end(), columns.begin(), columns.end());
+        
+        std::cout << columns.size() << "Inserting columns\n";
+        std::vector<ColumnDescriptor*> tmp = columns_;
+        tmp.insert(tmp.end(), columns.begin(), columns.end());
+        columns_ = tmp;
+        // for(auto &column : columns)
+        // {
+        //     columns_.push_back(column);
+        // }
+        
+        std::cout << "Findihe columns\n";
     };
 
     std::vector<ColumnDescriptor*> TableDescriptor::get_columns() const{
@@ -64,5 +79,9 @@ namespace emerald
            }
         }
         return nullptr;
+    }
+
+    ColumnDescriptor* TableDescriptor::get_column(int index) const {
+        return columns_[index];
     }
 } // emerald
