@@ -6,14 +6,12 @@
 
 namespace emerald
 {
-    Table* NestedLoopJoinHelper(Database* db, JoinCondition* join_condition){
+    void NestedLoopJoinHelper(Database* db, JoinCondition* join_condition, JoinResult* result){
         /* Determine which columns in the table need to be joined. Assumption is that in the 
             predicate the first field correponds to table 1 and second field corresponds to table 2*/
         Predicate* join_predicate = join_condition->get_predicate();
         int table_1_column_id = join_condition->get_table_1()->getTableDescriptor()->getColumnId(join_predicate->getColumn());
         int table_2_column_id = join_condition->get_table_2()->getTableDescriptor()->getColumnId(join_predicate->getValue());
-
-        JoinResult* result = new JoinResult(-1); //setting a dummy table_id
 
         if (join_condition->get_table_1()->getStorageType()==Table::JOIN_INDEX) {
             //for the join column 1, get the table id
@@ -63,13 +61,10 @@ namespace emerald
             }
         }
         
-        return result;
-        
     };
 
     Table* NestedLoopJoin(Database* db, std::vector<JoinCondition*> join_conditions){
-        Table* joined_table = new JoinResult(-1);
-        std::cout  << "Before looping\n";
+        JoinResult* joined_table = new JoinResult(-1);
         /*
            Loop through the join conditions and join the tables
            If there are more than two tables, invoke NestedLoopJoin() with the result of the previous join results
@@ -78,20 +73,19 @@ namespace emerald
         {
             /* Get the table descriptors from both the tables and merge them*/
             joined_table->merge_table_desc(join_condition->get_table_1()->getTableDescriptor());
-            //joined_table->merge_table_desc(join_condition->get_table_2()->getTableDescriptor());
-            std::cout << "Merged table_des\n";
+            joined_table->merge_table_desc(join_condition->get_table_2()->getTableDescriptor());
             if (joined_table->size()==0) {
                 /* This is the first join. Join the two table references and store the result in joined_table */
-                joined_table = NestedLoopJoinHelper(db, join_condition);
+                NestedLoopJoinHelper(db, join_condition, joined_table);
             } else {
                 /* joined_table has the joined tuples from previous joins. Need to join the current table with that result */
-                Table* tmp_table = NestedLoopJoinHelper(db, new JoinCondition(joined_table, join_condition->get_table_2(), join_condition->get_predicate()));
-                free(joined_table); // All of the previous join results are not required
-                joined_table = tmp_table;
+                NestedLoopJoinHelper(db, 
+                                        new JoinCondition(joined_table, join_condition->get_table_2(), join_condition->get_predicate())
+                                        ,joined_table);
+
             }
             
         }
-        
         return joined_table;
         
     }

@@ -7,6 +7,7 @@ namespace emerald
     Table::Table(int table_id, storageType storage_type){
         type = storage_type;
         table_id_ = table_id;
+        tableDesc = new TableDescriptor();
     };
 
     void Table::setTableDesc(int table_id, std::vector<std::string> column_names, std::vector<std::string> column_types){
@@ -30,7 +31,6 @@ namespace emerald
     };
 
     void Table::merge_table_desc(TableDescriptor* table_desc){
-        std::cout << table_desc->get_columns().size() << "trying to append columns\n";
         tableDesc->AppendColumns(table_desc->get_columns());
     };
 

@@ -6,7 +6,7 @@
 namespace emerald
 {
     TableDescriptor::TableDescriptor(){
-        columns_.clear();
+        
     }
 
     TableDescriptor::TableDescriptor(int table_id, std::vector<std::string> column_names, std::vector<std::string> column_types){
@@ -55,17 +55,10 @@ namespace emerald
 
     //Appends the given array of columns to the existing columns array
     void TableDescriptor::AppendColumns(std::vector<ColumnDescriptor*> columns){
-        
-        std::cout << columns.size() << "Inserting columns\n";
-        std::vector<ColumnDescriptor*> tmp = columns_;
-        tmp.insert(tmp.end(), columns.begin(), columns.end());
-        columns_ = tmp;
-        // for(auto &column : columns)
-        // {
-        //     columns_.push_back(column);
-        // }
-        
-        std::cout << "Findihe columns\n";
+        for(auto column : columns)
+        {
+            columns_.push_back(column);
+        }
     };
 
     std::vector<ColumnDescriptor*> TableDescriptor::get_columns() const{
@@ -83,5 +76,9 @@ namespace emerald
 
     ColumnDescriptor* TableDescriptor::get_column(int index) const {
         return columns_[index];
+    }
+
+    size_t TableDescriptor::size() const{
+        return columns_.size();
     }
 } // emerald

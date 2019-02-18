@@ -22,5 +22,6 @@ namespace emerald
         std::vector<ColumnDescriptor*> get_columns() const;
         ColumnDescriptor* get_column(std::string name) const; 
         ColumnDescriptor* get_column(int index) const;
+        size_t size() const;
    };
 }; // emerald
