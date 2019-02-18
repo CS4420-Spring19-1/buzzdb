@@ -20,6 +20,14 @@ ${CMAKE_THREAD_LIBS_INIT}
 )
 add_test(NAME JoinTestSuite COMMAND join_test "../../data/schema/catalog.txt" "../../data/database")
 
+# ---[ GROUPING TEST
+add_executable(grouping_test grouping_test.cpp)
+target_link_libraries(grouping_test emerald_library
+${GTEST_BOTH_LIBRARIES} 
+${GLOG_LIBRARIES} 
+${CMAKE_THREAD_LIBS_INIT}
+)
+add_test(NAME GroupTestSuite COMMAND grouping_test "../../data/schema/catalog.txt" "../../data/database")
 
 
 # ---[ DATACUBE TEST

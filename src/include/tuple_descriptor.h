@@ -11,5 +11,6 @@ namespace emerald
             TupleDescriptor(int table_id, int tuple_id);
             int get_table_id() const;
             int get_tuple_id() const;
+            bool equals(const TupleDescriptor* tuple_desc) const;
     };
 } // emerald

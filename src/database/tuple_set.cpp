@@ -19,7 +19,21 @@ namespace emerald
         return -1;
     }
 
-
     TupleSet::TupleSet(){}
 
+    bool TupleSet::equals(const TupleSet* tuple_set) const{
+        bool isEqual = true;
+        for(size_t i = 0; i < tuple_set->get_tuple_descs().size(); i++)
+        {
+            if(!(tuple_descriptors_[i]->equals(tuple_set->get_tuple_descs()[i]))){
+                isEqual = false;
+                break;
+            }
+        }
+        return isEqual;
+    }
+
+    std::vector<TupleDescriptor*> TupleSet::get_tuple_descs() const{
+        return tuple_descriptors_;
+    }
 } // emerald
