@@ -23,31 +23,33 @@ namespace emerald
     }
 
     void RunDB(){
-
+        std::cout << "-----------------------SETTING UP DB-----------------------------------\n";
         Database* db = setupDB();
-        db->printTable("Orders");
-        std::cout << "----------------------------------------------------------\n";
-        // Predicate* predicate = new Predicate("O_ORDERSTATUS", "=", "F");
-        // Table* tableWithPredApplied = seqScan(db->getTableRef("Orders"), predicate);
-        // tableWithPredApplied->print();
-        // std::vector<int> table_ids;
-        // table_ids.push_back(db->getTableId("Orders"));
-        // table_ids.push_back(db->getTableId("Customer"));
-        // //tables.push_back(db->getTableRef("Lineitem"));
+        //db->printTable("Orders");
         
-        // std::vector<std::string> group_by_columns;
-        // group_by_columns.push_back("O_ORDERDATE");
-        // group_by_columns.push_back("O_SHIPPRIORITY");
+        std::cout << "-----------------------CREATING DATACUBE-----------------------------------\n";
+        
+        std::vector<std::string> group_by_columns;
+        group_by_columns.push_back("O_ORDERDATE");
+        group_by_columns.push_back("O_SHIPPRIORITY");
 
-        // std::vector<JoinCondition*> join_conditions;
-        // join_conditions.push_back(new JoinCondition(db->getTableRef("Orders"), 
-        //                                             db->getTableRef("Customer"), 
-        //                                             new Predicate("O_CUSTKEY", "=", "C_CUSTKEY")));
+        std::vector<JoinCondition*> join_conditions;
+        join_conditions.push_back(new JoinCondition(db->getTableRef("Orders"), 
+                                                    db->getTableRef("Customer"), 
+                                                    new Predicate("O_CUSTKEY", "=", "C_CUSTKEY")));
 
-        // DataCube* datacube = new DataCube(db, group_by_columns, join_conditions);
-        // if(datacube!=nullptr){
-        //     std::cout << "Yay";
-        // }
+        DataCube* datacube = new DataCube(db, group_by_columns, join_conditions);
+
+        std::cout << "-----------------------APPLYING PREDICATES TO DATACUBE-----------------------------------\n";
+        std::vector<Predicate*> predicates;
+        predicates.push_back(new Predicate("C_MKTSEGMENT", "=", "BUILDING"));
+        predicates.push_back(new Predicate("O_ORDERDATE", "<", "03/15/96"));
+        
+        DataCube* datacube_filtered = GroupScan(db, datacube, predicates);
+        if (datacube_filtered!=nullptr) {
+            
+        }
+        
     }
     
 } // emerald

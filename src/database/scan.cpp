@@ -1,6 +1,7 @@
 #include "scan.h"
 #include "utility.h"
 #include "row_store.h"
+#include "summary_list.h"
 
 namespace emerald
 {
@@ -28,4 +29,74 @@ namespace emerald
         }
         return nullptr;
     };
+
+    Summary* SummaryListScan(Database* db, SummaryList* tuple_list, std::vector<Predicate*> predicates){
+        SummaryList* result = new SummaryList();
+
+        // use the first tuple_set to figure out which tables the predicates belong to
+        TupleSet* tuple_set_tmp = tuple_list->get_tuples()[0];;
+        std::vector<ColumnDescriptor*> columns;
+        for(auto &predicate : predicates)
+        {
+            for(auto &tuple : tuple_set_tmp->get_tuple_descs())
+            {
+                //get the table id for the tuple
+                int table_id = tuple->get_table_id();
+
+                //get the table descriptor and check if the predicate column exists
+                ColumnDescriptor* column = db->getTable(table_id)->getTableDescriptor()->get_column(predicate->getColumn());
+                if(column != nullptr){
+                    //predicate column belongs to this table
+                    columns.push_back(column);
+                    break;
+                }
+            }
+        }
+         
+        // for every tuple_set in the tuple_list, apply the predicate
+        for(auto &tuple_set : tuple_list->get_tuples())
+        {
+            bool isMatch = true;
+            int index = 0;
+            for(auto &predicate : predicates)
+            {
+                int tuple_id = tuple_set->get_tuple_id(columns[index]->get_table_id());
+                if(!db->get_field(columns[index]->get_table_id(), tuple_id, columns[index]->get_column_id())
+                        ->filter(predicate->getOp(), 
+                            constructField(predicate->getValue(), columns[index]->get_column_type()))){
+                    isMatch = false;
+                }
+                if (isMatch) {
+                    // tuple_set satisfied all conditions; add it to result
+                    // currently, this is doing a shallow copy, but this should be fine
+                    result->add_tuple_set(tuple_set);
+                }
+                
+                index++;
+            }  
+        }
+        
+        return result;
+    }
+
+    DataCube* GroupScan(Database* db, DataCube* datacube, std::vector<Predicate*> predicates){
+        //create an empty datacube
+        DataCube* result = new DataCube();
+
+        //for each group, apply the predicates. If any tuple in the group satisfies the predicate, add the group and tuples to the result
+        for(auto &entry : datacube->get_summary_table())
+        {
+            Summary* filtered_tuples = nullptr;
+            if(entry.second->get_type()==Summary::SUMMARY_LIST){
+                filtered_tuples = SummaryListScan(db, static_cast<SummaryList*>(entry.second), predicates);
+            }
+
+            if(filtered_tuples->size()>0){
+                //some tuple of this group matched the predicates; add this entry to the result
+                result->add_mapping(entry.first, filtered_tuples);
+            }
+        }
+
+        return result;
+    }
 } // emerald

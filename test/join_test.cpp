@@ -73,7 +73,7 @@ TEST(JoinTestSuite, ShouldJoinTwoTables){
         int tuple_1_id = tuple_set->get_tuple_id(table_1_id);
         int tuple_2_id = tuple_set->get_tuple_id(table_2_id);
 
-        EXPECT_GE(db->get_field(table_1_id, tuple_1_id, column_1_id)->filter(Predicate::EQ, db->get_field(table_2_id, tuple_2_id, column_2_id)), 0);
+        EXPECT_GT(db->get_field(table_1_id, tuple_1_id, column_1_id)->filter(Predicate::EQ, db->get_field(table_2_id, tuple_2_id, column_2_id)), 0);
         
     }
     

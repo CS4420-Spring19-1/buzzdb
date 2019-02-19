@@ -25,5 +25,10 @@ namespace emerald
             DataCube(Database* db,
                         std::vector<std::string> group_by_columns,  
                         std::vector<JoinCondition*> join_conditions);
+
+            std::map<Dimension*, Summary*> get_summary_table() const;
+
+            void add_mapping(Dimension* dimension, Summary* summary);
+
     };
 } // emerald

@@ -12,4 +12,16 @@ namespace emerald
         summary_table_ = OrderedGroup(db, joined_table, group_by_columns);
 
     }
+
+    DataCube::DataCube() {
+        
+    }
+
+    std::map<Dimension*, Summary*> DataCube::get_summary_table() const{
+        return summary_table_;
+    }
+
+    void DataCube::add_mapping(Dimension* dimension, Summary* summary){
+        summary_table_[dimension] = summary;
+    }
 } // emerald

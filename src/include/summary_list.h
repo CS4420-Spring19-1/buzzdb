@@ -12,6 +12,7 @@ namespace emerald
             SummaryList();
             void add_tuple_set(TupleSet* tuple_set);
             std::vector<TupleSet*> get_tuples() const;
+            size_t size() const;
 
     };
 } // emerald

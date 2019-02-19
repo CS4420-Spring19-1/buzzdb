@@ -2,7 +2,7 @@
 
 namespace emerald
 {
-    SummaryList::SummaryList(){
+    SummaryList::SummaryList():Summary(SummaryType::SUMMARY_LIST){
 
     }
 
@@ -12,5 +12,9 @@ namespace emerald
 
     std::vector<TupleSet*> SummaryList::get_tuples() const {
         return tuple_set_list_;
+    }
+
+    size_t SummaryList::size() const{
+        return tuple_set_list_.size();
     }
 } // emerald
