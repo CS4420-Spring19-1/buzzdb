@@ -18,4 +18,9 @@ namespace emerald
     bool TupleDescriptor::equals(const TupleDescriptor* tuple_desc) const{
         return table_id_ == tuple_desc->get_table_id() && tuple_id_ == tuple_desc->get_tuple_id();
     }
+
+    TupleDescriptor::TupleDescriptor(const TupleDescriptor &tuple_desc){
+        table_id_ = tuple_desc.get_table_id();
+        tuple_id_ = tuple_desc.get_tuple_id();
+    }
 } // emerald

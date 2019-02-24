@@ -50,7 +50,7 @@ namespace emerald
 
 
     TableDescriptor::TableDescriptor(const TableDescriptor &tableDesc){
-        columns_ = tableDesc.columns_;
+        columns_ = tableDesc.get_columns();
     };
 
     //Appends the given array of columns to the existing columns array

@@ -6,7 +6,7 @@ namespace emerald
     StringField::StringField(std::string v):Field(field_type::STRING),value(v){};
 
     void StringField::print() const{
-        std::cout << value << " ";
+        std::cout << "String value" << value << " ";
     };
 
     bool StringField::filter(Predicate::opType op, Field* value){

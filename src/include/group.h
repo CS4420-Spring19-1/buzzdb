@@ -8,5 +8,5 @@
 namespace emerald
 {
     /*This method groups the tables in sorted order using a tree structure*/
-    std::map<Dimension*, Summary*> OrderedGroup(Database* db, Table* table, std::vector<std::string> group_by_columns);
+    std::map<Dimension, Summary*> OrderedGroup(Database* db, Table* table, std::vector<ColumnDescriptor*> column_descs);
 } // emerald

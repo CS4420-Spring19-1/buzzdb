@@ -14,5 +14,6 @@ namespace emerald
             int get_tuple_id(int table_id);
             bool equals(const TupleSet* tuple_set) const;
             std::vector<TupleDescriptor*> get_tuple_descs() const;
+            TupleSet(const TupleSet &tuple_set);
     };
 } // emerald

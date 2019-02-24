@@ -36,4 +36,8 @@ namespace emerald
     std::vector<TupleDescriptor*> TupleSet::get_tuple_descs() const{
         return tuple_descriptors_;
     }
+
+    TupleSet::TupleSet(const TupleSet &tuple_set){
+        tuple_descriptors_ = tuple_set.get_tuple_descs();
+    }
 } // emerald

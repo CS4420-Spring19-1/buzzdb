@@ -17,7 +17,7 @@ namespace emerald
             std::vector<ColumnDescriptor*> dimensions_;
 
             //a sorted map of the grouping attributes versus the grouped tuples
-            std::map<Dimension*, Summary*> summary_table_;
+            std::map<Dimension, Summary*> summary_table_;
 
         public:
             DataCube();
@@ -26,9 +26,11 @@ namespace emerald
                         std::vector<std::string> group_by_columns,  
                         std::vector<JoinCondition*> join_conditions);
 
-            std::map<Dimension*, Summary*> get_summary_table() const;
+            std::map<Dimension, Summary*> get_summary_table() const;
 
-            void add_mapping(Dimension* dimension, Summary* summary);
+            void add_mapping(Dimension dimension, Summary* summary);
+
+            std::vector<ColumnDescriptor*> get_dimensions() const;
 
     };
 } // emerald

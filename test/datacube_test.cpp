@@ -28,13 +28,15 @@ namespace emerald {
 
         datacube = new DataCube(db, group_by_columns, join_conditions);
 
-        EXPECT_NE(datacube, nullptr);        
+        EXPECT_NE(datacube, nullptr);    
+        EXPECT_GT(datacube->get_dimensions().size(), 0); 
+        EXPECT_GT(datacube->get_summary_table().size(), 0);
     }
 
     TEST(DatacubeTestSuite, ShouldFilterDatacube){
         std::vector<Predicate*> predicates;
         predicates.push_back(new Predicate("C_MKTSEGMENT", "=", "BUILDING"));
-        predicates.push_back(new Predicate("O_ORDERDATE", "<", "03/15/96"));
+        predicates.push_back(new Predicate("O_ORDERDATE", "<", "08/21/96"));
 
         DataCube* datacube_filtered = GroupScan(db, datacube, predicates);
 
@@ -47,18 +49,20 @@ namespace emerald {
         field_type column_1_type = db->getTableRef("Customer")->getTableDescriptor()->getColumnType(column_1_id);
         field_type column_2_type = db->getTableRef("Orders")->getTableDescriptor()->getColumnType(column_2_id);
 
+        EXPECT_GT(datacube_filtered->get_summary_table().size(), 0);
         //for each group, check if the tuples satisfy the predicates
         for(auto &group : datacube_filtered->get_summary_table()){
+            EXPECT_GT(group.second->size(), 0);
             if(group.second->get_type()==Summary::SUMMARY_LIST){
                 for(auto &tuple_set : static_cast<SummaryList*>(group.second)->get_tuples())
                 {
                     int tuple_1_id = tuple_set->get_tuple_id(table_1_id);
                     int tuple_2_id = tuple_set->get_tuple_id(table_2_id);
-
-                    EXPECT_GT(db->get_field(table_1_id, tuple_1_id, column_1_id)
-                                ->filter(predicates[0]->getOp(), constructField(predicates[0]->getValue(), column_1_type)), 0);
-                    EXPECT_GT(db->get_field(table_2_id, tuple_2_id, column_2_id)
-                                ->filter(predicates[1]->getOp(), constructField(predicates[1]->getValue(), column_2_type)), 0);
+;
+                    EXPECT_EQ(db->get_field(table_1_id, tuple_1_id, column_1_id)
+                                ->filter(predicates[0]->getOp(), constructField(predicates[0]->getValue(), column_1_type)), true);
+                    EXPECT_EQ(db->get_field(table_2_id, tuple_2_id, column_2_id)
+                                ->filter(predicates[1]->getOp(), constructField(predicates[1]->getValue(), column_2_type)), true);
 
                 }
                 

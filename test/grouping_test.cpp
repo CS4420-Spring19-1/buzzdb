@@ -16,10 +16,15 @@ emerald::Table* joined_table = nullptr;
 namespace emerald {
 
     TEST(GroupTestSuite, ShouldGroupByOneColumn){
-        std::vector<std::string> group_by_columns;
-        group_by_columns.push_back("O_SHIPPRIORITY");
+        std::vector<ColumnDescriptor*> group_by_columns;
+        group_by_columns.push_back(db->getTableRef("Orders")->getTableDescriptor()->get_column("O_SHIPPRIORITY"));
 
-        std::map<Dimension*, Summary*> groups = OrderedGroup(db, joined_table, group_by_columns);
+
+        std::map<Dimension, Summary*> groups = OrderedGroup(db, joined_table, group_by_columns);
+        
+        EXPECT_GT(groups.size(), 0);
+
+        //printSummaryTable(groups);
 
         int column_id = joined_table->getTableDescriptor()->get_column("O_SHIPPRIORITY")->get_column_id();
         int table_id = joined_table->getTableDescriptor()->get_column("O_SHIPPRIORITY")->get_table_id();
@@ -28,32 +33,39 @@ namespace emerald {
         std::vector<TupleSet*> tuple_sets = static_cast<JoinResult*>(joined_table)->get_tuples();
         for(auto &tuple_set : tuple_sets)
         {
+            
             int tuple_id = tuple_set->get_tuple_id(table_id);
             std::vector<Field*> fields;
             fields.push_back(db->get_field(table_id, tuple_id, column_id));
 
-            Dimension* dimension = new Dimension(fields);
-            SummaryList* summary = static_cast<SummaryList*>(groups[dimension]);
+            Dimension dimension(fields);
+            Summary* summary = groups[dimension];
+            
+            ASSERT_NE(summary, nullptr);
+
+            EXPECT_GT(static_cast<SummaryList*>(summary)->get_tuples().size(), 0);
 
             bool found = 0;
-            for(auto &summary_tuple_set : summary->get_tuples())
+            for(auto &summary_tuple_set : static_cast<SummaryList*>(summary)->get_tuples())
             {
+
                 if(tuple_set->equals(summary_tuple_set)){
                     found = 1;
                     break;
                 }
             }
+
             EXPECT_EQ(found, 1);
         }
          
     }
 
     TEST(GroupTestSuite, ShouldGroupByTwoColumns){
-        std::vector<std::string> group_by_columns;
-        group_by_columns.push_back("O_SHIPPRIORITY");
-        group_by_columns.push_back("O_ORDERDATE");
+        std::vector<ColumnDescriptor*> group_by_columns;
+        group_by_columns.push_back(db->getTableRef("Orders")->getTableDescriptor()->get_column("O_SHIPPRIORITY"));
+        group_by_columns.push_back(db->getTableRef("Orders")->getTableDescriptor()->get_column("O_ORDERDATE"));
 
-        std::map<Dimension*, Summary*> groups = OrderedGroup(db, joined_table, group_by_columns);
+        std::map<Dimension, Summary*> groups = OrderedGroup(db, joined_table, group_by_columns);
 
         int column_1_id = joined_table->getTableDescriptor()->get_column("O_SHIPPRIORITY")->get_column_id();
         int table_id = joined_table->getTableDescriptor()->get_column("O_SHIPPRIORITY")->get_table_id();
@@ -68,7 +80,7 @@ namespace emerald {
             fields.push_back(db->get_field(table_id, tuple_id, column_1_id));
             fields.push_back(db->get_field(table_id, tuple_id, column_2_id));
 
-            Dimension* dimension = new Dimension(fields);
+            Dimension dimension(fields);
             SummaryList* summary = static_cast<SummaryList*>(groups[dimension]);
 
             bool found = 0;

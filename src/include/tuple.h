@@ -15,5 +15,6 @@ namespace emerald{
             Tuple(const Tuple& tuple);
             std::vector<Field*> get_fields() const;
             void append_fields(std::vector<Field*> fields);
+            void add_field(Field* field);
     };
 };

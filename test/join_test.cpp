@@ -25,6 +25,8 @@ TEST(JoinTestSuite, ShouldJoinTwoTables){
 
     Table* result = NestedLoopJoin(db, join_conditions);
 
+    EXPECT_GT(result->size(), 0);
+    
     //check if result is a join index
     EXPECT_EQ(result->getStorageType(), Table::JOIN_INDEX);
 

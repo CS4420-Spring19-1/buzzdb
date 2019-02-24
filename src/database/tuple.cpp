@@ -3,6 +3,10 @@
 
 namespace emerald
 {
+    Tuple::Tuple(){
+
+    }
+    
     Tuple::Tuple(std::vector<Field*> fields){
         fields_ = fields;
     };
@@ -31,4 +35,8 @@ namespace emerald
     void Tuple::append_fields(std::vector<Field*> fields){
         fields_.insert(fields_.end(), fields.begin(), fields.end());
     };
+
+    void Tuple::add_field(Field* field){
+        fields_.push_back(field);
+    }
 } // emerald

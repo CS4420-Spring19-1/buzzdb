@@ -15,5 +15,6 @@ namespace emerald
             bool operator<(const Dimension& dimension) const;
             size_t size() const;
             Field* get_field(int index) const;
+            std::vector<Field*> get_fields() const;
     };
 } // emerald

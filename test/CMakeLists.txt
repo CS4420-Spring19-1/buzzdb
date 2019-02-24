@@ -30,6 +30,16 @@ ${CMAKE_THREAD_LIBS_INIT}
 add_test(NAME GroupTestSuite COMMAND grouping_test "../../data/schema/catalog.txt" "../../data/database")
 
 
+# ---[ PROJECTION TEST
+add_executable(projection_test projection_test.cpp)
+target_link_libraries(projection_test emerald_library
+${GTEST_BOTH_LIBRARIES} 
+${GLOG_LIBRARIES} 
+${CMAKE_THREAD_LIBS_INIT}
+)
+add_test(NAME ProjectionTestSuite COMMAND projection_test "../../data/schema/catalog.txt" "../../data/database")
+
+
 # ---[ DATACUBE TEST
 add_executable(datacube_test datacube_test.cpp)
 target_link_libraries(datacube_test emerald_library

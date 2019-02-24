@@ -12,6 +12,7 @@
 #include <sstream>
 #include <string>
 #include <iostream>
+#include "summary_list.h"
 
 namespace emerald
 {
@@ -22,6 +23,7 @@ namespace emerald
             return Table::COLUMN_STORE;
         }
     }
+
     void createTables(Database* db, std::string catalogFile){
 
         std::ifstream catalog;
@@ -46,6 +48,7 @@ namespace emerald
             catalog.close();
         }
     }
+
     Field* constructField(std::string field_value, field_type type){
         Field* field = nullptr;
 
@@ -56,12 +59,14 @@ namespace emerald
         } else if(type==field_type::DOUBLE){
             field = new DoubleField(stod(field_value));
         } else if(type==field_type::DATE){
+            //std::cout << "Constructing date" << field_value << "\n";
             field = new DateField(field_value);
         } else {
             //need to fill it for boolean type
         }
         return field;
     }
+
     void loadData(Database* db, std::string data_dir){
 
         for(auto &x : db->getTableIds()){
@@ -96,5 +101,28 @@ namespace emerald
             }
             file.close();
         }
+    }
+
+    void printSummaryTable(std::map<Dimension,Summary*> groups){
+        for(auto &entry : groups)
+        {
+            std::cout << "Dimension :" ;
+            for(auto &field : entry.first.get_fields())
+            {
+                field->print();
+            }
+
+            std::cout << "\n Summary :";
+            for(auto &tuple_set : static_cast<SummaryList*>(entry.second)->get_tuples())
+            {
+                for(auto &tuple_desc : tuple_set->get_tuple_descs())
+                {
+                    std::cout << "(" << tuple_desc->get_table_id() << ", " << tuple_desc->get_tuple_id() << "\n";
+                }
+                
+            }
+                
+        }
+        
     }
 } // emerald

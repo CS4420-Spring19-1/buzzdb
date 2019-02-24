@@ -17,6 +17,6 @@ namespace emerald
     }
 
     void JoinResult::print() const{
-
+        
     }
 } // emerald

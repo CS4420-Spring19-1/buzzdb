@@ -46,9 +46,13 @@ namespace emerald
         predicates.push_back(new Predicate("O_ORDERDATE", "<", "03/15/96"));
         
         DataCube* datacube_filtered = GroupScan(db, datacube, predicates);
-        if (datacube_filtered!=nullptr) {
-            
+
+        std::cout << "-----------------------PROJECT COLUMNS/AGGREGATES DATACUBE-----------------------------------\n";
+
+        if (datacube_filtered==nullptr) {
+            /* code */
         }
+        
         
     }
     

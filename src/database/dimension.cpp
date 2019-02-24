@@ -1,4 +1,5 @@
 #include "dimension.h"
+#include <iostream>
 
 namespace emerald
 {
@@ -7,8 +8,9 @@ namespace emerald
     };
 
     bool Dimension::operator==(const Dimension& dimension) const{
-        
+
         if (fields_.size()!=dimension.size()) {
+ 
             return false;
         }
         bool is_equal = true;
@@ -23,17 +25,19 @@ namespace emerald
     };
 
     bool Dimension::operator<(const Dimension& dimension) const {
+
         if (fields_.size()!=dimension.size()) {
             return false;
         }
         bool is_less = true;
         for(size_t i = 0; i<fields_.size(); i++)
         {
-            if(!fields_[i]->filter(Predicate::LE, dimension.get_field(i))){
+            if(!fields_[i]->filter(Predicate::LT, dimension.get_field(i))){
                 is_less = false;
                 break;
             }
         }
+
         return is_less;
     };
 
@@ -43,5 +47,9 @@ namespace emerald
 
     Field* Dimension::get_field(int index) const{
         return fields_[index];
+    }
+
+    std::vector<Field*> Dimension::get_fields() const{
+        return fields_;
     }
 } // emerald
