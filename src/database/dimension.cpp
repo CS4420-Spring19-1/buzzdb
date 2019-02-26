@@ -8,7 +8,6 @@ namespace emerald
     };
 
     bool Dimension::operator==(const Dimension& dimension) const{
-
         if (fields_.size()!=dimension.size()) {
  
             return false;
@@ -25,20 +24,27 @@ namespace emerald
     };
 
     bool Dimension::operator<(const Dimension& dimension) const {
-
         if (fields_.size()!=dimension.size()) {
             return false;
         }
-        bool is_less = true;
-        for(size_t i = 0; i<fields_.size(); i++)
+
+        //bool is_less = true;
+        size_t i = 0;
+        for(; i<fields_.size(); i++)
         {
-            if(!fields_[i]->filter(Predicate::LT, dimension.get_field(i))){
-                is_less = false;
+            if(!fields_[i]->filter(Predicate::EQ, dimension.get_field(i))){
+                // std::cout << "Setting is less false\n";
+                // fields_[i]->print();
+                // dimension.get_field(i)->print();
+                // is_less = false;
                 break;
             }
         }
+        if(i == fields_.size()){
+            return false;
+        }
 
-        return is_less;
+        return fields_[i]->filter(Predicate::LT, dimension.get_field(i));
     };
 
     size_t Dimension::size() const {

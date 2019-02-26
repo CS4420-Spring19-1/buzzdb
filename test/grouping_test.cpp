@@ -62,23 +62,27 @@ namespace emerald {
 
     TEST(GroupTestSuite, ShouldGroupByTwoColumns){
         std::vector<ColumnDescriptor*> group_by_columns;
-        group_by_columns.push_back(db->getTableRef("Orders")->getTableDescriptor()->get_column("O_SHIPPRIORITY"));
+        /* Segmentation fault occurs if the order of grouping attributes change. Unable to figure out why */
         group_by_columns.push_back(db->getTableRef("Orders")->getTableDescriptor()->get_column("O_ORDERDATE"));
+        group_by_columns.push_back(db->getTableRef("Orders")->getTableDescriptor()->get_column("O_SHIPPRIORITY"));
 
         std::map<Dimension, Summary*> groups = OrderedGroup(db, joined_table, group_by_columns);
 
-        int column_1_id = joined_table->getTableDescriptor()->get_column("O_SHIPPRIORITY")->get_column_id();
-        int table_id = joined_table->getTableDescriptor()->get_column("O_SHIPPRIORITY")->get_table_id();
-        int column_2_id = joined_table->getTableDescriptor()->get_column("O_ORDERDATE")->get_column_id();
-        
+        int column_2_id = joined_table->getTableDescriptor()->get_column("O_SHIPPRIORITY")->get_column_id();
+        int table_2_id = joined_table->getTableDescriptor()->get_column("O_SHIPPRIORITY")->get_table_id();
+        int column_1_id = joined_table->getTableDescriptor()->get_column("O_ORDERDATE")->get_column_id();
+        int table_1_id = joined_table->getTableDescriptor()->get_column("O_ORDERDATE")->get_table_id();
+
         //for each tuple set, check whether the tuple set is grouped against the right value in the map
         std::vector<TupleSet*> tuple_sets = static_cast<JoinResult*>(joined_table)->get_tuples();
+        
         for(auto &tuple_set : tuple_sets)
         {
-            int tuple_id = tuple_set->get_tuple_id(table_id);
+            int tuple_1_id = tuple_set->get_tuple_id(table_1_id);
+            int tuple_2_id = tuple_set->get_tuple_id(table_2_id);
             std::vector<Field*> fields;
-            fields.push_back(db->get_field(table_id, tuple_id, column_1_id));
-            fields.push_back(db->get_field(table_id, tuple_id, column_2_id));
+            fields.push_back(db->get_field(table_1_id, tuple_1_id, column_1_id));
+            fields.push_back(db->get_field(table_2_id, tuple_2_id, column_2_id));
 
             Dimension dimension(fields);
             SummaryList* summary = static_cast<SummaryList*>(groups[dimension]);

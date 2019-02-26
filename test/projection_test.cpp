@@ -25,15 +25,17 @@ namespace emerald {
 
         EXPECT_EQ(result->getTableDescriptor()->size(), 2);
          
-        EXPECT_EQ(result->size(), datacube->get_dimensions().size());
+        EXPECT_EQ(result->size(), datacube->get_summary_table().size());
 
         std::vector<Tuple*> tuples = result->getTuples();
+
+        printSummaryTable(datacube->get_summary_table());
 
         int tuple_id =0;
         for(auto &entry : datacube->get_summary_table())
         {
-            EXPECT_GT(entry.first.get_field(0)->filter(Predicate::EQ, tuples[tuple_id]->getField(0)), 0);
-            EXPECT_GT(entry.first.get_field(1)->filter(Predicate::EQ, tuples[tuple_id]->getField(1)), 0);
+            EXPECT_EQ(entry.first.get_field(0)->filter(Predicate::EQ, tuples[tuple_id]->getField(0)), true);
+            EXPECT_EQ(entry.first.get_field(1)->filter(Predicate::EQ, tuples[tuple_id]->getField(1)), true);
         }
         
     }
@@ -65,8 +67,6 @@ int main(int argc, char **argv) {
                                                 new emerald::Predicate("O_CUSTKEY", "=", "C_CUSTKEY")));
 
     datacube = new emerald::DataCube(db, group_by_columns, join_conditions);
-
-    std::cout << datacube->get_summary_table().size();
 
     int result = RUN_ALL_TESTS();
 

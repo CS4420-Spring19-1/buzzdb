@@ -59,7 +59,6 @@ namespace emerald
         } else if(type==field_type::DOUBLE){
             field = new DoubleField(stod(field_value));
         } else if(type==field_type::DATE){
-            //std::cout << "Constructing date" << field_value << "\n";
             field = new DateField(field_value);
         } else {
             //need to fill it for boolean type

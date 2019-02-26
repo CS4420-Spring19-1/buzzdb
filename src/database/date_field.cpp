@@ -17,7 +17,7 @@ namespace emerald
         std::tm dt = *std::localtime(&value);
         std::stringstream wss;
         wss << (std::put_time(&dt, "%m/%d/%y"));
-        std::cout << wss.str() << " ";
+        std::cout << wss.str() << " \n" ;
     };
 
     std::time_t DateField::getValue() const{
