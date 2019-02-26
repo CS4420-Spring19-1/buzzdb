@@ -5,6 +5,7 @@
 #include "data_cube.h"
 #include "scan.h"
 #include "summary_list.h"
+#include "date_field.h"
 
 
 std::string file_name;
@@ -58,7 +59,10 @@ namespace emerald {
                 {
                     int tuple_1_id = tuple_set->get_tuple_id(table_1_id);
                     int tuple_2_id = tuple_set->get_tuple_id(table_2_id);
-;
+                    //std::cout << static_cast<DateField*>(db->get_field(table_2_id, tuple_2_id, column_2_id))->getValue() << "\n";
+                    //std::cout << static_cast<DateField*>(constructField(predicates[1]->getValue(), column_2_type))->getValue() << "\n";
+                    //std::cout << "end\n";
+                    
                     EXPECT_EQ(db->get_field(table_1_id, tuple_1_id, column_1_id)
                                 ->filter(predicates[0]->getOp(), constructField(predicates[0]->getValue(), column_1_type)), true);
                     EXPECT_EQ(db->get_field(table_2_id, tuple_2_id, column_2_id)

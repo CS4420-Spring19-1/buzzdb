@@ -25,7 +25,9 @@ namespace emerald
     };
 
     bool DateField::filter(Predicate::opType op, Field* value){
+        //std::cout << "Calling datefield filter\n";
         DateField* date_value = static_cast<DateField*>(value);
+        //std::cout << date_value->getValue()<< " " << this->value <<"\n";
         switch (op)
         {
             case Predicate::opType::EQ :

@@ -2,6 +2,7 @@
 #include "utility.h"
 #include "row_store.h"
 #include "summary_list.h"
+#include <iostream>
 
 namespace emerald
 {
@@ -34,7 +35,7 @@ namespace emerald
         SummaryList* result = new SummaryList();
 
         // use the first tuple_set to figure out which tables the predicates belong to
-        TupleSet* tuple_set_tmp = tuple_list->get_tuples()[0];;
+        TupleSet* tuple_set_tmp = tuple_list->get_tuples()[0];
         std::vector<ColumnDescriptor*> columns;
         for(auto &predicate : predicates)
         {
@@ -65,15 +66,15 @@ namespace emerald
                         ->filter(predicate->getOp(), 
                             constructField(predicate->getValue(), columns[index]->get_column_type()))){
                     isMatch = false;
-                }
-                if (isMatch) {
-                    // tuple_set satisfied all conditions; add it to result
-                    // currently, this is doing a shallow copy, but this should be fine
-                    result->add_tuple_set(tuple_set);
-                }
-                
+                    break;
+                }                
                 index++;
             }  
+            if (isMatch) {
+                // tuple_set satisfied all conditions; add it to result
+                // currently, this is doing a shallow copy, but this should be fine
+                result->add_tuple_set(tuple_set);
+            }
         }
         
         return result;
