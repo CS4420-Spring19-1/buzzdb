@@ -10,11 +10,14 @@ namespace emerald
         std::istringstream ss(v);
         std::tm dt;
         ss >> std::get_time(&dt, date_format.c_str());
+        dt.tm_sec = 0;
+        dt.tm_hour = 0;
+        dt.tm_min = 0; 
         this->value = std::mktime(&dt);
     };
 
     void DateField::print() const{
-        std::tm dt = *std::localtime(&value);
+        std::tm dt = *std::gmtime(&value);
         std::stringstream wss;
         wss << (std::put_time(&dt, "%m/%d/%y"));
         std::cout << wss.str() << " \n" ;
