@@ -36,13 +36,12 @@ namespace emerald
                     columns.push_back(dimension);
                     
                     for(auto &entry : groups){
-                        std::cout << "Group " << group_index << "Tuple" << tuples.size() << "\n";
                         if(group_index == tuples.size()){
                             // we are adding a tuple for this group for the first time
                             tuples.push_back(new Tuple());
                             tuples[tuples.size()-1]->add_field(entry.first.get_field(field_index));
                         } else {
-                            tuples[tuples.size()-1]->add_field(entry.first.get_field(field_index));
+                            tuples[group_index]->add_field(entry.first.get_field(field_index));
                         }
                         group_index++;
                     }
@@ -53,8 +52,6 @@ namespace emerald
             }
             
         }
-        
-        std::cout << "tuple size " << tuples.size() << "\n";
 
         // set the column descriptor for the result table
         // we need the column names at least to perform any filtering later on

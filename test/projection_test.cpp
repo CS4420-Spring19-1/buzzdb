@@ -29,13 +29,13 @@ namespace emerald {
 
         std::vector<Tuple*> tuples = result->getTuples();
 
-        printSummaryTable(datacube->get_summary_table());
-
         int tuple_id =0;
         for(auto &entry : datacube->get_summary_table())
         {
             EXPECT_EQ(entry.first.get_field(0)->filter(Predicate::EQ, tuples[tuple_id]->getField(0)), true);
+
             EXPECT_EQ(entry.first.get_field(1)->filter(Predicate::EQ, tuples[tuple_id]->getField(1)), true);
+            tuple_id++;
         }
         
     }
