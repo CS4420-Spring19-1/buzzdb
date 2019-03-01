@@ -27,6 +27,8 @@ namespace emerald {
          
         EXPECT_EQ(result->size(), datacube->get_summary_table().size());
 
+        EXPECT_EQ(result->get_tuple(0)->get_fields().size(), 2);
+
         std::vector<Tuple*> tuples = result->getTuples();
 
         int tuple_id =0;

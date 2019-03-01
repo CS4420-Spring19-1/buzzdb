@@ -19,4 +19,12 @@ namespace emerald
     void JoinResult::print() const{
         
     }
+
+    JoinResult::~JoinResult(){
+        for(auto &tuple : tuples_)
+        {
+            delete tuple;
+        }
+        tuples_.clear();
+    }
 } // emerald

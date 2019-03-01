@@ -15,5 +15,6 @@ namespace emerald
 
             size_t size() const;
             void print() const;
+            ~JoinResult();
     };
 } // emerald

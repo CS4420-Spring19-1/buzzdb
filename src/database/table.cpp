@@ -37,4 +37,8 @@ namespace emerald
     int Table::get_table_id() const {
         return table_id_;
     }
+
+    Table::~Table(){
+        delete tableDesc;
+    }
 } // emerald

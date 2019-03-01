@@ -23,6 +23,7 @@ namespace emerald{
             void merge_table_desc(TableDescriptor* table_desc);
             virtual size_t size() const=0;
             int get_table_id() const;
+            virtual ~Table();
         private:
             TableDescriptor* tableDesc;
             storageType type;  

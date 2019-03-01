@@ -1,7 +1,9 @@
 #pragma once
-#include "data_cube.h"
+#include "table.h"
 
 namespace emerald
 {
-    DataCube* OrderGroup(DataCube* datacube, std::vector<std::string> order_by_columns, bool asc);
+    Table* OrderTable(Table* table, std::vector<std::string> order_by_columns, std::vector<bool> is_asc);
+
+
 } // emerald

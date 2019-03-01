@@ -39,6 +39,15 @@ ${CMAKE_THREAD_LIBS_INIT}
 )
 add_test(NAME ProjectionTestSuite COMMAND projection_test "../../data/schema/catalog.txt" "../../data/database")
 
+# ---[ ORDERING TEST
+add_executable(order_test order_test.cpp)
+target_link_libraries(order_test emerald_library
+${GTEST_BOTH_LIBRARIES} 
+${GLOG_LIBRARIES} 
+${CMAKE_THREAD_LIBS_INIT}
+)
+add_test(NAME OrderingTestSuite COMMAND order_test "../../data/schema/catalog.txt" "../../data/database")
+
 
 # ---[ DATACUBE TEST
 add_executable(datacube_test datacube_test.cpp)

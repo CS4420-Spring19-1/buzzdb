@@ -18,5 +18,6 @@ namespace emerald
             void insert_tuples(std::vector<Tuple*> tuples);
             void merge_and_insert(Tuple* tuple_1, Tuple* tuple_2);
             Tuple* get_tuple(int index) const;
+            ~RowStore();
     };
 }; // emerald

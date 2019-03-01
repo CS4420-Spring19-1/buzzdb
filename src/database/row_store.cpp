@@ -1,6 +1,7 @@
 #include "table.h"
 #include "row_store.h"
 #include "tuple.h"
+#include <iostream>
 
 namespace emerald {
     
@@ -46,5 +47,14 @@ namespace emerald {
 
     Tuple* RowStore::get_tuple(int index) const{
         return tuples_[index];
+    }
+
+    RowStore::~RowStore(){
+        std::cout << "Calling clear\n";
+        for(auto &tuple : tuples_){
+            delete tuple;
+        }
+        tuples_.clear();
+        std::cout << "Completed clear\n";
     }
 };
