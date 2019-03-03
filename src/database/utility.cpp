@@ -13,6 +13,7 @@
 #include <string>
 #include <iostream>
 #include "summary_list.h"
+#include "column_store.h"
 
 namespace emerald
 {
@@ -24,7 +25,7 @@ namespace emerald
         }
     }
 
-    void createTables(Database* db, std::string catalogFile){
+    void createTables(Database* db, std::string catalogFile, Table::storageType type){
 
         std::ifstream catalog;
         catalog.open(catalogFile, std::ifstream::in);
@@ -33,9 +34,8 @@ namespace emerald
             std::string line;
             while(getline(catalog, line)){
                 std::istringstream ss(line);
-                std::string tableName, storageType, column_name, column_type;
+                std::string tableName, column_name, column_type;
                 getline(ss, tableName, ',');
-                getline(ss, storageType, ',');
                 
                 std::vector<std::string> column_names, column_types;
                 while(getline(ss, column_name, ',')){
@@ -43,7 +43,7 @@ namespace emerald
                     getline(ss, column_type, ',');
                     column_types.push_back(column_type);
                 }
-                db->createTable(tableName, column_names, column_types, toStorageType(storageType));
+                db->createTable(tableName, column_names, column_types, type);
             }
             catalog.close();
         }
@@ -89,11 +89,13 @@ namespace emerald
                          fields.push_back(constructField(field_value, columns[index]->get_column_type()));
                          index++;
                     }
-                    Tuple* tuple = new Tuple(fields);
+                    
                     if(table->getStorageType() == Table::ROW_STORE){
+                        Tuple* tuple = new Tuple(fields);
                         static_cast<RowStore*>(table)->insertTuple(tuple);
                     } else {
                         // need to fill this for column store
+                        static_cast<ColumnStore*>(table)->insert_tuple(fields);
                     }
                 }
                 

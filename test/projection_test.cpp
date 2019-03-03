@@ -56,7 +56,7 @@ int main(int argc, char **argv) {
 
     //setup the database
     
-    createTables(db, file_name);
+    createTables(db, file_name, emerald::Table::ROW_STORE);
     loadData(db, data_dir);
 
     std::vector<std::string> group_by_columns;

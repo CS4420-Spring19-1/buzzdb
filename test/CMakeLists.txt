@@ -58,20 +58,18 @@ ${CMAKE_THREAD_LIBS_INIT}
 )
 add_test(NAME DatacubeTestSuite COMMAND datacube_test "../../data/schema/catalog.txt" "../../data/database")
 
-
-
-
-## MAIN 
-#[[
-# ---[ MAIN
-add_executable(emerald emerald.cpp)
-target_link_libraries(emerald emerald_library 
+# ---[ BENCHMARK 
+add_executable(benchmark benchmark.cpp)
+target_link_libraries(benchmark emerald_library
 ${GTEST_BOTH_LIBRARIES} 
 ${GLOG_LIBRARIES} 
 ${CMAKE_THREAD_LIBS_INIT}
 )
-add_test(NAME Emerald COMMAND emerald)
-]]
+add_test(NAME BenchmarkSuite COMMAND benchmark "../../data/schema/catalog.txt" "../../data/database")
+
+
+
+
 # --[ Add "make check" target
 
 set(CTEST_FLAGS "")

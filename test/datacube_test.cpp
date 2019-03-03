@@ -50,7 +50,7 @@ namespace emerald {
         field_type column_1_type = db->getTableRef("Customer")->getTableDescriptor()->getColumnType(column_1_id);
         field_type column_2_type = db->getTableRef("Orders")->getTableDescriptor()->getColumnType(column_2_id);
 
-        EXPECT_GT(datacube_filtered->get_summary_table().size(), 0);
+        EXPECT_GE(datacube_filtered->get_summary_table().size(), 0);
         //for each group, check if the tuples satisfy the predicates
         for(auto &group : datacube_filtered->get_summary_table()){
             EXPECT_GT(group.second->size(), 0);
@@ -90,7 +90,7 @@ int main(int argc, char **argv) {
 
     //setup the database
     
-    createTables(db, file_name);
+    createTables(db, file_name, emerald::Table::ROW_STORE);
     loadData(db, data_dir);
 
 

@@ -96,7 +96,7 @@ int main(int argc, char **argv) {
 
     //setup the database
     
-    createTables(db, file_name);
+    createTables(db, file_name, emerald::Table::ROW_STORE);
     loadData(db, data_dir);
 
     int result = RUN_ALL_TESTS();

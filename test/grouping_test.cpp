@@ -114,7 +114,7 @@ int main(int argc, char **argv) {
 
     //setup the database
     
-    createTables(db, file_name);
+    createTables(db, file_name, emerald::Table::ROW_STORE);
     loadData(db, data_dir);
 
     emerald::Table* table_1 = db->getTableRef("Orders");

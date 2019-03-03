@@ -16,7 +16,7 @@ namespace emerald
     Database* setupDB(){
         Database* db = new Database();
 
-        createTables(db, state.file_name);
+        createTables(db, state.file_name, Table::ROW_STORE);
 
         loadData(db, state.data_dir);
         return db;

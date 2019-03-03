@@ -1,6 +1,7 @@
 #include "database.h"
 #include "table.h"
 #include "row_store.h"
+#include "column_store.h"
 #include <iostream>
 
 namespace emerald
@@ -12,11 +13,15 @@ namespace emerald
     void Database::createTable(std::string table_name, std::vector<std::string> column_names, std::vector<std::string> column_types, Table::storageType type){
         tableIds.insert(std::pair<std::string, int>(table_name, tableIds.size()));
         //schema contains column name mapped to column's data type
+        Table* table=nullptr;
         if(type == Table::ROW_STORE){
-            RowStore* rowStoreTable = new RowStore(tableIds.size()-1);
-            rowStoreTable->setTableDesc(rowStoreTable->get_table_id(), column_names, column_types);
-            tables.push_back(rowStoreTable);
+            table = new RowStore(tableIds.size()-1);
+        } else {
+            //column store
+            table = new ColumnStore(tableIds.size()-1);
         }
+        table->setTableDesc(table->get_table_id(), column_names, column_types);
+            tables.push_back(table);
     }
 
     Table* Database::getTable(int index){

@@ -27,14 +27,20 @@ namespace emerald
         return this->value;
     };
 
+    std::string toString(time_t value){
+        std::tm dt = *std::gmtime(&value);
+        std::stringstream wss;
+        wss << (std::put_time(&dt, "%m/%d/%y"));
+        return wss.str();
+    }
+
     bool DateField::filter(Predicate::opType op, Field* value){
-        //std::cout << "Calling datefield filter\n";
         DateField* date_value = static_cast<DateField*>(value);
-        //std::cout << date_value->getValue()<< " " << this->value <<"\n";
+
         switch (op)
         {
             case Predicate::opType::EQ :
-                return std::difftime(this->value, date_value->getValue())==0;
+                return toString(this->value).compare(toString(date_value->getValue())) == 0 ;
                 break;
             case Predicate::opType::NE :
                 return std::difftime(this->value, date_value->getValue())!=0;
