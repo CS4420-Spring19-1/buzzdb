@@ -1,6 +1,7 @@
 #include "scan.h"
 #include "utility.h"
 #include "row_store.h"
+#include "column_store.h"
 #include "summary_list.h"
 #include <iostream>
 
@@ -20,15 +21,15 @@ namespace emerald
         }
         return result;
     };
+
     Table* seqScan(Table* table, Predicate* predicate){
         TableDescriptor* tableDesc = table->getTableDescriptor();
         int columnIndex = tableDesc->getColumnId(predicate->getColumn());
         field_type type = tableDesc->getColumnType(columnIndex);
         Field* value = constructField(predicate->getValue(), type); 
-        if(table->getStorageType() == Table::ROW_STORE){
-            return seqScanRowStore(static_cast<RowStore*>(table), columnIndex, predicate->getOp(), value);
-        }
-        return nullptr;
+
+        return seqScanRowStore(static_cast<RowStore*>(table), columnIndex, predicate->getOp(), value);
+
     };
 
     Summary* SummaryListScan(Database* db, SummaryList* tuple_list, std::vector<Predicate*> predicates){
@@ -59,6 +60,7 @@ namespace emerald
         {
             bool isMatch = true;
             int index = 0;
+            // FIX : this logic assumes that all the operations are connected by AND
             for(auto &predicate : predicates)
             {
                 int tuple_id = tuple_set->get_tuple_id(columns[index]->get_table_id());
@@ -99,5 +101,24 @@ namespace emerald
         }
 
         return result;
+    }
+
+    std::vector<int> ColumnScan(Table* table, Predicate* predicate){
+        int column_id = table->getTableDescriptor()->getColumnId(predicate->getColumn());
+
+        std::vector<Field*> fields = static_cast<ColumnStore*>(table)->get_column(column_id)->get_fields();
+
+        std::vector<int> tuple_ids;
+
+        field_type type = table->getTableDescriptor()->getColumnType(column_id);
+        Field* value = constructField(predicate->getValue(), type);
+
+        for(size_t i = 0; i < fields.size(); i++)
+        {
+            if(fields[i]->filter(predicate->getOp(), value)){
+                tuple_ids.push_back(i);
+            }
+        }
+        return tuple_ids;
     }
 } // emerald

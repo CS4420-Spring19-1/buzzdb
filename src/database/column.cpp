@@ -15,4 +15,8 @@ namespace emerald
     Field* Column::get_field(int index) const {
         return fields_[index];
     }
+
+    std::vector<Field*> Column::get_fields() const {
+        return fields_;
+    }
 } // emerald

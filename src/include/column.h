@@ -14,5 +14,6 @@ namespace emerald
             size_t size() const;
             void insert(Field* field);
             Field* get_field(int index) const;
+            std::vector<Field*> get_fields() const;
     };
 } // emerald

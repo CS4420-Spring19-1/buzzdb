@@ -8,5 +8,7 @@ namespace emerald
 {
     Table* seqScan(Table* table, Predicate* predicate);
 
+    std::vector<int> ColumnScan(Table* table, Predicate* predicate);
+
     DataCube* GroupScan(Database* db, DataCube* datacube, std::vector<Predicate*> predicates);
 } // emerald

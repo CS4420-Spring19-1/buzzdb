@@ -8,6 +8,7 @@
 #include "join_condition.h"
 #include "predicate.h"
 #include "row_store.h"
+#include "scan.h"
 #include "order.h"
 #include <chrono>
 
@@ -36,15 +37,24 @@ namespace emerald {
         auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
         std::cout << "Datacube creation : " << time_milliseconds.count() << " ms \n";
 
+        // APPLY FILTERS
+        std::vector<Predicate*> predicates;
+        predicates.push_back(new Predicate("C_MKTSEGMENT", "=", "BUILDING"));
+        predicates.push_back(new Predicate("O_ORDERDATE", "<", "08/21/96"));
+
+        DataCube* datacube_filtered = GroupScan(db, datacube, predicates);
+
+        //PROJECT COLUMNS
         std::vector<emerald::ProjectionExpression*> selected_columns;
         selected_columns.push_back(new ProjectionExpression("NONE", "O_ORDERDATE"));
         selected_columns.push_back(new ProjectionExpression("NONE", "O_SHIPPRIORITY"));
         
         start = std::chrono::high_resolution_clock::now();
 
-        projected_result = ProjectFromDataCube(datacube, selected_columns);
+        projected_result = ProjectFromDataCube(datacube_filtered, selected_columns);
         elapsed +=  std::chrono::high_resolution_clock::now() - start;
         
+        //ORDER RESULTS
         std::vector<std::string> order_by_column;
         order_by_column.push_back("O_ORDERDATE");
         std::vector<bool> is_asc(true);

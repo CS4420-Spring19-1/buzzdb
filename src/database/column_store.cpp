@@ -32,4 +32,8 @@ namespace emerald
     std::vector<Column*> ColumnStore::get_columns() const {
         return columns_;
     }
+
+    Column* ColumnStore::get_column(int index) const {
+        return columns_[index];
+    }
 } // emerald

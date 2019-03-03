@@ -13,5 +13,6 @@ namespace emerald
             size_t size() const;
             void insert_tuple(std::vector<Field*> fields);
             std::vector<Column*> get_columns() const;
+            Column* get_column(int index) const;
     };
 } // emerald

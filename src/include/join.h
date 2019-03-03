@@ -8,4 +8,6 @@
 namespace emerald
 {
     Table* NestedLoopJoin(Database* db, std::vector<JoinCondition*> join_conditions);
+
+    
 } // emerald
