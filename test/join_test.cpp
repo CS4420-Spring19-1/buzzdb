@@ -175,6 +175,7 @@ namespace emerald {
             EXPECT_EQ(column_1[tuple_1_id]->filter(Predicate::EQ, column_2[tuple_2_id]), true);
             
         }
+        delete db;
         
     }
 }

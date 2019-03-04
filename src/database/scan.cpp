@@ -85,7 +85,8 @@ namespace emerald
     DataCube* GroupScan(Database* db, DataCube* datacube, std::vector<Predicate*> predicates){
         //create an empty datacube
         DataCube* result = new DataCube();
-
+        result->set_dimensions(datacube->get_dimensions());
+        
         //for each group, apply the predicates. If any tuple in the group satisfies the predicate, add the group and tuples to the result
         for(auto &entry : datacube->get_summary_table())
         {

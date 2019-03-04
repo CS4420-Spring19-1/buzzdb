@@ -203,7 +203,6 @@ namespace emerald {
     TEST(GroupTestSuite, ShouldGroupColumnStoreByTwoColumns){
         SetupDBColumnStore();
         std::vector<ColumnDescriptor*> group_by_columns;
-        /* Segmentation fault occurs if the order of grouping attributes change. Unable to figure out why */
         group_by_columns.push_back(db->getTableRef("Orders")->getTableDescriptor()->get_column("O_ORDERDATE"));
         group_by_columns.push_back(db->getTableRef("Orders")->getTableDescriptor()->get_column("O_SHIPPRIORITY"));
 

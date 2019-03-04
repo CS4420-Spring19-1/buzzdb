@@ -20,7 +20,6 @@ namespace emerald
         std::vector<ColumnDescriptor*> columns;
 
         std::map<Dimension, Summary*> groups = datacube->get_summary_table();
-
         /*
             If the columns to project are the grouping attributes, get the values from the datacube itself
         */
@@ -52,7 +51,6 @@ namespace emerald
             }
             
         }
-
         // set the column descriptor for the result table
         // we need the column names at least to perform any filtering later on
         result->getTableDescriptor()->AppendColumns(columns);
