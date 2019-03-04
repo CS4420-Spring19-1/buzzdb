@@ -52,6 +52,8 @@ namespace emerald
         Table* table = tables[table_id];
         if (table->getStorageType()==Table::ROW_STORE) {
             return static_cast<RowStore*>(table)->get_tuple(tuple_id)->getField(column_id);
+        } else {
+            return static_cast<ColumnStore*>(table)->get_column(column_id)->get_field(tuple_id);
         }
         return nullptr;
     }

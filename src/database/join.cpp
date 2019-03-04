@@ -1,5 +1,7 @@
 #include "join.h"
 #include "row_store.h"
+#include "column.h"
+#include "column_store.h"
 #include "join_result.h"
 #include "tuple_set.h"
 #include <iostream>
@@ -88,5 +90,65 @@ namespace emerald
         }
         return joined_table;
         
+    };
+
+    void NestedLoopJoinHelper(JoinCondition* join_condition, JoinResult* result, std::vector<int> table_1_tuples, std::vector<int> table_2_tuples){
+        /* Determine which columns in the table need to be joined. Assumption is that in the 
+            predicate the first field correponds to table 1 and second field corresponds to table 2*/
+        Predicate* join_predicate = join_condition->get_predicate();
+        int table_1_column_id = join_condition->get_table_1()->getTableDescriptor()->getColumnId(join_predicate->getColumn());
+        int table_2_column_id = join_condition->get_table_2()->getTableDescriptor()->getColumnId(join_predicate->getValue());
+
+        if (join_condition->get_table_1()->getStorageType()==Table::JOIN_INDEX) {
+            // TO DO         
+        } else {
+            std::vector<Field*> columns_1 = static_cast<ColumnStore*>(join_condition->get_table_1())->get_column(table_1_column_id)->get_fields();
+            std::vector<Field*> columns_2 = static_cast<ColumnStore*>(join_condition->get_table_2())->get_column(table_2_column_id)->get_fields();
+            
+            /* Loop through both the columns, select only those tuples that match the join_predicate */
+            for(auto &tuple_1 : table_1_tuples)
+            {
+                for(auto &tuple_2 : table_2_tuples)
+                {
+                    if(columns_1[tuple_1]->filter(join_predicate->getOp(), columns_2[tuple_2])){
+                        TupleSet* tuple_set = new TupleSet();
+                        tuple_set->insert(new TupleDescriptor(join_condition->get_table_1()->get_table_id(), tuple_1));
+                        tuple_set->insert(new TupleDescriptor(join_condition->get_table_2()->get_table_id(), tuple_2));
+                        result->insert(tuple_set);
+                    }
+                }  
+            }
+        }
+        
+    };
+
+    Table* NestedLoopJoin(std::vector<JoinCondition*> join_conditions, std::vector<std::vector<int>> filters){
+        JoinResult* joined_table = new JoinResult(-1);
+
+        int table_index=0;
+        for(auto &join_condition : join_conditions)
+        {
+            /* Get the table descriptors from both the tables and merge them*/
+            if(filters[table_index].size() > 0){
+                // if any tuple from table 1 needs to be joined
+                joined_table->merge_table_desc(join_condition->get_table_1()->getTableDescriptor());
+            }
+            if(filters[table_index+1].size() > 0){
+                joined_table->merge_table_desc(join_condition->get_table_2()->getTableDescriptor());
+
+            }
+            if (joined_table->size()==0) {
+                /* This is the first join. Join the two table references and store the result in joined_table */
+                NestedLoopJoinHelper(join_condition, joined_table, filters[table_index], filters[table_index+1]);
+                table_index+=2;
+            } else {
+                /* joined_table has the joined tuples from previous joins. Need to join the current table with that result */
+                
+                table_index++;
+            }
+            
+        }
+        return joined_table;
     }
+
 } // emerald

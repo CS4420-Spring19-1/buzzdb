@@ -14,12 +14,15 @@
 
 std::string file_name;
 std::string data_dir;
-emerald::Database* db = new emerald::Database();
-emerald::Table* projected_result = nullptr;
 
 namespace emerald {
 
     TEST(BenchmarkSuite, Query1DataCube){
+
+        //setup the database
+        Database* db = new Database();
+        createTables(db, file_name, emerald::Table::ROW_STORE);
+        loadData(db, data_dir);
 
         std::vector<std::string> group_by_columns;
         group_by_columns.push_back("O_ORDERDATE");
@@ -51,7 +54,7 @@ namespace emerald {
         
         start = std::chrono::high_resolution_clock::now();
 
-        projected_result = ProjectFromDataCube(datacube_filtered, selected_columns);
+        Table* projected_result = ProjectFromDataCube(datacube_filtered, selected_columns);
         elapsed +=  std::chrono::high_resolution_clock::now() - start;
         
         //ORDER RESULTS
@@ -69,6 +72,25 @@ namespace emerald {
         ordered_result->print();
 
     }
+
+    TEST(BenchmarkSuite, Query1ColumnStore){
+        //setup the database
+        Database* db = new Database();
+        createTables(db, file_name, emerald::Table::ROW_STORE);
+        loadData(db, data_dir);
+
+        //APPLY FILTERS
+
+        //JOIN THE SELECTED TUPLES
+
+        //GROUP THE TUPLES
+
+        //PROJECT RESULT
+
+        //ORDER THE RESULT
+   
+
+    }
 }
 
 int main(int argc, char **argv) {
@@ -81,11 +103,6 @@ int main(int argc, char **argv) {
     file_name = argv[1];
 
     data_dir = argv[2];
-
-    //setup the database
-    
-    createTables(db, file_name, emerald::Table::ROW_STORE);
-    loadData(db, data_dir);
 
     
     int result = RUN_ALL_TESTS();
