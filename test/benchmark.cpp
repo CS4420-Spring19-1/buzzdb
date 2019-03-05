@@ -79,8 +79,10 @@ namespace emerald {
         time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
         std::cout << "Query processing : " << time_milliseconds.count() << " ms \n";
 
-        ordered_result->print();
-
+        if(ordered_result){
+            
+        }
+        delete db;
 
     }
 
@@ -92,8 +94,8 @@ namespace emerald {
 
         //APPLY FILTERS
         auto start = std::chrono::high_resolution_clock::now();
-        std::vector<int> table_1_tuples = ColumnScan(db->getTableRef("Customer"), new Predicate("C_MKTSEGMENT", "=", "BUILDING"));
-        std::vector<int> table_2_tuples = ColumnScan(db->getTableRef("Orders"), new Predicate("O_ORDERPRIORITY", "=", "1-URGENT"));
+        std::vector<int> table_2_tuples = ColumnScan(db->getTableRef("Customer"), new Predicate("C_MKTSEGMENT", "=", "BUILDING"));
+        std::vector<int> table_1_tuples = ColumnScan(db->getTableRef("Orders"), new Predicate("O_ORDERPRIORITY", "=", "1-URGENT"));
         auto elapsed = std::chrono::high_resolution_clock::now() - start;
 
         //JOIN THE SELECTED TUPLES
@@ -117,7 +119,7 @@ namespace emerald {
         start = std::chrono::high_resolution_clock::now();
         DataCube* grouped_tuples = new DataCube(db, joined_table, group_by_columns);
         elapsed += std::chrono::high_resolution_clock::now() - start;
-
+        
         //PROJECT RESULT
         std::vector<emerald::ProjectionExpression*> selected_columns;
         selected_columns.push_back(new ProjectionExpression("NONE", "O_ORDERDATE"));
@@ -139,7 +141,10 @@ namespace emerald {
         auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
         std::cout << "Query processing : " << time_milliseconds.count() << " ms \n";
 
-        ordered_result->print();
+        if (ordered_result) {
+            /* code */
+        }
+        
         delete db;
     }
 }

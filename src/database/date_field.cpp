@@ -32,7 +32,7 @@ namespace emerald
         std::stringstream wss;
         wss << (std::put_time(&dt, "%m/%d/%y"));
         return wss.str();
-    }
+    };
 
     bool DateField::filter(Predicate::opType op, Field* value){
         DateField* date_value = static_cast<DateField*>(value);

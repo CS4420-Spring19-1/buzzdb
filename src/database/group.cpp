@@ -24,7 +24,8 @@ namespace emerald
                     /* Use the table_id, tuple_id and column_id to get the field*/
                     fields.push_back(db->get_field(column->get_table_id(), tuple_id, column->get_column_id()));
                 }
-                /* Create the dimension object */
+                
+                // /* Create the dimension object */
                 Dimension dimension(fields);
 
                 // Insert the dimension into the map

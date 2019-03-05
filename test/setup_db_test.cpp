@@ -233,9 +233,9 @@ TEST(SetupDBTestSuite, ShouldLoadDataRowStore){
                 std::string field_value;
                 int index = 0;
                 while(getline(ss, field_value, ',')){
-                        EXPECT_GT(tuples[tuple_id]->getField(index)->
+                        EXPECT_EQ(tuples[tuple_id]->getField(index)->
                                     filter(Predicate::opType::EQ, 
-                                       constructField(field_value, columns[index]->get_column_type())), 0);
+                                       constructField(field_value, columns[index]->get_column_type())), true);
                         index++;
                 }
                 tuple_id++;
