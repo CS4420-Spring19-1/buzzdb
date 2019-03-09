@@ -1,8 +1,19 @@
 Emerald
 -------
 
+a) Installing dependencies
 
-a) Build instructions:
+```
+sudo apt install cmake
+sudo apt-get install libgtest-dev
+cd /usr/src/gtest
+sudo cmake CMakeLists.txt
+sudo make
+sudo cp *.a /usr/lib
+sudo apt install libgoogle-glog-dev
+```
+
+b) Build instructions:
 
 ```
 mkdir build
@@ -11,7 +22,7 @@ cmake -DCMAKE_BUILD_TYPE=Release ..
 make
 ```
 
-b) Run Emerald
+c) Run Emerald
 
 ```
 ./test/emerald
@@ -22,7 +33,7 @@ b) Run Emerald
     
   New tables can be added by updating catalog file with the table schema. A corresponding csv file (with the same name as the table) needs to be present in the data directory. 
 
-c) Debugging (Optional)
+d) Debugging (Optional)
 
 ```
 cd build
