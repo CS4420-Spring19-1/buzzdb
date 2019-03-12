@@ -271,12 +271,6 @@ TEST(SetupDBTestSuite, ShouldLoadDataColumnStore){
                 std::string field_value;
                 int field_index = 0;
                 while(getline(ss, field_value, ',')){
-                    // if(!(columns[field_index]->get_field(tuple_id)->
-                    //             filter(Predicate::EQ, 
-                    //                 constructField(field_value, column_desc[field_index]->get_column_type())))){
-                    //                     std::cout << static_cast<DateField*>(columns[field_index]->get_field(tuple_id))->getValue() << "\n";
-                    //                     std::cout << static_cast<DateField*>(constructField(field_value, column_desc[field_index]->get_column_type()))->getValue() << "\n";
-                    //                 }
                     EXPECT_EQ(columns[field_index]->get_field(tuple_id)->
                                 filter(Predicate::EQ, 
                                     constructField(field_value, column_desc[field_index]->get_column_type())), true);

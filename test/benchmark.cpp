@@ -23,7 +23,7 @@ namespace emerald {
 
         //setup the database
         Database* db = new Database();
-        createTables(db, file_name, emerald::Table::ROW_STORE);
+        createTables(db, file_name, emerald::Table::COLUMN_STORE);
         loadData(db, data_dir);
 
         std::vector<std::string> group_by_columns;
@@ -35,10 +35,28 @@ namespace emerald {
                                                     db->getTableRef("Customer"), 
                                                     new Predicate("O_CUSTKEY", "=", "C_CUSTKEY")));
 
+        std::vector<int> table_1_tuples, table_2_tuples;
+        for(size_t i = 0; i < db->getTableRef("Orders")->size(); i++)
+        {
+            table_1_tuples.push_back(i);
+        }
+        
+        for(size_t i = 0; i < db->getTableRef("Customer")->size(); i++)
+        {
+            table_2_tuples.push_back(i);
+        }
+        
+        std::vector<std::vector<int>> tuples;
+        tuples.push_back(table_1_tuples);
+        tuples.push_back(table_2_tuples);
+
         auto start = std::chrono::high_resolution_clock::now();
-        DataCube* datacube = new DataCube(db, group_by_columns, join_conditions);
-        auto stop = std::chrono::high_resolution_clock::now();
-        auto elapsed = stop - start;
+        Table* joined_table = NestedLoopJoin(join_conditions, tuples);
+        auto elapsed = std::chrono::high_resolution_clock::now() - start;
+
+        start = std::chrono::high_resolution_clock::now();
+        DataCube* datacube = new DataCube(db, joined_table, group_by_columns);
+        elapsed += std::chrono::high_resolution_clock::now() - start;
         auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
         std::cout << "Datacube creation : " << time_milliseconds.count() << " ms \n";
 
@@ -79,9 +97,8 @@ namespace emerald {
         time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
         std::cout << "Query processing : " << time_milliseconds.count() << " ms \n";
 
-        if(ordered_result){
-            
-        }
+        std::cout << ordered_result->size() << "\n";
+        
         delete db;
 
     }
@@ -141,9 +158,7 @@ namespace emerald {
         auto time_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
         std::cout << "Query processing : " << time_milliseconds.count() << " ms \n";
 
-        if (ordered_result) {
-            /* code */
-        }
+        std::cout << ordered_result->size() << "\n";
         
         delete db;
     }
