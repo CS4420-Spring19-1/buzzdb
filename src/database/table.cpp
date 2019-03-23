@@ -2,8 +2,7 @@
 #include <string>
 #include <iostream>
 
-namespace emerald
-{
+namespace emerald {
     Table::Table(int table_id, storageType storage_type){
         type = storage_type;
         table_id_ = table_id;
