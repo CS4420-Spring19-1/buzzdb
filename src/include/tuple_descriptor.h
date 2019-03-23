@@ -1,7 +1,8 @@
+// is this necessary? I am genuinely not sure.
 #pragma once
 
-namespace emerald
-{
+namespace emerald {
+    // not sure how this class works
     class TupleDescriptor {
         private:
             int table_id_;
