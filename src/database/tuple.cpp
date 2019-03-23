@@ -1,42 +1,40 @@
 #include "tuple.h"
 #include <iostream>
 
-namespace emerald
-{
-    Tuple::Tuple(){
-
+namespace emerald {
+    Tuple::Tuple() {
     }
     
-    Tuple::Tuple(std::vector<Field*> fields){
+    Tuple::Tuple(std::vector<Field*> fields) {
         fields_ = fields;
-    };
+        // does the tuple description need to be handled here?
+    }; // redundant semicolon?
 
-    void Tuple::print() const{
-        for(auto &field : fields_)
-        {
+    // Copy constructor for Tuple class
+    Tuple::Tuple(const Tuple& tuple) {
+        fields_ = tuple.get_fields();
+    }; // redundant semicolon?
+
+    void Tuple::print() const {
+        for (auto &field : fields_) {
             field->print();
         }
         std::cout << std::endl;
-    };
+    }; // redundant semicolon?
 
-    Field* Tuple::getField(int index) const{
+    Field* Tuple::getField(int index) const {
         return fields_[index];
-    };
+    }; // redundant semicolon?
 
-    // Copy constructor for Tuple class
-    Tuple::Tuple(const Tuple& tuple){
-        fields_ = tuple.get_fields();
-    };
-
-    std::vector<Field*> Tuple::get_fields() const{
+    std::vector<Field*> Tuple::get_fields() const {
         return fields_;
-    };
+    }; // redundant semicolon?
 
-    void Tuple::append_fields(std::vector<Field*> fields){
+    void Tuple::append_fields(std::vector<Field*> fields) {
         fields_.insert(fields_.end(), fields.begin(), fields.end());
-    };
+    }; // redundant semicolon?
 
-    void Tuple::add_field(Field* field){
+    void Tuple::add_field(Field* field) {
         fields_.push_back(field);
     }
 } // emerald
