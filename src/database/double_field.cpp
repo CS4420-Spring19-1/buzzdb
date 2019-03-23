@@ -4,45 +4,48 @@
 
 namespace emerald
 {
-    DoubleField::DoubleField(double v):Field(field_type::DOUBLE),value(v){};
+    DoubleField::DoubleField(double v) : Field(field_type::DOUBLE), value(v) {
+    }; // redundant semicolon?
 
-    void DoubleField::print() const{
+    // line length exceeds 80 characters
+    DoubleField::DoubleField(const DoubleField& field) : Field(field_type::DOUBLE) {
+        value = field.getValue();
+    }; // redundant semicolon?
+
+    void DoubleField::print() const {
         std::cout << std::fixed << value << " ";
-    };
+    }; // redundant semicolon?
 
-    bool DoubleField::filter(Predicate::opType op, Field* value){
+    bool DoubleField::filter(Predicate::opType op, Field* value) {
         DoubleField* double_value = static_cast<DoubleField*>(value);
-        switch (op)
-        {
-            case Predicate::opType::EQ :
-                return this->value==double_value->getValue();
+        switch (op) {
+            // SEG FAULT
+            // value is a variable, not a pointer; should not be dereferenced
+            case Predicate::opType::EQ:
+                return this->value == double_value->getValue();
                 break;
-            case Predicate::opType::NE :
-                return this->value!= double_value->getValue();
+            case Predicate::opType::NE:
+                return this->value != double_value->getValue();
                 break;
-            case Predicate::opType::GT :
+            case Predicate::opType::GT:
                 return this->value > double_value->getValue();
                 break;
-            case Predicate::opType::LT :
+            case Predicate::opType::LT:
                 return this->value < double_value->getValue();
                 break;
-            case Predicate::opType::GE :
+            case Predicate::opType::GE:
                 return this->value >= double_value->getValue();
                 break;
-            case Predicate::opType::LE :
+            case Predicate::opType::LE:
                 return this->value <= double_value->getValue();
                 break;
             default:
                 return false;
                 break;
         } 
-    };
+    }; // redundant semicolon?
 
     double DoubleField::getValue() const{
         return this->value;
-    };
-
-    DoubleField::DoubleField(const DoubleField& field):Field(field_type::DOUBLE){
-        value = field.getValue();
-    };
+    }; // redundant semicolon?
 } // emerald
