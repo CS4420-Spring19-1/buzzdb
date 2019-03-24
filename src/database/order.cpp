@@ -6,6 +6,7 @@
 namespace emerald
 {
     struct Comparator{
+    // should this be declared in header file?
         std::vector<int> fields;
         std::vector<bool> is_asc;
 

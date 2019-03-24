@@ -3,8 +3,8 @@
 #include "tuple_descriptor.h"
 #include "field.h"
 
-namespace emerald
-{
+namespace emerald {
+    // not sure what this class does
     class TupleSet {
         private:
             std::vector<TupleDescriptor*> tuple_descriptors_;

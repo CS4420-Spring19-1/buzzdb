@@ -26,5 +26,6 @@ namespace emerald
             delete tuple;
         }
         tuples_.clear();
+    // not implemented?
     }
 } // emerald

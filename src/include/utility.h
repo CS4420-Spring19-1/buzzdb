@@ -6,10 +6,14 @@
 #include <string>
 #include <map>
 
-namespace emerald
-{
+namespace emerald {
+    // not sure where these functions are being used
     void createTables(Database* db, std::string catalogFile, Table::storageType type);
-    void loadData(Database* db, std::string data_dir);
+
     Field* constructField(std::string field_value, field_type type);
+
+    void loadData(Database* db, std::string data_dir);
+
     void printSummaryTable(std::map<Dimension, Summary*> groups);
+
 } // emerald
