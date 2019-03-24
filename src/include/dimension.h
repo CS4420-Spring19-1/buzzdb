@@ -4,6 +4,7 @@
 
 namespace emerald
 {
+    // used for grouping in group.h / cpp
     class Dimension {
         private:
             std::vector<Field*> fields_;
