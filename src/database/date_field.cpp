@@ -27,6 +27,15 @@ namespace emerald
         std::cout << wss.str() << " \n" ;
     }; // redundant semicolon?
 
+    // function not declared in header file
+    // function used in filter()
+    std::string toString(time_t value) {
+        std::tm dt = *std::gmtime(&value);
+        std::stringstream wss;
+        wss << (std::put_time(&dt, "%m/%d/%y"));
+        return wss.str();
+    };
+
     bool DateField::filter(Predicate::opType op, Field* value) {
         DateField* date_value = static_cast<DateField*>(value);
         switch (op) {
@@ -60,11 +69,4 @@ namespace emerald
         return this->value;
     }; // redundant semicolon?
 
-    // not declared in header file
-    std::string toString(time_t value) {
-        std::tm dt = *std::gmtime(&value);
-        std::stringstream wss;
-        wss << (std::put_time(&dt, "%m/%d/%y"));
-        return wss.str();
-    };
 } // emerald
