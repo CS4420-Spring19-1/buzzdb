@@ -41,6 +41,10 @@ class Tuple {
    */
   Field* getField(int index) const;
 
+  /**
+   * Changes the value of the ith value of the tuple.
+   */
+  void setField(int index, Field& new_field);
 
   /**
    * Returns a vector of all fields in the tuple.
