@@ -2,6 +2,7 @@
 #include<vector>
 
 #include "field.h"
+#include "tuple_descriptor.h"
 
 namespace emerald{
     class Tuple{
