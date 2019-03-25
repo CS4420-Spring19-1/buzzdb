@@ -8,14 +8,14 @@ namespace emerald {
 class Tuple {
  private:
   /**
-   * Internal representation of a tuple
-   */
-  std::vector<Field*> fields_;
-
-  /**
    * Pointer to a TupleDescriptor object that represents the tuple's schema
    */
   TupleDescriptor* tuple_desc_;
+
+  /**
+   * Internal representation of a tuple
+   */
+  std::vector<Field*> fields_;
 
   // RecordID has not been adeded yet as the class has not been created.
 
@@ -34,16 +34,6 @@ class Tuple {
    * Copy constructor of the Tuple class
    */
   Tuple(const Tuple& tuple);
-
-  /**
-   * Prints the tuple's contents
-   */
-  void print() const;
-
-  /**
-   * Returns a pointer to the TupleDescriptor object
-   */
-  TupleDescriptor* get_tuple_desc() const;
 
   /**
    * Returns a pointer to the ith field in the tuple.
@@ -69,5 +59,15 @@ class Tuple {
    * Returns null if field is not set.
    */
   void add_field(Field* field);
+
+  /**
+   * Returns a pointer to the TupleDescriptor object
+   */
+  TupleDescriptor* get_tuple_desc() const;
+
+  /**
+   * Prints the tuple's contents
+   */
+  void print() const;
 };
 }
