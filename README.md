@@ -22,14 +22,14 @@ cmake -DCMAKE_BUILD_TYPE=Release ..
 make
 ```
 
-c) Run Emerald
+c) Run Tests
 
 ```
-./test/emerald
+make check
 ```
 
-  To create tables and load data into them, use the following command
-    ```./test/emerald -f "../data/schema/catalog.txt" -d "../data/database"```
+  To run any specific test file, use the following command
+    ```./test/<test_file> -f "../data/schema/catalog.txt" -d "../data/database"```
     
   New tables can be added by updating catalog file with the table schema. A corresponding csv file (with the same name as the table) needs to be present in the data directory. 
 
