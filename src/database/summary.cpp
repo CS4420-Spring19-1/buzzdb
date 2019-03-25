@@ -1,8 +1,7 @@
 #include "summary.h"
 
-namespace emerald
-{
-    Summary::Summary(SummaryType type){
+namespace emerald {
+    Summary::Summary(SummaryType type) {
         summary_type_ = type;
     }
 

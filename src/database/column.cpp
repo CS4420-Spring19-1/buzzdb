@@ -1,8 +1,8 @@
 #include "column.h"
 
-namespace emerald
-{
-    Column::Column(){}
+namespace emerald {
+    Column::Column() {
+    }
 
     size_t Column::size() const {
         return fields_.size();

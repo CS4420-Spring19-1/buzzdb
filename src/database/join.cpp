@@ -9,6 +9,8 @@
 namespace emerald
 {
     void NestedLoopJoinHelper(Database* db, JoinCondition* join_condition, JoinResult* result){
+    // function uses dynamic memory allocation
+    // function not declared in header
         /* Determine which columns in the table need to be joined. Assumption is that in the 
             predicate the first field correponds to table 1 and second field corresponds to table 2*/
         Predicate* join_predicate = join_condition->get_predicate();
@@ -66,6 +68,7 @@ namespace emerald
     };
 
     Table* NestedLoopJoin(Database* db, std::vector<JoinCondition*> join_conditions){
+    // function uses dyanmic memory allocation
         JoinResult* joined_table = new JoinResult(-1);
         /*
            Loop through the join conditions and join the tables
@@ -92,6 +95,8 @@ namespace emerald
         
     };
 
+    // function not declared in header
+    // function uses dynamic memory allocation
     void NestedLoopJoinHelper(JoinCondition* join_condition, JoinResult* result, std::vector<int> table_1_tuples, std::vector<int> table_2_tuples){
         /* Determine which columns in the table need to be joined. Assumption is that in the 
             predicate the first field correponds to table 1 and second field corresponds to table 2*/
@@ -123,6 +128,7 @@ namespace emerald
     };
 
     Table* NestedLoopJoin(std::vector<JoinCondition*> join_conditions, std::vector<std::vector<int>> filters){
+    // function uses dynamic memory allocation
         JoinResult* joined_table = new JoinResult(-1);
 
         int table_index=0;

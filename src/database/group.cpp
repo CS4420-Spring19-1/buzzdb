@@ -38,6 +38,7 @@ namespace emerald
             }
             
         }
+        // what if the first if clause evaluates to false?
         return groups; 
     }
 } // emerald
