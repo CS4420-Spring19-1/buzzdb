@@ -1,0 +1,35 @@
+dist: trusty
+sudo: false
+language: cpp
+os: linux
+compiler: gcc
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - gcc-7
+      - g++-7
+      - libgtest-dev
+      - libgoogle-glog-dev
+    update: true
+
+before_install: chmod +x ./ci/install_dependencies.sh
+install: ./ci/install_dependencies.sh
+script: 
+  - export CC=gcc-7
+  - export CXX=g++-7
+  - mkdir build
+  - cd build
+  - cmake -DCMAKE_BUILD_TYPE=Release ..
+  - make
+
+notifications:
+  email: false
+
+# References:
+# Travis CI Docs - Installing dependencies: https://docs.travis-ci.com/user/installing-dependencies/
+# How to tell cmake which compilers to use: https://stackoverflow.com/questions/41916656/how-to-use-travis-ci-to-build-modern-c-using-modern-cmake
+# (not used) How to install GTest into Travis CI: http://david-grs.github.io/cpp-clang-travis-cmake-gtest-coveralls-appveyor/
+#     git submodule command: https://git-scm.com/book/en/v2/Git-Tools-Submodules 

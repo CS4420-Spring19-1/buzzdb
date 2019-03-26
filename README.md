@@ -1,5 +1,6 @@
 Emerald
 -------
+[![Build Status](https://travis-ci.org/georgia-tech-db/buzzdb.svg?branch=master)](https://travis-ci.org/georgia-tech-db/buzzdb)
 
 a) Installing dependencies
 
