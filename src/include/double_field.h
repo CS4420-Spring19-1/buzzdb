@@ -3,19 +3,39 @@
 #include "field.h"
 
 namespace emerald {
-    class DoubleField : public Field {
-        private:
-            double value;
+class DoubleField : public Field {
+private:
+  double value;
 
-        public:
-            DoubleField(double v);
+  // not implemented: equality operator, serialize, getType
 
-            DoubleField(const DoubleField& field);
+public:
+  /**
+   * Constructor for the DoubleField class
+   */
+  DoubleField(double v);
 
-            void print() const;
+  /**
+   * Copy constructor for the DoubleField class
+   */
+  DoubleField(const DoubleField &field);
 
-            bool filter(Predicate::opType op, Field* value);
+  /**
+   * Prints the double field's contents
+   */
+  void print() const override;
 
-            double getValue() const;
-    };
-} // emerald
+  /**
+   * Compares other_value with the current field using the op specified.
+   * Equivalent to field.compare() in the Java implementation.
+   * If function returns true, the tuple / attribute value needs to be
+   *  included in the result.
+   */
+  bool filter(Predicate::opType op, Field *other_value) override;
+
+  /**
+   * Gets the double field's value
+   */
+  double getValue() const;
+};
+}

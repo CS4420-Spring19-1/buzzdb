@@ -3,19 +3,53 @@
 #include "field.h"
 
 namespace emerald {
-   class IntegerField : public Field {
-       private:
-            int value;
+class IntegerField : public Field {
+ public:
+  /**
+   * Constructor for the IntegerField class
+   */
+  IntegerField(int v);
 
-        public:
-            IntegerField(int v);
+  /**
+   * Copy constructor for the IntegerField class
+   */
+  IntegerField(const IntegerField &field);
 
-            void print() const;
+  /**
+   * Gets the integer field's value
+   */
+  int get_value() const;
 
-            bool filter(Predicate::opType op, Field* value);
+  /**
+   * Returns the type of the Field.
+   */
+  Type::FieldType get_type() const override;
 
-            int getValue() const;
+  /**
+   * Write the bytes representing the field to the specified Stream.
+   */
+  /* To be implemented
+    void serialize(DataOutputStream dos) override;
+  */
 
-            IntegerField(const IntegerField& field);
-   }; 
-} // emerald
+  /**
+   * Compares the value of the IntegerField to the value of operand.
+   * 
+   * Throws IllegalCastException if operand is not a IntegerField *.
+   */
+  bool Compare(Predicate::OpType op_type, Field * operand) override;
+
+  /**
+   * Prints the integer field's contents
+   */
+  void Print() const override;
+
+  /**
+   * Overload of the equality operator.
+   */
+  bool operator==(IntegerField other);
+
+ private:
+  int value;
+};
+}

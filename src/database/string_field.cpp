@@ -1,52 +1,55 @@
 #include <iostream>
 #include <string_field.h>
 
-namespace emerald
-{
-    // exceeds 80 chracters
-    StringField::StringField(std::string v) : Field(field_type::STRING), value(v) {
-    };
+namespace emerald {
+StringField::StringField(std::string s) : value(s) {
+}
 
-    void StringField::print() const {
-        std::cout << value << " \n";
-    };
+StringField::StringField(const StringField & string_field) { 
+  value = string_field.get_value();
+}
 
-    bool StringField::filter(Predicate::opType op, Field* value) {
-        StringField* str_value = static_cast<StringField*>(value);
-        switch (op) {
-            // SEG FAULT
-            // value is a variable, not a pointer; should not be dereferenced
-            case Predicate::opType::EQ:
-                return this->value.compare(str_value->getValue())==0;
-                break;
-            case Predicate::opType::NE:
-                return this->value.compare(str_value->getValue())!=0;
-                break;
-            case Predicate::opType::GT:
-                return this->value.compare(str_value->getValue())>0;
-                break;
-            case Predicate::opType::LT:
-                return this->value.compare(str_value->getValue())<0;
-                break;
-            case Predicate::opType::GE:
-                return this->value.compare(str_value->getValue())>=0;
-                break;
-            case Predicate::opType::LE:
-                return this->value.compare(str_value->getValue())<=0;
-                break;
-            default:
-                return false;
-                break;
-        } 
-    };
+std::string StringField::get_value() const {
+  return this->value;
+}
 
-    std::string StringField::getValue() const{
-        // SEG FAULT
-        // value is a variable, not a pointer; should not be dereferenced
-        return this->value;
-    };
+Type::FieldType StringField::get_type() const {
+  return Type::FieldType::STRING;
+}
 
-    StringField::StringField(const StringField& field):Field(field_type::STRING){
-        value = field.getValue();
-    };
-} // emerald
+bool StringField::Compare(Predicate::OpType op_type, Field * operand) {
+  StringField * operand_value_pointer = static_cast<StringField *>(operand);
+  std::string operand_value = operand_value_pointer->get_value();
+  switch (op_type) {
+    case Predicate::OpType::EQUALS:
+      return this->value == operand_value;
+      break;
+    case Predicate::OpType::NOT_EQUALS:
+      return this->value != operand_value;
+      break;
+    case Predicate::OpType::GREATER_THAN:
+      return this->value > operand_value;
+      break;
+    case Predicate::OpType::LESS_THAN:
+      return this->value < operand_value;
+      break;
+    case Predicate::OpType::GREATER_THAN_OR_EQUAL:
+      return this->value >= operand_value;
+      break;
+    case Predicate::OpType::LESS_THAN_OR_EQUAL:
+      return this->value <= operand_value;
+      break;
+    default:
+      return false; // should throw an exception instead of returning false
+      break;
+  }
+}
+
+void StringField::Print() const {
+  std::cout << value << " \n";
+}
+
+bool StringField::operator==(StringField other) {
+  return this->value == other.get_value();
+}
+}
