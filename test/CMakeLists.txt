@@ -79,6 +79,7 @@ add_test(NAME BenchmarkSuite COMMAND benchmark "../../data/schema/catalog.txt" "
 
 
 
+
 # --[ Add "make check" target
 
 set(CTEST_FLAGS "")

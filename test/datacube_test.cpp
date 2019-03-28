@@ -38,7 +38,7 @@ namespace emerald {
         predicates.push_back(new Predicate("C_MKTSEGMENT", "=", "BUILDING"));
         predicates.push_back(new Predicate("O_ORDERPRIORITY", "=", "1-URGENT"));
 
-        DataCube* datacube_filtered = GroupScan(db, datacube, predicates);
+        DataCube* datacube_filtered = GroupScan(db, datacube, predicates, "AND");
 
         int table_1_id = db->getTableId("Customer");
         int table_2_id = db->getTableId("Orders");

@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 
+#include <fstream>
+
 #include "utility.h"
 #include "database.h"
 #include "join_condition.h"
@@ -119,6 +121,9 @@ namespace emerald {
 
         Table* result = NestedLoopJoin(join_conditions, tuple_ids);
 
+       // std::ofstream file("../data/join.txt");
+
+
         EXPECT_GT(result->size(), 0);
         
         //check if result is a join index
@@ -171,6 +176,8 @@ namespace emerald {
             // for each tuple set, there will be two tuples. The join columns for each of these tuples should have same value
             int tuple_1_id = tuple_set->get_tuple_id(table_1_id);
             int tuple_2_id = tuple_set->get_tuple_id(table_2_id);
+
+
 
             EXPECT_EQ(column_1[tuple_1_id]->filter(Predicate::EQ, column_2[tuple_2_id]), true);
             

@@ -32,7 +32,7 @@ namespace emerald
 
     };
 
-    Summary* SummaryListScan(Database* db, SummaryList* tuple_list, std::vector<Predicate*> predicates){
+    Summary* SummaryListScan(Database* db, SummaryList* tuple_list, std::vector<Predicate*> predicates, std::string logical_connector){
         SummaryList* result = new SummaryList();
 
         // use the first tuple_set to figure out which tables the predicates belong to
@@ -64,12 +64,28 @@ namespace emerald
             for(auto &predicate : predicates)
             {
                 int tuple_id = tuple_set->get_tuple_id(columns[index]->get_table_id());
-                if(!db->get_field(columns[index]->get_table_id(), tuple_id, columns[index]->get_column_id())
+                if(index == 0){
+                    isMatch = db->get_field(columns[index]->get_table_id(), tuple_id, columns[index]->get_column_id())
                         ->filter(predicate->getOp(), 
-                            constructField(predicate->getValue(), columns[index]->get_column_type()))){
-                    isMatch = false;
-                    break;
-                }                
+                            constructField(predicate->getValue(), columns[index]->get_column_type()));
+                } else {
+                    if(logical_connector.compare("AND")==0){
+                        isMatch = isMatch && db->get_field(columns[index]->get_table_id(), tuple_id, columns[index]->get_column_id())
+                                                ->filter(predicate->getOp(), 
+                                                constructField(predicate->getValue(), columns[index]->get_column_type()));
+                        if(!isMatch){
+                            break;
+                        }
+                    } else {
+
+                        isMatch = isMatch || db->get_field(columns[index]->get_table_id(), tuple_id, columns[index]->get_column_id())
+                                                ->filter(predicate->getOp(), 
+                                                constructField(predicate->getValue(), columns[index]->get_column_type()));
+                        if(isMatch){
+                            break;
+                        }
+                    }
+                }
                 index++;
             }  
             if (isMatch) {
@@ -82,7 +98,7 @@ namespace emerald
         return result;
     }
 
-    DataCube* GroupScan(Database* db, DataCube* datacube, std::vector<Predicate*> predicates){
+    DataCube* GroupScan(Database* db, DataCube* datacube, std::vector<Predicate*> predicates, std::string logical_connector){
         //create an empty datacube
         DataCube* result = new DataCube();
         result->set_dimensions(datacube->get_dimensions());
@@ -92,7 +108,7 @@ namespace emerald
         {
             Summary* filtered_tuples = nullptr;
             if(entry.second->get_type()==Summary::SUMMARY_LIST){
-                filtered_tuples = SummaryListScan(db, static_cast<SummaryList*>(entry.second), predicates);
+                filtered_tuples = SummaryListScan(db, static_cast<SummaryList*>(entry.second), predicates, logical_connector);
             }
 
             if(filtered_tuples->size()>0){

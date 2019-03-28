@@ -10,5 +10,5 @@ namespace emerald
 
     std::vector<int> ColumnScan(Table* table, Predicate* predicate);
 
-    DataCube* GroupScan(Database* db, DataCube* datacube, std::vector<Predicate*> predicates);
+    DataCube* GroupScan(Database* db, DataCube* datacube, std::vector<Predicate*> predicates, std::string logical_connector);
 } // emerald

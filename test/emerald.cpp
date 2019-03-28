@@ -10,7 +10,7 @@
 #include "benchmark.h"
 #include "macros.h"
 #include "configuration.h"
-#include "emerald_db.h"
+
 
 namespace emerald {
 
@@ -19,9 +19,9 @@ extern configuration state;
 // Main Entry Point
 void RunBenchmark() {
 
-	//RunJoinBenchmark();
+	RunJoinBenchmark();
   
-  RunDB();
+  //RunDB();
 
 }
 
