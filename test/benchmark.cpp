@@ -21,11 +21,14 @@ emerald::DataCube* datacube = nullptr;
 
 namespace emerald {
 
-    void createDataCube(){
+    void createDB(){
         //setup the database
         db = new Database();
         createTables(db, file_name, emerald::Table::COLUMN_STORE);
         loadData(db, data_dir);
+    }
+
+    void createDataCube(){
 
         std::vector<std::string> group_by_columns;
         group_by_columns.push_back("O_ORDERDATE");
@@ -97,8 +100,7 @@ namespace emerald {
 
         std::cout << ordered_result->size() << "\n";
         
-        delete db;
-        delete datacube;
+
     }
 
     void printCount(DataCube* dc){
@@ -110,10 +112,8 @@ namespace emerald {
         std::cout << "Groups: " << groups << " Tuples: " << tuples << "\n";
     }
 
-
-    TEST(BenchmarkSuite, DataCube1){
+    void Query1(){
         std::cout << "Query : Scan selectivity = 0.2\n";
-        createDataCube();
 
         // APPLY FILTERS
         std::vector<Predicate*> predicates;
@@ -134,9 +134,8 @@ namespace emerald {
         QueryOnDataCube(datacube_filtered);
     }
 
-    TEST(BenchmarkSuite, DataCube2){
+    void Query2(){
         std::cout << "Query : Scan selectivity = 0.4\n";
-        createDataCube();
         // APPLY FILTERS
         std::vector<Predicate*> predicates;
         predicates.push_back(new Predicate("C_MKTSEGMENT", "=", "BUILDING"));
@@ -154,12 +153,10 @@ namespace emerald {
         printCount(datacube_filtered);
 
         QueryOnDataCube(datacube_filtered);
-
     }
 
-    TEST(BenchmarkSuite, DataCube3){
+    void Query3(){
         std::cout << "Query : Scan selectivity = 0.6\n";
-        createDataCube();
         // APPLY FILTERS
         std::vector<Predicate*> predicates;
         predicates.push_back(new Predicate("C_MKTSEGMENT", "=", "BUILDING"));
@@ -178,12 +175,10 @@ namespace emerald {
         printCount(datacube_filtered);
 
         QueryOnDataCube(datacube_filtered);
-
     }
 
-    TEST(BenchmarkSuite, DataCube4){
+    void Query4(){
         std::cout << "Query : Scan selectivity = 0.8\n";
-        createDataCube();
         // APPLY FILTERS
         std::vector<Predicate*> predicates;
         predicates.push_back(new Predicate("C_MKTSEGMENT", "=", "BUILDING"));
@@ -203,12 +198,10 @@ namespace emerald {
         printCount(datacube_filtered);
 
         QueryOnDataCube(datacube_filtered);
-
     }
 
-    TEST(BenchmarkSuite, DataCube5){
+    void Query5(){
         std::cout << "Query : Scan selectivity = 1\n";
-        createDataCube();
         // APPLY FILTERS
         std::vector<Predicate*> predicates;
         predicates.push_back(new Predicate("C_MKTSEGMENT", "=", "BUILDING"));
@@ -229,15 +222,21 @@ namespace emerald {
         printCount(datacube_filtered);
 
         QueryOnDataCube(datacube_filtered);
-
     }
 
-    void createDB(){
-        //setup the database
-        Database* db = new Database();
-        createTables(db, file_name, emerald::Table::COLUMN_STORE);
-        loadData(db, data_dir);
+    TEST(BenchmarkSuite, DataCube){
+        createDB();
+        createDataCube();
+
+        Query1();
+        Query2();
+        Query3();
+        Query4();
+        Query5();
+        
     }
+
+
 
     void QueryOnTable(std::vector<int> table_1_tuples, std::vector<int> table_2_tuples){
         //JOIN THE SELECTED TUPLES
@@ -298,12 +297,12 @@ namespace emerald {
 
         std::cout << ordered_result->size() << "\n";
         
-        delete db;
+
     }
 
-    TEST(BenchmarkSuite, Table1){
+    void TableQuery1(){
         std::cout << "Query : Scan selectivity = 0.2\n";
-        createDB();
+        
         //APPLY FILTERS
         auto start = std::chrono::high_resolution_clock::now();
         std::vector<int> table_2_tuples = ColumnScan(db->getTableRef("Customer"), new Predicate("C_MKTSEGMENT", "=", "BUILDING"));
@@ -321,9 +320,9 @@ namespace emerald {
         QueryOnTable(table_1_tuples, table_2_tuples);
     }
 
-    TEST(BenchmarkSuite, Table2){
+    void TableQuery2(){
         std::cout << "Query : Scan selectivity = 0.4\n";
-        createDB();
+
         //APPLY FILTERS
         auto start = std::chrono::high_resolution_clock::now();
         std::vector<int> table_2_tuples = ColumnScan(db->getTableRef("Customer"), new Predicate("C_MKTSEGMENT", "=", "BUILDING"));
@@ -343,9 +342,9 @@ namespace emerald {
         QueryOnTable(table_1_tuples, table_2_tuples);
     }
 
-    TEST(BenchmarkSuite, Table3){
+    void TableQuery3(){
         std::cout << "Query : Scan selectivity = 0.6\n";
-        createDB();
+
         //APPLY FILTERS
         auto start = std::chrono::high_resolution_clock::now();
         std::vector<int> table_2_tuples = ColumnScan(db->getTableRef("Customer"), new Predicate("C_MKTSEGMENT", "=", "BUILDING"));
@@ -367,9 +366,9 @@ namespace emerald {
         QueryOnTable(table_1_tuples, table_2_tuples);
     }
 
-    TEST(BenchmarkSuite, Table4){
+    void TableQuery4(){
         std::cout << "Query : Scan selectivity = 0.8\n";
-        createDB();
+
         //APPLY FILTERS
         auto start = std::chrono::high_resolution_clock::now();
         std::vector<int> table_2_tuples = ColumnScan(db->getTableRef("Customer"), new Predicate("C_MKTSEGMENT", "=", "BUILDING"));
@@ -393,9 +392,9 @@ namespace emerald {
         QueryOnTable(table_1_tuples, table_2_tuples);
     }
 
-    TEST(BenchmarkSuite, Table5){
+    void TableQuery5(){
         std::cout << "Query : Scan selectivity = 1\n";
-        createDB();
+
         //APPLY FILTERS
         auto start = std::chrono::high_resolution_clock::now();
         std::vector<int> table_2_tuples = ColumnScan(db->getTableRef("Customer"), new Predicate("C_MKTSEGMENT", "=", "BUILDING"));
@@ -420,6 +419,17 @@ namespace emerald {
 
         QueryOnTable(table_1_tuples, table_2_tuples);
     }
+
+    TEST(BenchmarkSuite, Table1){
+
+        TableQuery1();
+        TableQuery2();
+        TableQuery3();
+        TableQuery4();
+        TableQuery5();
+        
+    }
+
 }
 
 int main(int argc, char **argv) {
@@ -432,7 +442,6 @@ int main(int argc, char **argv) {
     file_name = argv[1];
 
     data_dir = argv[2];
-
     
     int result = RUN_ALL_TESTS();
 
