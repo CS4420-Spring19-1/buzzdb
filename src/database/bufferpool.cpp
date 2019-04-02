@@ -1,15 +1,14 @@
 #include "bufferpool.h"
 
-void BufferPool::BufferPool(int numPages){
-    MaxSize = numPages;
+void BufferPool::BufferPool(int num_pages) {
+  MaxSize = num_pages;
 }
 
-const int BufferPool::getPageSize(){
-    return PAGE_SIZE;
+const int BufferPool::get_page_size() {
+  return PAGE_SIZE;
 }
 
-Page* BufferPool::getPage(TransactionId* tid, PageId* pid, Permissions* perm){
-    
+Page* BufferPool::GetPage(TransactionId* tid, PageId* pid, Permissions* perm){
     for(Page* page: PageList){
         if (page->getId()->equals(pid)){
             return page;
@@ -21,8 +20,8 @@ Page* BufferPool::getPage(TransactionId* tid, PageId* pid, Permissions* perm){
     }
 
     // get_catalog not implemented && 4.3
-    for (Table* tab: Database->getCatalog()->getTables()){
-        if (tab.file->getId() == pid->get_table_id()){
+    for (Table* tab: Database->GetCatalog()->GetTables()){
+        if (tab.file->getid() == pid->get_table_id()){
             Page* page = tab.file->ReadPage(pid);
             PageList.push_back(page);
             return page;
@@ -32,46 +31,46 @@ Page* BufferPool::getPage(TransactionId* tid, PageId* pid, Permissions* perm){
     return null;
 }
 
-void BufferPool::releasePage(TransactionId* tid, PageId* pid){
+void BufferPool::ReleasePage(TransactionId* tid, PageId* pid){
 
 }
 
-void BufferPool::transactionComplete(TransactionId* tid){
+void BufferPool::TransactionComplete(TransactionId* tid){
 
 }
 
-bool BufferPool::holdslock(TransactionId* tid, PageId* p){
+bool BufferPool::HoldsLock(TransactionId* tid, PageId* p){
     return false;
 }
 
-void BufferPool::transactionComplete(TransactionId* tid, bool commit){
+void BufferPool::TransactionComplete(TransactionId* tid, bool commit){
 
 }
 
-void BufferPool::insertTuple(TransactionId* tid, int tableId, Tuple* t){
+void BufferPool::InsertTuple(TransactionId* tid, int tableId, Tuple* t){
 
 }
 
-void BufferPool::deleteTuple(TransactionId* tid, Tuple* t){
+void BufferPool::DeleteTuple(TransactionId* tid, Tuple* t){
 
 }
 
-void BufferPool::flushAllPages(){
+void BufferPool::FlushAllPages(){
 
 }
 
-void BufferPool::discardPage(PageId* pid){
+void BufferPool::DiscardPage(PageId* pid){
 
 }
 
-void BufferPool::flushPage(PageId* pid){
+void BufferPool::FlushPage(PageId* pid){
 
 }
 
-void BufferPool::flushPages(TransactionId* tid){
+void BufferPool::FlushPages(TransactionId* tid){
 
 }
 
-void BufferPool::evictPage() {
+void BufferPool::EvictPage() {
 
 }

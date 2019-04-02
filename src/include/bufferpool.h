@@ -45,8 +45,8 @@ namespace emerald{
             std::vector<Page*> PageList;
             int MaxSize = DEFAULT_PAGES;
 			
-            BufferPool(int numPages);
-            static int getPageSize();
+            BufferPool(int num_pages);
+            static int get_page_size();
 
             /**
              * Retrieve the specified page with the associated permissions.
@@ -63,7 +63,7 @@ namespace emerald{
              * @param pid the ID of the requested page
              * @param perm the requested permissions on the page
              */
-            Page getPage(TransactionId tid, PageId pid, Permissions perm);
+            Page* GetPage(TransactionId* tid, PageId* pid, Permissions* perm);
 
             /**
             * Releases the lock on a page.
@@ -74,17 +74,17 @@ namespace emerald{
             * @param tid the ID of the transaction requesting the unlock
             * @param pid the ID of the page to unlock
             */
-            void releasePage(TransactionId* tid, PageId* pid);
+            void ReleasePage(TransactionId* tid, PageId* pid);
 
             /**
              * Release all locks associated with a given transaction.
              *
              * @param tid the ID of the transaction requesting the unlock
              */
-            void transactionComplete(TransactionId* tid); // throws IOexception
+            void TransactionComplete(TransactionId* tid); // throws IOexception
 
             /** Return true if the specified transaction has a lock on the specified page */
-            bool holdslock(TransactionId* tid, Page);
+            bool HoldsLock(TransactionId* tid, Page);
 
             /**
              * Commit or abort a given transaction; release all locks associated to
@@ -93,7 +93,7 @@ namespace emerald{
              * @param tid the ID of the transaction requesting the unlock
              * @param commit a flag indicating whether we should commit or abort
              */
-            void transactionComplete(TransactionId* tid, bool commit); //IO exception
+            void TransactionComplete(TransactionId* tid, bool commit); //IO exception
 
             /**
              * Add a tuple to the specified table behalf of transaction tid.  Will
@@ -109,9 +109,7 @@ namespace emerald{
              * @param tableId the table to add the tuple to
              * @param t the tuple to add
              */
-            void insertTuple(TransactionId* tid, int tableId, Tuple* t); // throws DbException, IOException, TransactionAbortedException
-
-            void deleteTuple(TransactionId* tid, Tuple* t);
+            void InsertTuple(TransactionId* tid, int tableId, Tuple* t); // throws DbException, IOException, TransactionAbortedException
 
             /**
              * Remove the specified tuple from the buffer pool.
@@ -126,17 +124,36 @@ namespace emerald{
              * @param tid the transaction deleting the tuple.
              * @param t the tuple to delete
              */
-            void flushAllPages();
+            void DeleteTuple(TransactionId* tid, Tuple* t);
+
+            /**
+             * Flush all dirty pages to disk.
+             * NB: Be careful using this routine -- it writes dirty data to disk so will
+             *     break simpledb if running in NO STEAL mode.
+             */
+            void FlushAllPages();
 
             /** Remove the specific page id from the buffer pool.
-            Needed by the recovery manager to ensure that the
-            buffer pool doesn't keep a rolled back page in its
-            cache.
+                Needed by the recovery manager to ensure that the
+                buffer pool doesn't keep a rolled back page in its
+                cache.
             */
-            void discardPage(PageId* pid);
+            void DiscardPage(PageId* pid);
 
+            /**
+             * Flushes a certain page to disk
+             * @param pid an ID indicating the page to flush
+             */
+            void FlushPage(PageId* pid);
+            
             // Write all pages of the specified transaction to disk
-            void flushPages(TransactionId* tid);
+            void FlushPages(TransactionId* tid);
+
+            /**
+             * Discards a page from the buffer pool.
+             * Flushes the page to disk to ensure dirty pages are updated on disk.
+             */
+            EvictPage();
 
     }
 }
