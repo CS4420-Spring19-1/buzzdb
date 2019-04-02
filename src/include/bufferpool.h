@@ -6,6 +6,7 @@
 #include "pageId.h"
 #include "table.h"
 #include "database.h"
+#include "tuple.h"
 
 /*
 remaining question
@@ -31,18 +32,19 @@ namespace emerald{
         private:
             /** Bytes per page, including header. */
             static const int PAGE_SIZE = 4096;          
-			std::vector<Page> buffer;
+			std::vector<Page*> buffer;
             int evictIdx = 0;
+            void flushPage(PageId* pid);
+            void evictPage();
   
         public:
             /** Default number of pages passed to the constructor. This is used by
             other classes. BufferPool should use the numPages argument to the
             constructor instead. */
             static const int DEFAULT_PAGES = 50;
-            std::vector<Page> PageList;
+            std::vector<Page*> PageList;
             int MaxSize = DEFAULT_PAGES;
 			
-            // final LockManager lock
             BufferPool(int numPages);
             static int getPageSize();
 
@@ -63,30 +65,81 @@ namespace emerald{
              */
             Page getPage(TransactionId tid, PageId pid, Permissions perm);
 
+            /**
+            * Releases the lock on a page.
+            * Calling this is very risky, and may result in wrong behavior. Think hard
+            * about who needs to call this and why, and why they can run the risk of
+            * calling it.
+            *
+            * @param tid the ID of the transaction requesting the unlock
+            * @param pid the ID of the page to unlock
+            */
+            void releasePage(TransactionId* tid, PageId* pid);
+
+            /**
+             * Release all locks associated with a given transaction.
+             *
+             * @param tid the ID of the transaction requesting the unlock
+             */
+            void transactionComplete(TransactionId* tid); // throws IOexception
+
+            /** Return true if the specified transaction has a lock on the specified page */
+            bool holdslock(TransactionId* tid, Page);
+
+            /**
+             * Commit or abort a given transaction; release all locks associated to
+             * the transaction.
+             *
+             * @param tid the ID of the transaction requesting the unlock
+             * @param commit a flag indicating whether we should commit or abort
+             */
+            void transactionComplete(TransactionId* tid, bool commit); //IO exception
+
+            /**
+             * Add a tuple to the specified table behalf of transaction tid.  Will
+             * acquire a write lock on the page the tuple is added to(Lock 
+             * acquisition is not needed for lab2). May block if the lock cannot 
+             * be acquired.
+             * 
+             * Marks any pages that were dirtied by the operation as dirty by calling
+             * their markDirty bit, and updates cached versions of any pages that have 
+             * been dirtied so that future requests see up-to-date pages. 
+             *
+             * @param tid the transaction adding the tuple
+             * @param tableId the table to add the tuple to
+             * @param t the tuple to add
+             */
+            void insertTuple(TransactionId* tid, int tableId, Tuple* t); // throws DbException, IOException, TransactionAbortedException
+
+            void deleteTuple(TransactionId* tid, Tuple* t);
+
+            /**
+             * Remove the specified tuple from the buffer pool.
+             * Will acquire a write lock on the page the tuple is removed from. May block if
+             * the lock cannot be acquired.
+             *
+             * Marks any pages that were dirtied by the operation as dirty by calling
+             * their markDirty bit.  Does not need to update cached versions of any pages that have 
+             * been dirtied, as it is not possible that a new page was created during the deletion
+             * (note difference from addTuple).
+             *
+             * @param tid the transaction deleting the tuple.
+             * @param t the tuple to delete
+             */
+            void flushAllPages();
+
+            /** Remove the specific page id from the buffer pool.
+            Needed by the recovery manager to ensure that the
+            buffer pool doesn't keep a rolled back page in its
+            cache.
+            */
+            void discardPage(PageId* pid);
+
+            // Write all pages of the specified transaction to disk
+            void flushPages(TransactionId* tid);
+
     }
 }
 
-void BufferPool::BufferPool(int numPages){
-    MaxSize = numPages;
-}
 
-const int BufferPool::getPageSize(){
-    return PAGE_SIZE;
-}
 
-BufferPool::getPage(TransactionId tid, PageId pid, Permissions perm){
-    
-    for(Page page: PageList){
-        if (page.getId().equals(pid)){
-            return page;
-        }
-    }
-
-    if (PageList.size() == MaxSize){
-        // throw new DbException("PageList is full!");
-    }
-
-    for (Table tab: Database.getCatalog().getTables()){
-        
-    }
-}
