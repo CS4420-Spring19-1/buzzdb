@@ -1,58 +1,68 @@
 #pragma once
 
-#include "table_descriptor.h"
+#include "heap_page_id.h"
+#include "page.h"
+#include "transaction_id.h"
 #include "tuple.h"
-#include <unordered_map>
 
 namespace emerald {
-class HeapPage {
+/**
+ * This class stores pages of HeapFiles and implements the Page interface that
+ * is used by the BufferPool class/
+ */
+class HeapPage : public Page {
  public:
   HeapPage();
 
-  HeapPage(HeapPageId id, byte[] data)();
+  HeapPage(HeapPageId id, std::byte data[]);
 
-  virtual ~HeapPage();
+  HeapPageId get_id();
 
-  int getNumTuples();
+  TransactionId GetIdOfLastDirtyTransaction() override;
 
-  int getHeaderSize();
+  void MarkDirty(bool dirty, TransactionId tid) override;
 
-  HeapPage getBeforeImage();
+  HeapPage GetBeforeImage();
 
-  void setBeforeImage();
+  void SetBeforeImage() override;
 
-  HeapPageId getId();
+  int get_num_tuples();
 
-  tuple readNextTuple(DataInputStream dis, int slotId)();
+  int get_header_size();
 
-  byte[] getPageData();
+  /* Not implemented
+  Tuple ReadNextTuple(DataInputStream dis, int slotId)();
+  */
 
-  static byte[] createEmptyPageData();
+  void GetPageData(std::byte rep[]);
 
-  void deleteTuple(tuple t);
+  static void CreateEmptyPageData(std::byte rep[]);
 
-  void insertTuple(tuple t);
+  void DeleteTuple(Tuple t);
 
-  void markDirty(bool dirty, transactionId tid);
+  void InsertTuple(Tuple t);
 
-  transactionId isDirty();
+  void AddTuple(Tuple t);
 
-  int getNumEmptySlots();
+  int GetNumEmptySlots();
 
-  bool isSlotUsed(int i);
+  bool IsSlotUsed(int i);
 
-  void markSlotUsed(int i, bool value);
+  void SetSlot(int i, bool value);
 
+  /* Not implemented
   Iterator<tuple> iterator();
+  */
 
  private:
   HeapPageId pid;
-  tuple_descriptor td;
-  byte header[];
-  tuple tuples[];
+  TupleDesc td;
+  std::byte * header;
+  Tuple * tuples;
   int numSlots;
-  byte oldData[];
-  byte oldDataLock = new byte(0);
-  int readIndex;
+  std::byte * old_data;
+
+  // byte oldDataLock = new byte(0);
+  int read_index;
 };
 }

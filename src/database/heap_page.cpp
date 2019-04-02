@@ -1,63 +1,77 @@
+#include <cmath>
+#include <iostream>
 #include "heap_page.h"
 
 namespace emerald {
-HeapPage::HeapPage(HeapPageId id, byte[] data)() {
+HeapPage::HeapPage(HeapPageId id, std::byte data[]) {
   this->pid = id;
-  this->td = database.getCatalog().getTupleDesc(id.getTableId());
-  this->numSlots = getNumTuples();
+  this->td = Database::get_catalog().get_tuple_desc(id.get_table_id());
+  this->numSlots = get_num_tuples();
   //DataInputStream dis = new DataInputStream(new ByteArrayInputStream(data));
-  this->readIndex = 0;
+  this->read_index = 0;
 
-  header = new byte[getHeaderSize()];
+  this->header = new std::byte[get_header_size()];
   for (int i = 0; i < sizeof(header) / sizeof(header[0]); i++) {
-    header[i] = data[readIndex];
-    readIndex++;
+    header[i] = data[read_index];
+    read_index++;
   }
 
-  tuples = new tuple[numSlots];
+  this->tuples = new Tuple[numSlots];
   try {
     // allocate and read the actual records of this page
     for (int i = 0; i < sizeof(tuples) / sizeof(tuples[0]); i++) {
-      tuples[i] = readNextTuple(data, i);
+      /* ReadNextTuple is not declared
+      tuples[i] = ReadNextTuple(data, i);
+      */
     }
-  } catch (NoSuchElementException e) {
+  } catch (std::exception e) {
     std::cout << "Exception occurred";
   }
 
-  setBeforeImage();
+  SetBeforeImage();
 }
 
-int HeapPage::getNumTuples() {
-  double pagesize = (double)database.getBufferPool().getPageSize() * 8;
-  double tuplesize = (double)(td.getSize() * 8 + 1);
-  double res = pagesize / tuplesize;
-  return (int)floor(res);
-}
-
-int HeapPage::getHeaderSize() {
-  double res = (double)numSlots / (double)8;
-  return (int)ceil(res);
-}
-
-HeapPage HeapPage::getBeforeImage() {
-  try {
-    byte[] oldDataRef = null;
-    oldDataRef = oldData;
-    return new HeapPage(pid, oldDataRef);
-  } catch (IOException e) {
-    System.exit(1);
-  }
-  return null;
-}
-
-void HeapPage::setBeforeImage() {
-}
-
-HeapPageId HeapPage::getId() {
+HeapPageId::HeapPageId HeapPage::get_id() {
   return pid;
 }
 
-tuple HeapPage::readNextTuple(byte[] data, int slotId)() {
+TransactionId HeapPage::GetIdOfLastDirtyTransaction() {
+  // some code goes here
+  // return null;
+}
+
+void HeapPage::MarkDirty(bool dirty, TransactionId tid) {
+}
+
+HeapPage::HeapPage HeapPage::GetBeforeImage() {
+  try {
+    std::byte * old_data_ref = nullptr;
+    old_data_ref = old_data;
+    return new HeapPage(pid, old_data_ref);
+  } catch (std::exception e) {
+    /*
+    System.exit(1);
+    */
+  }
+}
+
+void HeapPage::SetBeforeImage() {
+}
+
+int HeapPage::get_num_tuples() {
+  double pagesize = (double) Database.get_buffer_pool().get_page_size() * 8;
+  double tuplesize = (double) (td.get_size() * 8 + 1);
+  double res = pagesize / tuplesize;
+  return (int) floor(res);
+}
+
+int HeapPage::get_header_size() {
+  double res = (double) numSlots / (double) 8;
+  return (int) ceil(res);
+}
+
+/*
+Tuple HeapPage::ReadNextTuple(byte[] data, int slotId) {
   if (!isSlotUsed(slotId)) {
     for (int i = 0; i < td.getSize(); i++) {
       try {
@@ -83,48 +97,49 @@ tuple HeapPage::readNextTuple(byte[] data, int slotId)() {
   }
   return t;
 }
+*/
 
-byte[] HeapPage::getPageData() {
+void HeapPage::GetPageData(std::byte rep[]) {
 }
 
-static byte[] HeapPage::createEmptyPageData() {
+void HeapPage::CreateEmptyPageData(std::byte rep[]) {
+  /*
   int len = BufferPool.getPageSize();
   return new byte[len];
+  */
 }
 
-void HeapPage::deleteTuple(tuple t) throws DbException {
+void HeapPage::DeleteTuple(Tuple t) {
 }
 
-void HeapPage::insertTuple(tuple t) throws DbException {
+void HeapPage::InsertTuple(Tuple t) {
 }
 
-void HeapPage::markDirty(bool dirty, transactionId tid) {
+void HeapPage::AddTuple(Tuple t) {
 }
 
-transactionId HeapPage::isDirty() {
-  // some code goes here
-  return null;
-}
-
-int HeapPage::getNumEmptySlots() {
+int HeapPage::GetNumEmptySlots() {
   int count = 0;
   for (int i = 0; i < sizeof(tuples) / sizeof(tuples[0]); ++i) {
-    if (!isSlotUsed(i))
+    if (!IsSlotUsed(i))
       count++;
   }
   return count;
 }
 
-bool HeapPage::isSlotUsed(int i) {
+bool HeapPage::IsSlotUsed(int i) {
   int x = i / 8;
   int y = i % 8;
 
+  /* Error here
   return ((header[x] >> y) & 1) == 1;
+  */
 }
 
-void HeapPage::markSlotUsed(int i, bool value) {
+void HeapPage::SetSlot(int i, bool value) {
 }
 
+/* Not implemented
 Iterator<tuple> HeapPage::iterator() {
   std::vector<tuple> arr = new std::vector<tuple>();
   for (tuple t : tuples) {
@@ -133,4 +148,5 @@ Iterator<tuple> HeapPage::iterator() {
   }
   return arr.iterator();
 }
+*/
 }
