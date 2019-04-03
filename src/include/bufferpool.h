@@ -27,8 +27,8 @@ remaining question
  * @Threadsafe, all fields are final
  */
 
-namespace emerald{
-    class BufferPool{
+namespace emerald {
+    class BufferPool {
         private:
             /** Bytes per page, including header. */
             static const int PAGE_SIZE = 4096;          

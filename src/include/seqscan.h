@@ -33,7 +33,7 @@ namespace emerald
        *            tableAlias.null, or null.null).
        */
       SeqScan(TransactionId* tid, int table_id, std::string table_alias);
-      
+      SeqScan(TransactionId* tid, int table_id);
 
       std::string get_table_name();
 
@@ -54,50 +54,28 @@ namespace emerald
        *            are, but the resulting name can be null.fieldName,
        *            tableAlias.null, or null.null).
        */
-      void reset(int table_id, std::string table_alias) {
-        this->table_id = table_id;
-        this->table_alias = table_alias;
-      }
+      void Reset(int table_id, std::string table_alias);
 
-      SeqScan(TransactionId* tid, int table_id) {
-        // this(tid, tableid, Database.getCatalog().getTableName(tableid));
-      }
+      void Open();
 
-      void open() {
-        iterator = Database.getCatalog().getDatabaseFile(tableid).iterator(tid);
-        iterator->open();
-      }
+      /**
+       * Returns the TupleDesc with field names from the underlying HeapFile,
+       * prefixed with the tableAlias string from the constructor. This prefix
+       * becomes useful when joining tables containing a field(s) with the same
+       * name.
+       * 
+       * @return the TupleDesc with field names from the underlying HeapFile,
+       *         prefixed with the tableAlias string from the constructor.
+       */
+      TupleDesc* get_tuple_desc();
 
-      TupleDesc* get_tuple_desc() {
-        // return Database.getCatalog().getTupleDesc(tableid);
-      }
+      bool HasNext();
 
-      bool hasNext() {
-        if (iterator == NULL) return false;
-        return iterator->hasNext();
-      }
+      Tuple* Next();
 
-      Tuple* next() {
-        if (iterator == null) {
-          // throw new NoSuchElementException();
-        }
-        Tuple* t = iterator->next();
+      void Close();
 
-        if (t == null) {
-          // throw new NoSuchElementException();
-        }
-
-        return t;
-      }
-
-      void close() {
-        iterator = null;
-      }
-
-      void rewind() {
-        close();
-        open();
-      }
+      void Rewind();
   }
     
 } // emerald
