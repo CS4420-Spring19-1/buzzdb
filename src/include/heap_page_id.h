@@ -3,11 +3,11 @@
 #include "page_id.h"
 
 namespace emerald {
-class HeapPageId : public PageId {
+class heap_page_id : public page_id {
  public:
-  HeapPageId();
+  heap_page_id();
 
-  HeapPageId(int table_id, int page_number);
+  heap_page_id(int table_id, int page_number);
 
   int get_table_id();
 
@@ -15,7 +15,7 @@ class HeapPageId : public PageId {
 
   virtual void Serialize(int rep[]);
 
-  bool operator==(HeapPageId other);
+  bool operator==(heap_page_id other);
 
  private:
   int table_id;

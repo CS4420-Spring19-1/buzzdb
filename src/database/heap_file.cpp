@@ -1,41 +1,41 @@
 #include "heap_file.h"
 
 namespace emerald {
-HeapFile::HeapFile(File * file, TupleDesc td) {
+heap_file::heap_file(FILE * file, tuple_desc td) {
   this->file = file;
   this->td = td;
 }
 
-File * HeapFile::get_file() {
+FILE * heap_file::get_file() {
   return file;
 }
 
-uint32_t HeapFile::get_id() {
+uint32_t heap_file::get_id() {
   return reinterpret_cast<uint32_t>(file);
 }
 
-TupleDesc HeapFile::get_tuple_desc() {
+tuple_desc heap_file::get_tuple_desc() {
   return td;
 }
 
-Page HeapFile::ReadPage(PageId pid) {
+page heap_file::read_page(page_id pid) {
 }
 
-void HeapFile::WritePage(Page page) {
+void heap_file::write_page(page page) {
 }
 
-int HeapFile::NumPages() {
+int heap_file::num_pages() {
   return (int)ceil(ftell(file) / BufferPool.getPageSize());
 }
 
-std::vector<Page> HeapFile::AddTuple(TransactionId tid, Tuple t) {
+std::vector<page> heap_file::add_tuple(transaction_id tid, tuple t) {
 }
 
-Page HeapFile::DeleteTuple(TransactionId tid, Tuple t) {
+page heap_file::delete_tuple(transaction_id tid, tuple t) {
 }
 
-DBFileIterator HeapFile::Iterator(TransactionId tid) {
-  DBFileIterator iterator = new HeapFileIterator(tid, this);
+db_file_iterator heap_file::iterator(transaction_id tid) {
+  db_file_iterator iterator = new heap_file_iterator(tid, this);
   return iterator;
 }
 }

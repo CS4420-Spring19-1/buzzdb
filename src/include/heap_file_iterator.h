@@ -1,17 +1,15 @@
 #pragma once
 
-#include "table_descriptor.h"
-#include "tuple.h"
 #include <unordered_map>
 
 namespace emerald {
-class HeapFileIterator : public DbFileIterator {
+class heap_file_iterator : public db_file_iterator {
  public:
-  HeapFileIterator();
+  heap_file_iterator();
 
-  HeapFileIterator(TransactionId tid, HeapFile f);
+  heap_file_iterator(transaction_id tid, heap_file f);
 
-  virtual ~HeapFileIterator();
+  virtual ~heap_file_iterator();
 
   void open();
 
@@ -24,9 +22,9 @@ class HeapFileIterator : public DbFileIterator {
   void close();
 
  private:
-  Iterator<tuple> iterator;
-  int pageIndex;
-  TransactionId tid;
-  HeapFile file;
+  iterator<tuple> iterator;
+  int page_index;
+  transaction_id tid;
+  heap_file file;
 };
 }

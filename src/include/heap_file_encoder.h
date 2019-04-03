@@ -1,15 +1,15 @@
 #pragma once
 
-#include "table_descriptor.h"
-#include "tuple.h"
 #include <unordered_map>
 
 namespace emerald {
-class HeapFileEncoder {
- public:
-  HeapFileEncoder();
 
-  virtual ~HeapFileEncoder();
+class heap_file_encoder {
+ 
+ public:
+  heap_file_encoder();
+
+  virtual ~heap_file_encoder();
 
   static void convert(std::vector << std::vector<int>> tuples, FILE *outFile, int npagebytes, int numFields);
 
