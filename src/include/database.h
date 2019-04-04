@@ -1,35 +1,33 @@
 #pragma once
 
-#include <unordered_map>
-#include <vector>
-#include "field.h"
-#include "table.h"
+#include <string>
+#include "buffer_pool.h"
 #include "catalog.h"
 
 namespace emerald {
-    class Database {
-        private:
-            std::unordered_map<std::string, int> tableIds;
-            std::vector<Table*> tables;
-        public:
-            Database();
+class Database {
+ public:
+  Database();
 
-            void createTable(std::string table_name, std::vector<std::string> column_names, std::vector<std::string> column_types, Table::storageType type);
+  ~Database();
 
-            Table* getTable(int index);
+  static LogFile * get_log_file();
 
-            std::vector<Table*> getTables();
+  static BufferPool * get_buffer_pool();
 
-            std::unordered_map<std::string, int> getTableIds();
+  static Catalog * get_catalog();
 
-            void printTable(std::string table_name);
+  static BufferPool * ResetBufferPool(int pages);
 
-            Table* getTableRef(std::string table_name);
+  static void Reset();
 
-            int getTableId(std::string table_name);
+ private:
+  const std::string LOGFILENAME = "log";
 
-            Field* get_field(int table_id, int tuple_id, int column_id);
+  static Database * instance;
 
-            static Catalog getCatalog();
-    };
+  Catalog * catalog;
+  BufferPool * buffer_pool;
+  LogFile * log_file;
 };
+}
