@@ -1,11 +1,9 @@
 #pragma once
 
-#include <iostream>
 #include <vector>
-#include "page.h"
-#include "pageId.h"
-#include "table.h"
 #include "database.h"
+#include "page.h"
+#include "page_id.h"
 #include "tuple.h"
 
 /*
@@ -32,20 +30,22 @@ class BufferPool {
   private:
     /** Bytes per page, including header. */
     static const int PAGE_SIZE = 4096;          
+
     std::vector<Page*> buffer;
+
     int evictIdx = 0;
 
     /**
      * Flushes a certain page to disk
      * @param pid an ID indicating the page to flush
      */
-    void flushPage(PageId* pid);
+    void FlushPage(PageId * pid);
 
     /**
      * Discards a page from the buffer pool.
      * Flushes the page to disk to ensure dirty pages are updated on disk.
      */
-    void evictPage();
+    void EvictPage();
 
   public:
     /** Default number of pages passed to the constructor. This is used by
@@ -56,7 +56,8 @@ class BufferPool {
     int MaxSize = DEFAULT_PAGES;
     
     BufferPool(int num_pages);
-    static int get_page_size();
+
+    int get_page_size() const;
 
     /**
      * Retrieve the specified page with the associated permissions.
@@ -73,7 +74,7 @@ class BufferPool {
      * @param pid the ID of the requested page
      * @param perm the requested permissions on the page
      */
-    Page* GetPage(TransactionId* tid, PageId* pid, Permissions* perm);
+    Page * GetPage(TransactionId * tid, PageId * pid, Permissions * perm);
 
     /**
     * Releases the lock on a page.
@@ -94,7 +95,7 @@ class BufferPool {
     void TransactionComplete(TransactionId* tid); // throws IOexception
 
     /** Return true if the specified transaction has a lock on the specified page */
-    bool HoldsLock(TransactionId* tid, Page);
+    bool HoldsLock(TransactionId* tid, PageId * p);
 
     /**
      * Commit or abort a given transaction; release all locks associated to
@@ -134,7 +135,7 @@ class BufferPool {
      * @param tid the transaction deleting the tuple.
      * @param t the tuple to delete
      */
-    void DeleteTuple(TransactionId* tid, Tuple* t);
+    void DeleteTuple(TransactionId * tid, Tuple * t);
 
     /**
      * Flush all dirty pages to disk.
@@ -148,16 +149,9 @@ class BufferPool {
         buffer pool doesn't keep a rolled back page in its
         cache.
     */
-    void DiscardPage(PageId* pid);
+    void DiscardPage(PageId * pid);
 
-    
-    
     // Write all pages of the specified transaction to disk
-    void FlushPages(TransactionId* tid);
-
-    
+    void FlushPages(TransactionId * tid);
+};
 }
-}
-
-
-
