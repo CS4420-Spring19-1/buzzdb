@@ -1,4 +1,4 @@
-#include "bufferpool.h"
+#include "buffer_pool.h"
 
 namespace emerald {
 BufferPool::BufferPool(int num_pages) {
