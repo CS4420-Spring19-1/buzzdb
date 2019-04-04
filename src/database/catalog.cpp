@@ -12,14 +12,6 @@ void Catalog::AddTable(DbFile* file, std::string name, std::string pkeyField) {
   TableList.push_back(file);
 }
 
-void Catalog::AddTable(DbFile* file, std::string name) {
-  AddTable(file, name, "");
-}
-
-void Catalog::AddTable(DbFile* file) {
-  // addTable(file, (UUID.randomUUID()).toString());
-}
-
 int Catalog::get_table_id(std::string name) {
   for (int i=0; i<TableList.size(); i++) {
     if (TableList[i].name == name) {
@@ -29,9 +21,19 @@ int Catalog::get_table_id(std::string name) {
   // throw new NoSuchElementException();
 }
 
-TupleDesc* Catalog::GetTupleDesc(int tableid) {
+std::string Catalog::get_table_name(int table_id) {
   for (int i=0; i<TableList.size(); i++) {
-    if (TableList[i].file->get_id() == tableid) {
+    if (TableList[i].file->get_id() == table_id) {
+      return TableList[i].name;
+    }
+  }
+
+  // throw new NoSuchElementException();
+}
+
+TupleDesc * Catalog::get_tuple_desc(int table_id) {
+  for (int i = 0; i < TableList.size(); i++) {
+    if (TableList[i].file->get_id() == table_id) {
       return TableList[i].file->getTupleDesc();
     }
   }
@@ -57,21 +59,11 @@ Iterator<Integer> Catalog::TableIdIterator() {
   // return it
 }
 
-std::string Catalog::GetTableName(int id) {
-  for (int i=0; i<TableList.size(); i++) {
-    if (TableList[i].file->get_id() == id) {
-      return TableList[i].name;
-    }
-  }
-
-  // throw new NoSuchElementException();
-}
-
 void Catalog::Clear() {
   TableList.clear();
 }
 
 void Catalog::LoadSchema() {
-  // fucking complicated!!!
+  // complicated!!!
 }
 }
