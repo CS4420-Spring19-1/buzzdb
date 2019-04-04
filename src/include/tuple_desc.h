@@ -69,7 +69,7 @@ class TupleDesc {
   bool operator==(TupleDesc other);
 
  private:
-  Type types[];
-  std::string names[];
+  Type * types;
+  std::string * names;
 };
 }
