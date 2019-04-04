@@ -37,12 +37,12 @@ class DbFile {
   /**
    * Reads the specified page from disk.
    */
-  virtual Page * ReadPage(PageId id) = 0;
+  virtual Page * ReadPage(PageId * id) = 0;
 
   /**
    * Pushes the specified page to disk.
    */
-  virtual void WritePage(Page p) = 0;
+  virtual void WritePage(Page * p) = 0;
 
   /**
    * Adds the specified tuple to the DbFile on behalf of a transaction.
