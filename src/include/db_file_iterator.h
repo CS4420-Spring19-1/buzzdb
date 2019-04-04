@@ -33,7 +33,7 @@ class DbFileIterator {
    * Throws NoSuchElementException if there are no more tuples.
    * Throws TransactionAbortedException, DbException.
    */
-  virtual Tuple Next() = 0;
+  virtual Tuple * Next() = 0;
 
   /**
    * Resets the iterator to the start.

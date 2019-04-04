@@ -32,7 +32,7 @@ class DbFile {
   /**
    * Returns the schema of the table stored in the DbFile
    */
-  virtual TupleDesc get_tuple_desc() const = 0;
+  virtual TupleDesc & get_tuple_desc() const = 0;
 
   /**
    * Reads the specified page from disk.
@@ -62,6 +62,6 @@ class DbFile {
    * Returns an iterator over all tuples stored in this DbFile.
    * The iterator must use BufferPool.getPage() to iterate through.
    */
-  virtual DbFileIterator Iterator(TransactionId tid) = 0;
+  virtual DbFileIterator * Iterator(TransactionId tid) = 0;
 };
 }
