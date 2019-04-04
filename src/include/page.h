@@ -23,7 +23,7 @@ class Page {
    * The id is a unique identifier that can be used to look up the page on disc
    *  or to determine if the page is resident in the buffer pool.
    */
-  virtual PageId get_id() = 0;
+  virtual PageId * get_id() = 0;
 
   /**
    * Returns the TransactionId of the last transaction that dirtied the page.
@@ -44,7 +44,7 @@ class Page {
    * Returns a representation of the Page before any modifications were made to
    * it. Used by recovery.
    */
-  virtual Page GetBeforeImage() = 0;
+  virtual Page * GetBeforeImage() = 0;
 
   /**
    * A transaction that wrote this Page just committed it. Copy current content

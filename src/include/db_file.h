@@ -37,7 +37,7 @@ class DbFile {
   /**
    * Reads the specified page from disk.
    */
-  virtual Page ReadPage(PageId id) = 0;
+  virtual Page * ReadPage(PageId id) = 0;
 
   /**
    * Pushes the specified page to disk.
@@ -56,7 +56,7 @@ class DbFile {
    * This method will acquire a lock on the affected pages of the file, and may
    * block until the lock can be acquired.
    */
-  virtual Page DeleteTuple(TransactionId tid, Tuple t) = 0;
+  virtual Page * DeleteTuple(TransactionId tid, Tuple t) = 0;
 
   /**
    * Returns an iterator over all tuples stored in this DbFile.
