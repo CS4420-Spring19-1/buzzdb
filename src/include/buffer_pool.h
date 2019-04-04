@@ -85,17 +85,17 @@ class BufferPool {
     * @param tid the ID of the transaction requesting the unlock
     * @param pid the ID of the page to unlock
     */
-    void ReleasePage(TransactionId* tid, PageId* pid);
+    void ReleasePage(TransactionId * tid, PageId * pid);
 
     /**
      * Release all locks associated with a given transaction.
      *
      * @param tid the ID of the transaction requesting the unlock
      */
-    void TransactionComplete(TransactionId* tid); // throws IOexception
+    void TransactionComplete(TransactionId * tid); // throws IOexception
 
     /** Return true if the specified transaction has a lock on the specified page */
-    bool HoldsLock(TransactionId* tid, PageId * p);
+    bool HoldsLock(TransactionId * tid, PageId * p);
 
     /**
      * Commit or abort a given transaction; release all locks associated to
@@ -104,7 +104,7 @@ class BufferPool {
      * @param tid the ID of the transaction requesting the unlock
      * @param commit a flag indicating whether we should commit or abort
      */
-    void TransactionComplete(TransactionId* tid, bool commit); //IO exception
+    void TransactionComplete(TransactionId * tid, bool commit); //IO exception
 
     /**
      * Add a tuple to the specified table behalf of transaction tid.  Will
@@ -120,7 +120,7 @@ class BufferPool {
      * @param tableId the table to add the tuple to
      * @param t the tuple to add
      */
-    void InsertTuple(TransactionId* tid, int tableId, Tuple* t); // throws DbException, IOException, TransactionAbortedException
+    void InsertTuple(TransactionId * tid, int tableId, Tuple* t); // throws DbException, IOException, TransactionAbortedException
 
     /**
      * Remove the specified tuple from the buffer pool.

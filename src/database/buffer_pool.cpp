@@ -9,7 +9,7 @@ int BufferPool::get_page_size() const {
   return PAGE_SIZE;
 }
 
-Page* BufferPool::GetPage(TransactionId* tid, PageId* pid, Permissions * perm) {
+Page * BufferPool::GetPage(TransactionId * tid, PageId * pid, Permissions * perm) {
   for(Page* page: PageList) {
     if (page->getId()->equals(pid)) {
       return page;
