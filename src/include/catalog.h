@@ -2,13 +2,12 @@
 
 #include <vector>
 #include <string>
+#include <unordered_map>
 #include "db_file.h"
 #include "tuple_desc.h"
 
 namespace emerald {
 class Catalog {
- private:
-  std::vector<Table*> TableList;
  public:
   Catalog();
 
@@ -29,5 +28,9 @@ class Catalog {
   void Clear();
 
   void LoadSchema();
+
+ private:
+  std::unordered_map<std::string, DbFile *> db_fields;
+  std::unordered_map<int, std::string> p_fields;
 };
 }
