@@ -1,21 +1,14 @@
 #pragma once
 
 #include <string>
-#include "table.h"
-#include "predicate.h"
+#include "db_file.h"
 #include "db_file_iterator.h"
-#include <iostream>
+#include "transaction_id.h"
 
 namespace emerald {
 class SeqScan {
-  private:
-    TransactionId* tid;
-    int table_id;
-    std::string table_alias;
-    DbFileIterator* iterator;
-
-  public:
-    /**
+ public:
+  /**
      * Creates a sequential scan over the specified table as a part of the
      * specified transaction.
      * 
@@ -31,33 +24,11 @@ class SeqScan {
      *            are, but the resulting name can be null.fieldName,
      *            tableAlias.null, or null.null).
      */
-    SeqScan(TransactionId* tid, int table_id, std::string table_alias);
-    SeqScan(TransactionId* tid, int table_id);
+  SeqScan(TransactionId & tid, int table_id, std::string table_alias);
 
-    std::string get_table_name();
+  void Open();
 
-    /**
-    * @return Return the alias of the table this operator scans. 
-    **/
-    std::string get_alias();
-
-    /**
-     * Reset the tableid, and tableAlias of this operator.
-     * @param tableid
-     *            the table to scan.
-     * @param tableAlias
-     *            the alias of this table (needed by the parser); the returned
-     *            tupleDesc should have fields with name tableAlias.fieldName
-     *            (note: this class is not responsible for handling a case where
-     *            tableAlias or fieldName are null. It shouldn't crash if they
-     *            are, but the resulting name can be null.fieldName,
-     *            tableAlias.null, or null.null).
-     */
-    void Reset(int table_id, std::string table_alias);
-
-    void Open();
-
-    /**
+  /**
      * Returns the TupleDesc with field names from the underlying HeapFile,
      * prefixed with the tableAlias string from the constructor. This prefix
      * becomes useful when joining tables containing a field(s) with the same
@@ -66,15 +37,19 @@ class SeqScan {
      * @return the TupleDesc with field names from the underlying HeapFile,
      *         prefixed with the tableAlias string from the constructor.
      */
-    TupleDesc* get_tuple_desc();
+  TupleDesc & get_tuple_desc();
 
-    bool HasNext();
+  bool HasNext();
 
-    Tuple* Next();
+  Tuple *Next();
 
-    void Close();
+  void Close();
 
-    void Rewind();
+  void Rewind();
+
+ private:
+  DbFile *db_file;
+  std::string table_alias;
+  DbFileIterator *iterator;
+};
 }
-  
-} // emerald

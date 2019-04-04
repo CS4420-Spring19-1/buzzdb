@@ -1,50 +1,33 @@
 #include "seqscan.h"
+#include "database.h"
 
 namespace emerald {
-SeqScan::SeqScan(TransactionId* tid, int table_id, std::string table_alias) {
-  this->tid = tid;
-  this->table_id = table_id;
-  this->table_alias = table_alias;
-}
-
-SeqScan::SeqScan(TransactionId* tid, int table_id) {
-  // this(tid, tableid, Database.getCatalog().getTableName(tableid));
-}
-
-std::string SeqScan::get_table_name {
-  // return Database.getCatalog().getTableName(tableid);
-}
-
-std::string SeqScan::get_alias {
-  return table_alias;
-}
-
-void SeqScan::Reset(int table_id, ) {
-  this->table_id = table_id;
+SeqScan::SeqScan(TransactionId & tid, int table_id, std::string table_alias) {
+  this->db_file = Database::get_catalog()->get_db_file(table_id);
+  this->iterator = this->db_file->Iterator(tid);
   this->table_alias = table_alias;
 }
 
 void SeqScan::Open() {
-  iterator = Database.getCatalog().getDatabaseFile(tableid).iterator(tid);
-  iterator->open();
+  this->iterator->Open();
 }
 
-TupleDesc* SeqScan::get_tuple_desc() {
-  // return Database.getCatalog().getTupleDesc(tableid);
+TupleDesc & SeqScan::get_tuple_desc() {
+  return this->db_file->get_tuple_desc();
 }
 
 bool SeqScan::HasNext() {
-  if (iterator == NULL) return false;
-  return iterator->hasNext();
+  if (iterator == nullptr) return false;
+  return iterator->HasNext();
 }
 
-Tuple* SeqScan::Next() {
-  if (iterator == NULL) {
+Tuple * SeqScan::Next() {
+  if (iterator == nullptr) {
     // throw new NoSuchElementException();
   }
-  Tuple* t = iterator->Next();
+  Tuple * t = iterator->Next();
 
-  if (t == NULL) {
+  if (t == nullptr) {
     // throw new NoSuchElementException();
   }
 
@@ -52,12 +35,10 @@ Tuple* SeqScan::Next() {
 }
 
 void SeqScan::Close() {
-  iterator = NULL;
+  iterator = nullptr;
 }
 
 void SeqScan::Rewind() {
-  Close();
-  Open();
+  iterator->Rewind();
 }
 }
-
