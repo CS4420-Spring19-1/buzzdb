@@ -40,6 +40,9 @@ TupleDesc * Catalog::get_tuple_desc(int table_id) {
   // throw new NoSuchElementException();
 }
 
+DbFile * get_db_file(int table_id) {
+}
+
 std::string Catalog::GetPrimaryKey(int tableid) {
   for (int i=0; i<TableList.size(); i++) {
     if (TableList[i].file->get_id() == tableid) {
