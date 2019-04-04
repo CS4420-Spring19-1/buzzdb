@@ -1,7 +1,9 @@
 #pragma once
 
 #include <vector>
+#include "db_file_iterator.h"
 #include "page.h"
+#include "tuple.h"
 
 namespace emerald {
 /**

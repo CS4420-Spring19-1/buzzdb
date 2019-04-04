@@ -4,6 +4,7 @@
 #include "database.h"
 #include "page.h"
 #include "page_id.h"
+#include "permissions.h"
 #include "tuple.h"
 
 /*
