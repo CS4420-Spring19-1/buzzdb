@@ -1,30 +1,32 @@
 #pragma once
 
-#include <unordered_map>
+#include "heap_file.h"
+#include "transaction_id.h"
+
 
 namespace emerald {
-class heap_file_iterator : public db_file_iterator {
+class HeapFileIterator : public DbFileIterator {
  public:
-  heap_file_iterator();
+  HeapFileIterator();
 
-  heap_file_iterator(transaction_id tid, heap_file f);
+  HeapFileIterator(TransactionId tid, HeapFile f);
 
-  virtual ~heap_file_iterator();
+  virtual ~HeapFileIterator();
 
-  void open();
+  void Open();
 
-  bool hasNext();
+  bool HasNext();
 
-  tuple next();
+  Tuple Next();
 
-  void restart();
+  void Restart();
 
-  void close();
+  void Close();
 
  private:
-  iterator<tuple> iterator;
+  Iterator<Tuple> iterator;
   int page_index;
-  transaction_id tid;
-  heap_file file;
+  TransactionId tid;
+  HeapFile file;
 };
 }

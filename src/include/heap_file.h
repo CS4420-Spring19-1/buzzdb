@@ -1,6 +1,9 @@
 #pragma once
 
-#include <unordered_map>
+#include "db_file.h"
+#include "db_file_iterator.h"
+#include "page.h"
+#include "tuple.h"
 
 namespace emerald {
 /**
@@ -10,32 +13,32 @@ namespace emerald {
  * closely with HeapPage. The format of HeapPages is described in the HeapPage
  * constructor.
  */
-class heap_file : public db_file {
+class HeapFile : public DbFile {
  public:
-  heap_file(FILE *file, tuple_desc td);
+  HeapFile(FILE *file, TupleDesc td);
 
-  virtual ~heap_file();
+  virtual ~HeapFile();
 
-  File * get_file();
+  FILE * get_file();
 
   uint32_t get_id();
 
-  tuple_desc get_tuple_desc();
+  TupleDesc get_tuple_desc();
 
-  page read_page(page_id pid);
+  Page * ReadPage(PageId * pid);
 
-  void write_page(page page);
+  void WritePage(Page * page);
 
-  int num_pages();
+  int get_num_pages();
 
-  std::vector<page> add_tuple(transaction_id tid, tuple t);
+  std::vector<Page> AddTuple(TransactionId tid, Tuple t);
 
-  page delete_tuple(transaction_id tid, tuple t);
+  Page * DeleteTuple(TransactionId tid, Tuple t);
 
-  db_file_iterator iterator(transaction_id tid);
+  DbFileIterator Iterator(TransactionId tid);
 
  private:
   FILE * file;
-  tuple_desc td;
+  TupleDesc td;
 };
 }

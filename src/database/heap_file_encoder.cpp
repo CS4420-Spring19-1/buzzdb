@@ -1,14 +1,25 @@
 #include "heap_file_encoder.h"
 
 namespace emerald {
-heap_file_encoder::heap_file_encoder();
+HeapFileEncoder::HeapFileEncoder() {
+}
 
-static void heap_file_encoder::convert(std::vector << std::vector<int>> tuples, FILE *outFile, int npagebytes, int numFields) {}
+void HeapFileEncoder::Convert(std::vector<<std::vector<int>> tuples,
+                              FILE *out_file, int n_page_bytes,
+                              int num_fields) {
+}
 
-static void heap_file_encoder::convert(FILE *inFile, FILE *outFile, int npagebytes, int numFields) {}
+void HeapFileEncoder::Convert(FILE * in_file, FILE * out_file,
+                              int n_page_bytes, int num_fields) {
+}
 
-static void heap_file_encoder::convert(FILE *inFile, FILE *outFile, int npagebytes, int numFields, types[] typeAr) {}
+void HeapFileEncoder::Convert(FILE * in_file, FILE * out_file,
+                              int n_page_bytes, int num_fields,
+                              Type type_ar[]) {
+}
 
-static void heap_file_encoder::convert(FILE *inFile, FILE *outFile, int npagebytes, int numFields, types[] typeAr, char fieldSeparator) {}
-
+void HeapFileEncoder::Convert(FILE * in_file, FILE * out_file,
+                              int n_page_bytes, int num_fields,
+                              Type type_ar[], char field_separator) {
+}
 }

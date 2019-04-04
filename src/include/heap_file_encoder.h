@@ -1,23 +1,26 @@
 #pragma once
 
-#include <unordered_map>
+#include <vector>
+#include "type.h"
 
 namespace emerald {
-
-class heap_file_encoder {
- 
+class HeapFileEncoder {
  public:
-  heap_file_encoder();
+  HeapFileEncoder();
 
-  virtual ~heap_file_encoder();
+  virtual ~HeapFileEncoder();
 
-  static void convert(std::vector << std::vector<int>> tuples, FILE *outFile, int npagebytes, int numFields);
+  static void Convert(std::vector<<std::vector<int>> tuples, FILE *out_file,
+                      int n_page_bytes, int num_fields);
 
-  static void convert(FILE *inFile, FILE *outFile, int npagebytes, int numFields);
+  static void Convert(FILE * in_file, FILE * out_file, int n_page_bytes,
+                      int num_fields);
 
-  static void convert(FILE *inFile, FILE *outFile, int npagebytes, int numFields, types[] typeAr);
+  static void Convert(FILE * in_file, FILE * out_file, int n_page_bytes,
+                      int num_fields, Type type_ar[]);
 
-  static void convert(FILE *inFile, FILE *outFile, int npagebytes, int numFields, types[] typeAr, char fieldSeparator);
+  static void Convert(FILE *in_file, FILE *out_file, int n_page_bytes,
+                      int num_fields, Type type_ar[], char field_separator);
 
  private:
 };

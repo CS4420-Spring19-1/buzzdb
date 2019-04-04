@@ -10,21 +10,21 @@ namespace emerald {
  * This class stores pages of HeapFiles and implements the Page interface that
  * is used by the BufferPool class/
  */
-class heap_page : public page {
+class HeapPage : public Page {
  public:
-  heap_page();
+  HeapPage();
 
-  heap_page(heap_page_id id, std::byte data[]);
+  HeapPage(HeapPageId id, std::byte data[]);
 
-  heap_page_id get_id();
+  HeapPageId get_id();
 
-  transaction_id get_id_of_last_dirty_transaction() override;
+  TransactionId GetIdOfLastDirtyTransaction() override;
 
-  void mark_dirty(bool dirty, transaction_id tid) override;
+  void MarkDirty(bool dirty, TransactionId tid) override;
 
-  heap_page get_before_image();
+  HeapPage GetBeforeImage();
 
-  void set_before_image() override;
+  void SetBeforeImage() override;
 
   int get_num_tuples();
 
@@ -34,21 +34,21 @@ class heap_page : public page {
   Tuple ReadNextTuple(DataInputStream dis, int slotId)();
   */
 
-  void get_page_data(std::byte rep[]);
+  void GetPageData(std::byte rep[]);
 
-  static void create_empty_pageData(std::byte rep[]);
+  static void CreateEmptyPageData(std::byte rep[]);
 
-  void delete_tuple(tuple t);
+  void DeleteTuple(Tuple t);
 
-  void insert_tuple(tuple t);
+  void InsertTuple(Tuple t);
 
-  void add_tuple(tuple t);
+  void AddTuple(Tuple t);
 
-  int get_num_emptySlots();
+  int GetNumEmptySlots();
 
-  bool is_slot_used(int i);
+  bool IsSlotUsed(int i);
 
-  void set_slot(int i, bool value);
+  void SetSlot(int i, bool value);
 
   /* Not implemented
   Iterator<tuple> iterator();

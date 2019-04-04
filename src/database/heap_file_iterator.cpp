@@ -1,22 +1,23 @@
 #include "heap_file_iterator.h"
+#include "database.h"
 
 namespace emerald {
-heap_file_iterator::heap_file_iterator(transaction_id tid, heap_file f) {
+HeapFileIterator::HeapFileIterator(TransactionId tid, HeapFile f) {
   this->iterator = NULL;
   this->page_index = 0;
   this->tid = tid;
   this->file = file;
 }
 
-void heap_file_iterator::open() {
+void HeapFileIterator::Open() {
   page_index = 0;
-  page_Id page_id = new heap_page_id(file.getId(), page_index);
-  page page = database.getBufferPool().getPage(tid, page_id, Permissions.READ_ONLY);
-  Heap_page heap_page = (heap_page)page;
-  iterator = heap_page.iterator();
+  PageId page_id = new heap_page_id(file.getId(), page_index);
+  Page page = Database.getBufferPool().getPage(tid, page_id, Permissions.READ_ONLY);
+  HeapPage heap_page = (heap_page)page;
+  iterator = HeapPage.iterator();
 }
 
-bool heap_file_iterator::hasNext() {
+bool HeapFileIterator::HasNext() {
   if (iterator == NULL) {
     return false;
   }
@@ -28,15 +29,15 @@ bool heap_file_iterator::hasNext() {
       return false;
     } 
     else {
-      page_id page_id = new HeapPageId(file.getId(), page_index + 1);
-      page page = database.getBufferPool().getPage(tid, page_id, Permissions.READ_ONLY);
-      heap_page heap_page = (heap_page)page;
-      return heapPage.iterator().hasNext();
+      PageId page_id = new HeapPageId(file.getId(), page_index + 1);
+      Page page = Database.getBufferPool().getPage(tid, page_id, Permissions.READ_ONLY);
+      HeapPage heap_page = (HeapPage) page;
+      return heap_page.Iterator().HasNext();
     }
   }
 }
 
-tuple heap_file_iterator::next() {
+Tuple HeapFileIterator::Next() {
   if (iterator == null) {
     throw new NoSuchElementException();
   }
@@ -44,26 +45,26 @@ tuple heap_file_iterator::next() {
     return iterator.next();
   } 
   else {
-    page_id page_id = new heap_page_id(file.getId(), page_index + 1);
-    page page = database.getBufferPool().getPage(tid, page_id, Permissions.READ_ONLY);
-    heap_page heap_page = (heap_page)page;
+    PageId page_id = new HeapPageId(file.getId(), page_index + 1);
+    Page page = database.getBufferPool().getPage(tid, page_id, Permissions.READ_ONLY);
+    HeapPage heap_page = (HeapPage) page;
 
     if (page != null)
-      if (heap_page.iterator().hasNext()) {
+      if (heap_page.Iterator().HasNext()) {
         page_index++;
-        iterator = heap_page.iterator();
-        return iterator.next();
+        iterator = heap_page.Iterator();
+        return iterator.Next();
       }
     throw new NoSuchElementException();
   }
 }
 
-void heap_file_iterator::restart() {
-  close();
-  open();
+void HeapFileIterator::Restart() {
+  Close();
+  Open();
 }
 
-void heap_file_iterator::close() {
+void HeapFileIterator::Close() {
   iterator = null;
   page_index = 0;
 }
