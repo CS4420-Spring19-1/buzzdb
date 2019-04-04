@@ -43,6 +43,8 @@ namespace emerald {
 
             storageType type;  
 
-            int table_id_;      
+            int table_id_;  
+
+            std::string name;    
     };
 };

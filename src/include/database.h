@@ -4,6 +4,7 @@
 #include <vector>
 #include "field.h"
 #include "table.h"
+#include "catalog.h"
 
 namespace emerald {
     class Database {
@@ -28,5 +29,7 @@ namespace emerald {
             int getTableId(std::string table_name);
 
             Field* get_field(int table_id, int tuple_id, int column_id);
+
+            static Catalog getCatalog();
     };
 };
