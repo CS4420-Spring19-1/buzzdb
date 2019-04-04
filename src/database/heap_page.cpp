@@ -1,5 +1,6 @@
 #include <cmath>
 #include <iostream>
+#include "database.h"
 #include "heap_page.h"
 
 namespace emerald {
@@ -31,8 +32,8 @@ HeapPage::HeapPage(HeapPageId id, std::byte data[]) {
   SetBeforeImage();
 }
 
-HeapPageId::HeapPageId HeapPage::get_id() {
-  return pid;
+HeapPageId::HeapPageId * HeapPage::get_id() {
+  return &pid;
 }
 
 TransactionId HeapPage::GetIdOfLastDirtyTransaction() {
@@ -43,7 +44,7 @@ TransactionId HeapPage::GetIdOfLastDirtyTransaction() {
 void HeapPage::MarkDirty(bool dirty, TransactionId tid) {
 }
 
-HeapPage::HeapPage HeapPage::GetBeforeImage() {
+HeapPage::HeapPage * HeapPage::GetBeforeImage() {
   try {
     std::byte * old_data_ref = nullptr;
     old_data_ref = old_data;

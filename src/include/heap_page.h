@@ -16,13 +16,13 @@ class HeapPage : public Page {
 
   HeapPage(HeapPageId id, std::byte data[]);
 
-  HeapPageId get_id();
+  HeapPageId * get_id();
 
   TransactionId GetIdOfLastDirtyTransaction() override;
 
   void MarkDirty(bool dirty, TransactionId tid) override;
 
-  HeapPage GetBeforeImage();
+  HeapPage * GetBeforeImage();
 
   void SetBeforeImage() override;
 
