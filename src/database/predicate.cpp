@@ -7,8 +7,8 @@ Predicate::Predicate(int field, OpType op_type, Field * operand) {
   this->operand = operand;
 }
 
-bool Predicate::Filter(Tuple t) {
-  return t.getField(field).Compare(op_type, operand);
+bool Predicate::Filter(Tuple & t) {
+  return t.get_field(field).Compare(op_type, operand);
 }
 
 /* Parsing methods: not implemented
