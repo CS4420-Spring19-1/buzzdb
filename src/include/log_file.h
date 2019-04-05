@@ -5,6 +5,8 @@
 #include "page.h"
 #include "transaction_id.h"
 
+#include "random_access_file.h"
+
 namespace emerald {
 class LogFile {
  public:
