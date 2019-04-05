@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include "db_file.h"
+#include "iterator.h"
 #include "tuple_desc.h"
 
 namespace emerald {
@@ -23,7 +24,7 @@ class Catalog {
 
   std::string GetPrimaryKey(int tableid);
 
-  Iterator<Integer> TableIdIterator();
+  Iterator TableIdIterator();
 
   void Clear();
 
