@@ -10,26 +10,7 @@ int BufferPool::get_page_size() const {
 }
 
 Page * BufferPool::GetPage(TransactionId * tid, PageId * pid, Permissions * perm) {
-  for(Page* page: PageList) {
-    if (page->getId()->equals(pid)) {
-      return page;
-    }
-  }
-
-  if (PageList.size() == MaxSize) {
-    // throw new DbException("PageList is full!");
-  }
-
-  // get_catalog not implemented && 4.3
-  for (Table* tab: Database->GetCatalog()->GetTables()) {
-    if (tab.file->getid() == pid->get_table_id()) {
-      Page* page = tab.file->ReadPage(pid);
-      PageList.push_back(page);
-      return page;
-    }
-  }
-
-  return null;
+  return nullptr;
 }
 
 void BufferPool::ReleasePage(TransactionId * tid, PageId * pid) {
