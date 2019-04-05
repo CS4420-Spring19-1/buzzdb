@@ -19,7 +19,7 @@ class Transaction {
   /**
    * Returns the TransactionId object
    */
-  TransactionId & get_id();
+  TransactionId * get_id();
 
   /**
    * Starts the transaction
