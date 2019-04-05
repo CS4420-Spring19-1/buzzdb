@@ -52,7 +52,7 @@ std::string Catalog::GetPrimaryKey(int tableid) {
   // throw new NoSuchElementException();
 }
 
-Iterator<Integer> Catalog::TableIdIterator() {
+Iterator Catalog::TableIdIterator() {
   std::vector<int> lst;
   for (Table* tab: TableList) {
     lst.push_back(tab.file->get_id());
