@@ -3,6 +3,7 @@
 namespace emerald {
 BufferPool::BufferPool(int num_pages) {
   buffer = new std::vector<Page*>(num_pages);
+  // test
   // lock = new LockManager(num_pages);
 }
 
