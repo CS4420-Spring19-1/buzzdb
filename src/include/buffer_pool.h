@@ -1,63 +1,40 @@
 #pragma once
 
 #include <vector>
+#include "catalog.h"
 #include "database.h"
 #include "page.h"
 #include "page_id.h"
 #include "permissions.h"
 #include "tuple.h"
 
-/*
-remaining question
-1. Page structure
-2. 
-*/
-
-
 /**
  * BufferPool manages the reading and writing of pages into memory from
  * disk. Access methods call into it to retrieve pages, and it fetches
  * pages from the appropriate location.
- * <p>
+ * 
  * The BufferPool is also responsible for locking;  when a transaction fetches
  * a page, BufferPool checks that the transaction has the appropriate
  * locks to read/write the page.
  * 
  * @Threadsafe, all fields are final
  */
-
 namespace emerald {
 class BufferPool {
-  private:
-    /** Bytes per page, including header. */
-    static const int PAGE_SIZE = 4096;          
-
-    std::vector<Page*> buffer;
-
-    int evictIdx = 0;
-
-    /**
-     * Flushes a certain page to disk
-     * @param pid an ID indicating the page to flush
-     */
-    void FlushPage(PageId * pid);
-
-    /**
-     * Discards a page from the buffer pool.
-     * Flushes the page to disk to ensure dirty pages are updated on disk.
-     */
-    void EvictPage();
-
   public:
-    /** Default number of pages passed to the constructor. This is used by
-    other classes. BufferPool should use the numPages argument to the
-    constructor instead. */
+    /**
+     * Default number of pages passed to the constructor. This is used by
+     * other classes. The BufferPool class should use the num_pages argument
+     * supplied to the constructor instead.
+     */
     static const int DEFAULT_PAGES = 50;
+
     std::vector<Page*> PageList;
-    int MaxSize = DEFAULT_PAGES;
     
-    BufferPool(int num_pages);
+    BufferPool(int num_pages, Catalog * catalog);
+
     ~BufferPool();
+
     int get_page_size() const;
 
     /**
@@ -75,7 +52,7 @@ class BufferPool {
      * @param pid the ID of the requested page
      * @param perm the requested permissions on the page
      */
-    Page * GetPage(TransactionId * tid, PageId * pid, Permissions * perm);
+    Page * get_page(TransactionId * tid, PageId * pid, Permissions * perm);
 
     /**
     * Releases the lock on a page.
@@ -154,5 +131,29 @@ class BufferPool {
 
     // Write all pages of the specified transaction to disk
     void FlushPages(TransactionId * tid);
+
+  private:
+    /**
+     * Bytes per page, including header.
+     */
+    static const int PAGE_SIZE = 4096;          
+
+    std::vector<Page*> * buffer_pool;
+
+    Catalog * catalog = 0;
+
+    int evictIdx = 0;
+
+    /**
+     * Flushes a certain page to disk
+     * @param pid an ID indicating the page to flush
+     */
+    void FlushPage(PageId * pid);
+
+    /**
+     * Discards a page from the buffer pool.
+     * Flushes the page to disk to ensure dirty pages are updated on disk.
+     */
+    void EvictPage();
 };
 }
