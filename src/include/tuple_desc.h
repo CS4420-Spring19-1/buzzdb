@@ -15,17 +15,17 @@ class TupleDesc {
 
   /**
    * Constructor of the TupleDesc class.
-   * Creates a new TupleDesc with fields of types specified by type_array. The
+   * Creates a new TupleDesc with fields of types specified by type_vector. The
    * fields will be unnamed.
    */
-  TupleDesc(std::vector<Type> type_array);
+  TupleDesc(std::vector<Type> type_vector);
 
   /**
    * Constructor of the TupleDesc class.
-   * Creates a new TupleDesc with fields of types specified by type_array and
-   * names specified by field_array.
+   * Creates a new TupleDesc with fields of types specified by type_vector and
+   * names specified by field_vector.
    */
-  TupleDesc(std::vector<Type> type_array, std::vector<std::string> field_array);
+  TupleDesc(std::vector<Type> type_vector, std::vector<std::string> field_vector);
 
   /**
    * Copy constructor of the TupleDesc class.

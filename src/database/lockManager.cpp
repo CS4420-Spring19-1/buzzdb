@@ -8,7 +8,7 @@ LockManager::LockManager(int num_pages) {
   for (size_t i = 0; i < num_pages; i++) {
     // mutexes = new Object();
     read_lock_holders.push_back(new std::set<TransactionId*>());
-    write_lock_holders.push_back(NULL);
+    write_lock_holders.push_back(nullptr);
   }
   writers = new std::vector<int>(num_pages);
 }

@@ -3,7 +3,7 @@
 
 namespace emerald {
 HeapFileIterator::HeapFileIterator(TransactionId tid, HeapFile f) {
-  this->iterator = NULL;
+  this->iterator = nullptr;
   this->page_index = 0;
   this->tid = tid;
   this->file = file;
@@ -18,7 +18,7 @@ void HeapFileIterator::Open() {
 }
 
 bool HeapFileIterator::HasNext() {
-  if (iterator == NULL) {
+  if (iterator == nullptr) {
     return false;
   }
   if (iterator.hasNext()) {

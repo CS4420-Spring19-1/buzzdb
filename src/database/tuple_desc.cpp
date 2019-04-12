@@ -4,21 +4,21 @@ namespace emerald {
 TupleDesc::TupleDesc() {
 }
 
-TupleDesc::TupleDesc(std::vector<Type> type_array) {
+TupleDesc::TupleDesc(std::vector<Type> type_vector) {
   std::vector<std::string> empty_string = new std::vector<std::string>(0);
-  TupleDesc(type_array, empty_string);
+  TupleDesc(type_vector, empty_string);
 }
 
-TupleDesc::TupleDesc(std::vector<Type> type_array, std::vector<std::string> field_array) {
-  types = new std::vector<Type>(type_array.size());
+TupleDesc::TupleDesc(std::vector<Type> type_vector, std::vector<std::string> field_vector) {
+  types = new std::vector<Type>(type_vector.size());
   // memcpy ?
-  for (size_t i = 0; i < type_array.size(); i++) {
-      types.push_back(type_array[i]);
+  for (size_t i = 0; i < type_vector.size(); i++) {
+      types.push_back(type_vector[i]);
   }
   
-  names = new std::vector<std::string>(field_array.size());
-  for (size_t i = 0; i < field_array.size(); i++) {
-      names.push_back(field_array[i]);
+  names = new std::vector<std::string>(field_vector.size());
+  for (size_t i = 0; i < field_vector.size(); i++) {
+      names.push_back(field_vector[i]);
   }
 }
 
@@ -46,7 +46,7 @@ std::string TupleDesc::get_field_type(int index) const {
 }
 
 int TupleDesc::FieldNameToIndex(std::string name) {
-  if (name != NULL) {
+  if (name != nullptr) {
     for (size_t i = 0; i < name.length(); i++) {
       if (name == names[i]) {
         return i;
@@ -83,31 +83,22 @@ TupleDesc::TupleDesc* TupleDesc::Combine(TupleDesc* td1, TupleDesc* td2) {
 }
 
 bool TupleDesc::operator==(TupleDesc& other) {
-  if (!(dynamic_cast<TupleDesc*>(other) != nullptr)) {
-    return false;
-  } else {
-    TupleDesc* o = dynamic_cast<TupleDesc*>(other);
+  int n = this->get_number_fields();
 
-    if (this->get_number_fields() != o->get_number_fields()) {
-      return false;
-    } else {
-      int n = this->get_number_fields();
-
-      for (size_t i = 0; i < n; i++) {
-        if (o->get_field_name(i) == nullptr) {
-          if (o->get_field_name(i) != nullptr) {
-            return false;
-          }
-        }
-        else if (this->get_field_name(i) == o->get_field_name(i)) {
-          return false;
-        }
-        else if (this->get_field_type(i) != o->get_field_type(i)) {
-          return false;
-        }
+  for (size_t i = 0; i < n; i++) {
+    if (o->get_field_name(i) == nullptr) {
+      if (o->get_field_name(i) != nullptr) {
+        return false;
       }
-      return true;
     }
+    else if (this->get_field_name(i) == o->get_field_name(i)) {
+      return false;
+    }
+    else if (this->get_field_type(i) != o->get_field_type(i)) {
+      return false;
+    }
+  }
+  return true;
   }
 }
 } //emerald

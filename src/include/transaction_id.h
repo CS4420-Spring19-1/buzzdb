@@ -22,7 +22,6 @@ class TransactionId {
    */
   bool operator==(TransactionId & other);
 
-  int HashCode();
 
  private:
   /**

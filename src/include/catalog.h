@@ -21,7 +21,7 @@ namespace emerald {
 class Catalog {
  public:
   Catalog();
-
+  ~Catalog();
   /**
    * Add a new table to the catalog.
    * This table's contents are stored in the specified DbFile.
@@ -58,7 +58,7 @@ class Catalog {
 
   std::string GetPrimaryKey(int table_id);
 
-  Iterator TableIdIterator();
+  std::unordered_map<int, DbFile*>::iterator TableIdIterator();
 
   void Clear();
 

@@ -7,9 +7,20 @@ Catalog::Catalog() {
   p_fields = new std::unordered_map<int, std::string>();
 }
 
+Catalog::~Catalog() {
+  delete names;
+  names = nullptr;
+  delete db_fields;
+  db_fields = nullptr;
+  delete p_fields;
+  p_fields = nullptr;
+}
+
 void Catalog::AddTable(DbFile* file, std::string name, std::string pkeyField) {
   int table_id = file->get_id();
 
+  // follow devinz's code 
+  // many be we can just use iter.find() here
   for (auto const& elem: names) {
     int id = elem.first;
     if (names[id] == name) {
@@ -76,7 +87,7 @@ std::string Catalog::GetPrimaryKey(int table_id) {
   // throw new NoSuchElementException();
 }
 
-Iterator Catalog::TableIdIterator() {
+std::unordered_map<int, DbFile*>::iterator Catalog::TableIdIterator() {
   std::unordered_map<int, DbFile*>::iter = db_fields.begin();
   return iter;
 }

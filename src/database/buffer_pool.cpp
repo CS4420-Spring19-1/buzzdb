@@ -3,8 +3,11 @@
 namespace emerald {
 BufferPool::BufferPool(int num_pages) {
   buffer = new std::vector<Page*>(num_pages);
-  // test
   // lock = new LockManager(num_pages);
+}
+BufferPool::~BufferPool() {
+  delete buffer;
+  buffer = nullptr;
 }
 
 int BufferPool::get_page_size() const {
@@ -14,9 +17,10 @@ int BufferPool::get_page_size() const {
 Page * BufferPool::GetPage(TransactionId * tid, PageId * pid, Permissions * perm) {
   int idx = -1;
   for (size_t i = 0; i < buffer.size(); i++) {
-    if (buffer[i] == NULL) {
+    if (buffer[i] == nullptr) {
       idx = i;
     } else if (pid == buffer[i]->get_id()) {
+      // wait lock manager to be implemented
       // try {
       //   lock.acquire(tid, i, perm);
       // } catch (InterruptedException e) {
@@ -42,7 +46,7 @@ Page * BufferPool::GetPage(TransactionId * tid, PageId * pid, Permissions * perm
 
 void BufferPool::ReleasePage(TransactionId * tid, PageId * pid) {
   for (int i=0; i<buffer.size(); i++) {
-    if (buffer[i] != NULL && buffer[i]->get_id() == pid) {
+    if (buffer[i] != nullptr && buffer[i]->get_id() == pid) {
       /*
        if (lock.isHolding(tid, i)) {
          lock.release(tid, i);
@@ -59,7 +63,7 @@ void BufferPool::TransactionComplete(TransactionId * tid) {
 
 bool BufferPool::HoldsLock(TransactionId * tid, PageId * pid) {
   for (int i = 0; i < buffer.size(); i++) {
-    if (buffer[i] != NULL && buffer[i]->get_id() == pid) {
+    if (buffer[i] != nullptr && buffer[i]->get_id() == pid) {
       // return lock.isHolding(tid, i);
     }
   }
@@ -72,8 +76,8 @@ void BufferPool::TransactionComplete(TransactionId * tid, bool commit) {
   }
   for (int i = 0; i < buffer.size(); i++) {
     if (lock.isholding(tid, i)) {
-      if (!commit && buffer[i] != NULL && tid == buffer[i]->GetIdOfLastDirtyTransaction()) {
-        buffer[i] = NULL;
+      if (!commit && buffer[i] != nullptr && tid == buffer[i]->GetIdOfLastDirtyTransaction()) {
+        buffer[i] = nullptr;
       }
       lock.release(tid, i);
     }
@@ -97,7 +101,7 @@ void BufferPool::DeleteTuple(TransactionId * tid, Tuple * t) {
 
 void BufferPool::FlushAllPages() {
   for (int i = 0; i < buffer.size(); i++) {
-    if (buffer[i] != NULL) {
+    if (buffer[i] != nullptr) {
       FlushPage(buffer[i]->get_id());
     }
   }
@@ -105,8 +109,8 @@ void BufferPool::FlushAllPages() {
 
 void BufferPool::DiscardPage(PageId * pid) {
   for (int i = 0; i < buffer.size(); i++) {
-    if (buffer[i] != NULL && pid == buffer[i]->get_id()) {
-      buffer[i] = NULL;
+    if (buffer[i] != nullptr && pid == buffer[i]->get_id()) {
+      buffer[i] = nullptr;
       break;
     }
   }
@@ -114,9 +118,9 @@ void BufferPool::DiscardPage(PageId * pid) {
 
 void BufferPool::FlushPage(PageId * pid) {
   for (int i = 0; i < buffer.size(); i++) {
-    if (buffer[i] != NULL && pid == buffer[i]->get_id()) {
+    if (buffer[i] != nullptr && pid == buffer[i]->get_id()) {
       TransactionId* dirtier = buffer[i]->GetIdOfLastDirtyTransaction();
-      if (dirtier != NULL) {
+      if (dirtier != nullptr) {
         /*
          Database.getLogFile().logWrite(dirtier, buffer[i].getBeforeImage(), buffer[i]);
          Database.getLogFile().force();
@@ -131,7 +135,7 @@ void BufferPool::FlushPage(PageId * pid) {
 
 void BufferPool::FlushPages(TransactionId * tid) {
   for (int i = 0; i < buffer.size(); i++) {
-    if (buffer[i] != NULL && lock.isHolding(tid, i)) {
+    if (buffer[i] != nullptr && lock.isHolding(tid, i)) {
       FlushPage(buffer[i]->get_id());
       buffer[i]->SetBeforeImage();
     }
@@ -139,17 +143,17 @@ void BufferPool::FlushPages(TransactionId * tid) {
 }
 
 void BufferPool::EvictPage() {
-  for (int init = evictIdx; buffer[evictIdx] != NULL 
-    && buffer[evictIdx]->GetIdOfLastDirtyTransaction() != NULL; ) {
+  for (int init = evictIdx; buffer[evictIdx] != nullptr 
+    && buffer[evictIdx]->GetIdOfLastDirtyTransaction() != nullptr; ) {
       evictIdx = (evictIdx + 1) % buffer.size();
       if (init == evictIdx) {
         // throw new DbException("no non-dirty page to evict");
       }
     }
-  if (buffer[evictIdx] != NULL) {
+  if (buffer[evictIdx] != nullptr) {
     try {
       FlushPage(buffer[evictIdx]->get_id());
-      buffer[evictIdx] = NULL;
+      buffer[evictIdx] = nullptr;
       evictIdx = (evictIdx + 1) % buffer.size(); }
     // } catch (IOException e) {
     //   // throw new DbException(e.getMessage());

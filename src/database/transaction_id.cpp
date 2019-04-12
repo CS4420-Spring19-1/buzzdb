@@ -24,7 +24,4 @@ bool TransactionId::operator==(TransactionId & other) {
   return id_value == other.id_value; 
 }
 
-int HashCode() {
-  return (int)id_value;
-}
 }
