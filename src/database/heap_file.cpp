@@ -14,7 +14,10 @@ FILE * HeapFile::get_file() {
 }
 
 int HeapFile::get_id() const {
+  /** not working, to be fixed
   return reinterpret_cast<uint32_t>(file);
+  */
+  return 0;
 }
 
 TupleDesc HeapFile::get_tuple_desc() const {
