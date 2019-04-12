@@ -1,6 +1,7 @@
 #include <cmath>
 #include "buffer_pool.h"
 #include "heap_file.h"
+#include "heap_file_iterator.h"
 
 namespace emerald {
 HeapFile::HeapFile(FILE * file, TupleDesc td) {
@@ -12,11 +13,11 @@ FILE * HeapFile::get_file() {
   return file;
 }
 
-uint32_t HeapFile::get_id() {
+int HeapFile::get_id() const {
   return reinterpret_cast<uint32_t>(file);
 }
 
-TupleDesc HeapFile::get_tuple_desc() {
+TupleDesc & HeapFile::get_tuple_desc() const {
   return td;
 }
 
@@ -37,6 +38,7 @@ Page * HeapFile::DeleteTuple(TransactionId & tid, Tuple & t) {
 }
 
 DbFileIterator * HeapFile::Iterator(TransactionId & tid) {
+  // potential memory leak, should address somewhere
   DbFileIterator * iterator = new HeapFileIterator(tid, this);
   return iterator;
 }

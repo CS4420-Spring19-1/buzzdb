@@ -21,9 +21,9 @@ class HeapFile : public DbFile {
 
   FILE * get_file();
 
-  uint32_t get_id();
+  int get_id() const override;
 
-  TupleDesc get_tuple_desc();
+  TupleDesc & get_tuple_desc() const override;
 
   static int get_num_pages();
 
