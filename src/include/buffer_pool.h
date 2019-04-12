@@ -57,7 +57,7 @@ class BufferPool {
     int MaxSize = DEFAULT_PAGES;
     
     BufferPool(int num_pages);
-
+    ~BufferPool();
     int get_page_size() const;
 
     /**

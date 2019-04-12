@@ -10,6 +10,8 @@ class TransactionId {
    */
   TransactionId();
 
+  TransactionId::TransactionId(long id);
+
   /**
    * Returns the transaction id value
    */
@@ -19,6 +21,7 @@ class TransactionId {
    * Overload of the equality operator
    */
   bool operator==(TransactionId & other);
+
 
  private:
   /**

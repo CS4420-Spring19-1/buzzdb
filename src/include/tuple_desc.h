@@ -1,16 +1,12 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include "type.h"
 
 namespace emerald {
 class TupleDesc {
  public:
-  /**
-   * Merge two TupleDescs into one with td1.num_fields + td2.num_fields fields.
-   * The first fields will come from td1, followed by the fields from td2.
-   */
-  static TupleDesc combine(TupleDesc td1, TupleDesc td2);
 
   /**
    * Default constructor of the TupleDesc class.
@@ -19,17 +15,17 @@ class TupleDesc {
 
   /**
    * Constructor of the TupleDesc class.
-   * Creates a new TupleDesc with fields of types specified by type_array. The
+   * Creates a new TupleDesc with fields of types specified by type_vector. The
    * fields will be unnamed.
    */
-  TupleDesc(Type type_array[]);
+  TupleDesc(std::vector<Type> type_vector);
 
   /**
    * Constructor of the TupleDesc class.
-   * Creates a new TupleDesc with fields of types specified by type_array and
-   * names specified by field_array.
+   * Creates a new TupleDesc with fields of types specified by type_vector and
+   * names specified by field_vector.
    */
-  TupleDesc(Type type_array[], std::string field_array[]);
+  TupleDesc(std::vector<Type> type_vector, std::vector<std::string> field_vector);
 
   /**
    * Copy constructor of the TupleDesc class.
@@ -47,16 +43,18 @@ class TupleDesc {
    */
   std::string get_field_name(int index) const;
 
-  /**
-   * Returns the index of the first field that has a matching name in the
-   * TupleDesc.
-   */
-  int get_index(std::string name) const;
+  std::string TupleDesc::get_field_type(int index) const;
 
   /**
-   * Returns the type of the ith field in the TupleDesc.
+   * Find the index of the field with a given name.
+   * 
+   * @param name
+   *            name of the field.
+   * @return the index of the field that is first to have the given name.
+   * @throws NoSuchElementException
+   *             if no field with a matching name is found.
    */
-  Type get_type(int index) const;
+  int TupleDesc::FieldNameToIndex(std::string name);
 
   /**
    * Returns the size of the associated tuple in bytes.
@@ -64,12 +62,20 @@ class TupleDesc {
   int get_size() const;
 
   /**
+   * Merge two TupleDescs into one with td1.num_fields + td2.num_fields fields.
+   * The first fields will come from td1, followed by the fields from td2.
+   */
+  static TupleDesc Combine(TupleDesc* td1, TupleDesc* td2);
+
+  /**
    * Overload of the equality operator.
    */
-  bool operator==(TupleDesc other);
+  bool operator==(TupleDesc& other);
+
+
 
  private:
-  Type * types;
-  std::string * names;
+  std::vector<Type> types;
+  std::vector<std::string> names;
 };
 }
