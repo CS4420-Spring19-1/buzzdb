@@ -35,7 +35,7 @@ class BufferPool {
 
     ~BufferPool();
 
-    int get_page_size() const;
+    static int get_page_size();
 
     /**
      * Retrieve the specified page with the associated permissions.

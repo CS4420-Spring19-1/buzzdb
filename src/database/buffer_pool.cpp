@@ -11,7 +11,7 @@ BufferPool::~BufferPool() {
   buffer_pool = nullptr;
 }
 
-int BufferPool::get_page_size() const {
+int BufferPool::get_page_size() {
   return PAGE_SIZE;
 }
 
