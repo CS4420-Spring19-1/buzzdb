@@ -20,8 +20,16 @@ namespace emerald {
  */
 class Catalog {
  public:
+  /**
+   * Default constructor for the Catalog class.
+   */
   Catalog();
+
+  /**
+   * Destructor for the Catalog class.
+   */
   ~Catalog();
+
   /**
    * Add a new table to the catalog.
    * This table's contents are stored in the specified DbFile.
@@ -35,8 +43,6 @@ class Catalog {
 
   void AddTable(DbFile* file, std::string name);
 
-  void AddTable(DbFile* file);
-
   /**
    * Return the id of the table with a specified name,
    * @throws NoSuchElementException if the table doesn't exist
@@ -49,22 +55,23 @@ class Catalog {
    *     function passed to addTable
    * @throws NoSuchElementException if the table doesn't exist
    */
-  TupleDesc * get_tuple_desc(int table_id);
-
+  TupleDesc & get_tuple_desc(int table_id);
 
   std::string get_table_name(int table_id);
 
   DbFile * get_db_file(int table_id);
 
-  std::string GetPrimaryKey(int table_id);
+  std::string get_primary_key(int table_id);
+
+  std::unordered_map<int, DbFile*>::iterator TableIdIterator();
 
   void Clear();
 
   void LoadSchema();
 
  private:
-  std::unordered_map<int, std::string> names;
-  std::unordered_map<int, DbFile*> db_fields;
-  std::unordered_map<int, std::string> p_fields;
+  std::unordered_map<int, std::string> * names;
+  std::unordered_map<int, DbFile *> * db_fields;
+  std::unordered_map<int, std::string> * p_fields;
 };
 }
