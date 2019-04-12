@@ -60,10 +60,10 @@ class HeapPage : public Page {
  private:
   HeapPageId pid;
   TupleDesc * td;
-  std::byte * header;
+  // std::byte * header;
   Tuple * tuples;
   int numSlots;
-  std::byte * old_data;
+  // std::byte * old_data;
 
   // byte oldDataLock = new byte(0);
   int read_index;
