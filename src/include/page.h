@@ -29,12 +29,12 @@ class Page {
    * Returns the TransactionId of the last transaction that dirtied the page.
    * Returns null if the page is not dirty.
    */
-  virtual TransactionId GetIdOfLastDirtyTransaction() = 0;
+  virtual TransactionId * GetIdOfLastDirtyTransaction() = 0;
 
   /**
    * Sets the dirty state of the page as dirtied by a particular transaction.
    */
-  virtual void MarkDirty(bool dirty, TransactionId tid) = 0;
+  virtual void MarkDirty(bool dirty, TransactionId & tid) = 0;
  
   /* Need to use another input parameter type besides byte
   virtual void GetPageData(std::byte content_rep[]) = 0;

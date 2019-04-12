@@ -6,7 +6,7 @@
 namespace emerald {
 HeapPage::HeapPage(HeapPageId id, std::byte data[]) {
   this->pid = id;
-  this->td = Database::get_catalog().get_tuple_desc(id.get_table_id());
+  this->td = Database::get_catalog()->get_tuple_desc(id.get_table_id());
   this->numSlots = get_num_tuples();
   //DataInputStream dis = new DataInputStream(new ByteArrayInputStream(data));
   this->read_index = 0;
@@ -36,12 +36,12 @@ HeapPageId::HeapPageId * HeapPage::get_id() {
   return &pid;
 }
 
-TransactionId HeapPage::GetIdOfLastDirtyTransaction() {
+TransactionId * HeapPage::GetIdOfLastDirtyTransaction() {
   // some code goes here
   // return null;
 }
 
-void HeapPage::MarkDirty(bool dirty, TransactionId tid) {
+void HeapPage::MarkDirty(bool dirty, TransactionId & tid) {
 }
 
 HeapPage::HeapPage * HeapPage::GetBeforeImage() {
@@ -60,8 +60,8 @@ void HeapPage::SetBeforeImage() {
 }
 
 int HeapPage::get_num_tuples() {
-  double pagesize = (double) Database.get_buffer_pool().get_page_size() * 8;
-  double tuplesize = (double) (td.get_size() * 8 + 1);
+  double pagesize = (double) Database::get_buffer_pool()->get_page_size() * 8;
+  double tuplesize = (double) (td->get_size() * 8 + 1);
   double res = pagesize / tuplesize;
   return (int) floor(res);
 }

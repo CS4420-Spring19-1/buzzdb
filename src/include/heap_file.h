@@ -25,17 +25,17 @@ class HeapFile : public DbFile {
 
   TupleDesc get_tuple_desc();
 
-  Page * ReadPage(PageId * pid);
+  static int get_num_pages();
 
-  void WritePage(Page * page);
+  Page * ReadPage(PageId * pid) override;
 
-  int get_num_pages();
+  void WritePage(Page * page) override;
 
-  std::vector<Page> AddTuple(TransactionId tid, Tuple t);
+  std::vector<Page *> AddTuple(TransactionId & tid, Tuple & t) override;
 
-  Page * DeleteTuple(TransactionId tid, Tuple t);
+  Page * DeleteTuple(TransactionId & tid, Tuple & t) override;
 
-  DbFileIterator Iterator(TransactionId tid);
+  DbFileIterator * Iterator(TransactionId & tid) override;
 
  private:
   FILE * file;

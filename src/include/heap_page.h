@@ -18,9 +18,9 @@ class HeapPage : public Page {
 
   HeapPageId * get_id();
 
-  TransactionId GetIdOfLastDirtyTransaction() override;
+  TransactionId * GetIdOfLastDirtyTransaction() override;
 
-  void MarkDirty(bool dirty, TransactionId tid) override;
+  void MarkDirty(bool dirty, TransactionId & tid) override;
 
   HeapPage * GetBeforeImage();
 
@@ -56,7 +56,7 @@ class HeapPage : public Page {
 
  private:
   HeapPageId pid;
-  TupleDesc td;
+  TupleDesc * td;
   std::byte * header;
   Tuple * tuples;
   int numSlots;

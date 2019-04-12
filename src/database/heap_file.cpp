@@ -1,5 +1,5 @@
 #include <cmath>
-#include "bufferpool.h"
+#include "buffer_pool.h"
 #include "heap_file.h"
 
 namespace emerald {
@@ -20,24 +20,24 @@ TupleDesc HeapFile::get_tuple_desc() {
   return td;
 }
 
+int HeapFile::get_num_pages() {
+  return (int) ceil(ftell(file) / BufferPool::get_page_size());
+}
+
 Page * HeapFile::ReadPage(PageId * pid) {
 }
 
 void HeapFile::WritePage(Page * page) {
 }
 
-int HeapFile::get_num_pages() {
-  return (int) ceil(ftell(file) / BufferPool.getPageSize());
+std::vector<Page> HeapFile::AddTuple(TransactionId & tid, Tuple & t) {
 }
 
-std::vector<Page> HeapFile::AddTuple(TransactionId tid, Tuple t) {
+Page * HeapFile::DeleteTuple(TransactionId & tid, Tuple & t) {
 }
 
-Page * HeapFile::DeleteTuple(TransactionId tid, Tuple t) {
-}
-
-DbFileIterator HeapFile::Iterator(TransactionId tid) {
-  DbFileIterator iterator = new HeapFileIterator(tid, this);
+DbFileIterator * HeapFile::Iterator(TransactionId & tid) {
+  DbFileIterator * iterator = new HeapFileIterator(tid, this);
   return iterator;
 }
 }
