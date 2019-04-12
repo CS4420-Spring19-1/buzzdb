@@ -54,7 +54,7 @@ class Catalog {
    *     function passed to addTable
    * @throws NoSuchElementException if the table doesn't exist
    */
-  TupleDesc & get_tuple_desc(int table_id);
+  TupleDesc get_tuple_desc(int table_id);
 
   std::string get_table_name(int table_id);
 

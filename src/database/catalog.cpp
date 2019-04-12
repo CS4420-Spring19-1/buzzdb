@@ -61,7 +61,7 @@ int Catalog::get_table_id(std::string name) {
   // throw new NoSuchElementException();
 }
 
-TupleDesc & Catalog::get_tuple_desc(int table_id) {
+TupleDesc Catalog::get_tuple_desc(int table_id) {
   if (db_fields->count(table_id)) {
     return (*db_fields)[table_id]->get_tuple_desc();
   }
