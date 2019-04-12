@@ -4,7 +4,6 @@
 #include <string>
 #include <unordered_map>
 #include "db_file.h"
-#include "iterator.h"
 #include "tuple_desc.h"
 
 namespace emerald {
