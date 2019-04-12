@@ -25,7 +25,7 @@ class HeapFile : public DbFile {
 
   TupleDesc get_tuple_desc() const override;
 
-  static int get_num_pages();
+  int get_num_pages();
 
   Page * ReadPage(PageId * pid) override;
 
