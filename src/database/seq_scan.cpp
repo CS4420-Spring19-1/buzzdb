@@ -17,7 +17,9 @@ TupleDesc & SeqScan::get_tuple_desc() {
 }
 
 bool SeqScan::HasNext() {
-  if (iterator == nullptr) return false;
+  if (iterator == nullptr) {
+    return false;
+  }
   return iterator->HasNext();
 }
 
