@@ -50,9 +50,11 @@ void HeapPage::MarkDirty(bool dirty, TransactionId & tid) {
 
 HeapPage * HeapPage::GetBeforeImage() {
   try {
+    /*
     std::byte * old_data_ref = nullptr;
     old_data_ref = old_data;
-    // return new HeapPage(pid, old_data_ref);
+    return new HeapPage(pid, old_data_ref);
+    */
     return new HeapPage();
   } catch (std::exception e) {
     /*
