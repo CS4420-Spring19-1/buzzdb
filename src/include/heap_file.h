@@ -23,7 +23,7 @@ class HeapFile : public DbFile {
 
   int get_id() const override;
 
-  TupleDesc & get_tuple_desc() const override;
+  TupleDesc get_tuple_desc() const override;
 
   static int get_num_pages();
 

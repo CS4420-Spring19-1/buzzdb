@@ -34,7 +34,7 @@ class DbFile {
   /**
    * Returns the schema of the table stored in the DbFile
    */
-  virtual TupleDesc & get_tuple_desc() const = 0;
+  virtual TupleDesc get_tuple_desc() const = 0;
 
   /**
    * Reads the specified page from disk.

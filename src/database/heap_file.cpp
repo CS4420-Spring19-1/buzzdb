@@ -17,7 +17,7 @@ int HeapFile::get_id() const {
   return reinterpret_cast<uint32_t>(file);
 }
 
-TupleDesc & HeapFile::get_tuple_desc() const {
+TupleDesc HeapFile::get_tuple_desc() const {
   return td;
 }
 
@@ -26,15 +26,22 @@ int HeapFile::get_num_pages() {
 }
 
 Page * HeapFile::ReadPage(PageId * pid) {
+  // Implementation incomplete: difficulties with file IO in C++
+  return nullptr;
 }
 
 void HeapFile::WritePage(Page * page) {
+  // Implementation incomplete: difficulties with file IO in C++
 }
 
-std::vector<Page> HeapFile::AddTuple(TransactionId & tid, Tuple & t) {
+std::vector<Page *> HeapFile::AddTuple(TransactionId & tid, Tuple & t) {
+  // Implementation incomplete: difficulties with file IO in C++
+  return std::vector<Page *>(0);
 }
 
 Page * HeapFile::DeleteTuple(TransactionId & tid, Tuple & t) {
+  // Implementation incomplete: difficulties with file IO in C++
+  return nullptr;
 }
 
 DbFileIterator * HeapFile::Iterator(TransactionId & tid) {
