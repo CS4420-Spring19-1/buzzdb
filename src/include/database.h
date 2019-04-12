@@ -1,8 +1,10 @@
 #pragma once
 
 #include <string>
-#include "buffer_pool.h"
 #include "catalog.h"
+#include "log_file.h"
+
+class BufferPool;
 
 namespace emerald {
 class Database {

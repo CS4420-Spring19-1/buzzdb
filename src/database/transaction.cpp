@@ -16,8 +16,8 @@ Transaction::~Transaction() {
   delete tid;
 }
 
-TransactionId & Transaction::get_id() {
-  return *tid;
+TransactionId * Transaction::get_id() {
+  return tid;
 }
 
 void Transaction::Start() {

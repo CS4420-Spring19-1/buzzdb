@@ -15,32 +15,6 @@ int BufferPool::get_page_size() const {
 }
 
 Page * BufferPool::GetPage(TransactionId * tid, PageId * pid, Permissions * perm) {
-  int idx = -1;
-  for (size_t i = 0; i < buffer.size(); i++) {
-    if (buffer[i] == nullptr) {
-      idx = i;
-    } else if (pid == buffer[i]->get_id()) {
-      // wait lock manager to be implemented
-      // try {
-      //   lock.acquire(tid, i, perm);
-      // } catch (InterruptedException e) {
-      //   throw new TransactionAbortedException();
-      // }
-      return buffer[i];
-    }
-  }
-  if (idx < 0) {
-    EvictPage();
-    return GetPage(tid, pid, perm);
-  } else {
-    // try {
-    //   lock.acquire(tid, idx, perm);
-    // } catch (InterruptedException e) {
-    //   throw new TransactionAbortedException();
-    // }
-    //return buffer[idx] = Database.getCatalog().getDatabaseFile(pid.getTableId()).readPage(pid);
-  }
-
   return nullptr;
 }
 

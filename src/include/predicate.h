@@ -1,8 +1,10 @@
 #pragma once
 
 #include <string>
-#include "field.h"
 #include "tuple.h"
+
+class Field;
+class Tuple;
 
 namespace emerald {
 /**
@@ -30,7 +32,7 @@ class Predicate {
   /**
    * Compares the field number of t
    */
-  bool Filter(Tuple t);
+  bool Filter(Tuple & t);
 
   /**
    * Interface to access operations by a string containing an integer index
