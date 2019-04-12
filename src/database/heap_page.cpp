@@ -36,7 +36,7 @@ HeapPage::HeapPage(HeapPageId id, std::byte data[]) {
 }
 */
 
-HeapPageId::HeapPageId * HeapPage::get_id() {
+HeapPageId * HeapPage::get_id() {
   return &pid;
 }
 
@@ -48,7 +48,7 @@ TransactionId * HeapPage::GetIdOfLastDirtyTransaction() {
 void HeapPage::MarkDirty(bool dirty, TransactionId & tid) {
 }
 
-HeapPage::HeapPage * HeapPage::GetBeforeImage() {
+HeapPage * HeapPage::GetBeforeImage() {
   try {
     std::byte * old_data_ref = nullptr;
     old_data_ref = old_data;
