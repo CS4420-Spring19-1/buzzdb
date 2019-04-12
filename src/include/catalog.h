@@ -58,6 +58,8 @@ class Catalog {
 
   std::string GetPrimaryKey(int table_id);
 
+  std::unordered_map<int, DbFile*>::iterator TableIdIterator();
+
   void Clear();
 
   void LoadSchema();
