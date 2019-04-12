@@ -2,70 +2,34 @@
 #include "database.h"
 
 namespace emerald {
-HeapFileIterator::HeapFileIterator(TransactionId tid, HeapFile f) {
-  this->iterator = nullptr;
-  this->page_index = 0;
+HeapFileIterator::HeapFileIterator(TransactionId & tid, HeapFile * file) {
+  this->current_tuple = nullptr;
+  this->page_index = -1;
   this->tid = tid;
   this->file = file;
 }
 
 void HeapFileIterator::Open() {
   page_index = 0;
-  PageId page_id = new heap_page_id(file.getId(), page_index);
-  Page page = Database.getBufferPool().getPage(tid, page_id, Permissions.READ_ONLY);
-  HeapPage heap_page = (heap_page)page;
-  iterator = HeapPage.iterator();
+  current_tuple = nullptr;
 }
 
 bool HeapFileIterator::HasNext() {
-  if (iterator == nullptr) {
-    return false;
-  }
-  if (iterator.hasNext()) {
-    return true;
-  } 
-  else {
-    if (page_index >= file.num_pages() - 1) {
-      return false;
-    } 
-    else {
-      PageId page_id = new HeapPageId(file.getId(), page_index + 1);
-      Page page = Database.getBufferPool().getPage(tid, page_id, Permissions.READ_ONLY);
-      HeapPage heap_page = (HeapPage) page;
-      return heap_page.Iterator().HasNext();
-    }
-  }
+  // Implementation incomplete: difficulties with file IO in C++
+  return false;
 }
 
-Tuple HeapFileIterator::Next() {
-  if (iterator == null) {
-    throw new NoSuchElementException();
-  }
-  if (iterator.hasNext()) {
-    return iterator.next();
-  } 
-  else {
-    PageId page_id = new HeapPageId(file.getId(), page_index + 1);
-    Page page = database.getBufferPool().getPage(tid, page_id, Permissions.READ_ONLY);
-    HeapPage heap_page = (HeapPage) page;
-
-    if (page != null)
-      if (heap_page.Iterator().HasNext()) {
-        page_index++;
-        iterator = heap_page.Iterator();
-        return iterator.Next();
-      }
-    throw new NoSuchElementException();
-  }
+Tuple * HeapFileIterator::Next() {
+  // Implementation incomplete: difficulties with file IO in C++
 }
 
-void HeapFileIterator::Restart() {
-  Close();
-  Open();
+void HeapFileIterator::Rewind() {
+  page_index = 0;
+  current_tuple = nullptr;
 }
 
 void HeapFileIterator::Close() {
-  iterator = null;
-  page_index = 0;
+  page_index = -1;
+  current_tuple = nullptr;
 }
 }
