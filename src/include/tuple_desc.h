@@ -42,7 +42,7 @@ class TupleDesc {
    */
   std::string get_field_name(int index) const;
 
-  Type TupleDesc::get_field_type(int index) const;
+  Type get_field_type(int index) const;
 
   /**
    * Find the index of the field with a given name.
@@ -53,7 +53,7 @@ class TupleDesc {
    * @throws NoSuchElementException
    *             if no field with a matching name is found.
    */
-  int TupleDesc::FieldNameToIndex(std::string name);
+  int FieldNameToIndex(std::string name);
 
   /**
    * Returns the size of the associated tuple in bytes.

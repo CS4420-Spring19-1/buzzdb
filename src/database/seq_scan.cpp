@@ -1,4 +1,4 @@
-#include "seqscan.h"
+#include "seq_scan.h"
 #include "database.h"
 
 namespace emerald {

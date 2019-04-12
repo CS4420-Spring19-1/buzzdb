@@ -10,7 +10,7 @@ class TransactionId {
    */
   TransactionId();
 
-  TransactionId::TransactionId(long id);
+  TransactionId(long id);
 
   /**
    * Returns the transaction id value
