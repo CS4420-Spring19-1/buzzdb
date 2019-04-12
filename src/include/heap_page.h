@@ -8,13 +8,16 @@
 namespace emerald {
 /**
  * This class stores pages of HeapFiles and implements the Page interface that
- * is used by the BufferPool class/
+ * is used by the BufferPool class.
+ * 
+ * Some functions are not available because they use std::byte, which is only
+ * available in C++ 17. Currently working on a different way to represent pages
  */
 class HeapPage : public Page {
  public:
   HeapPage();
 
-  HeapPage(HeapPageId id, std::byte data[]);
+  // HeapPage(HeapPageId id, std::byte data[]);
 
   HeapPageId * get_id();
 
@@ -34,9 +37,9 @@ class HeapPage : public Page {
   Tuple ReadNextTuple(DataInputStream dis, int slotId)();
   */
 
-  void GetPageData(std::byte rep[]);
+  // void GetPageData(std::byte rep[]);
 
-  static void CreateEmptyPageData(std::byte rep[]);
+  // static void CreateEmptyPageData(std::byte rep[]);
 
   void DeleteTuple(Tuple t);
 

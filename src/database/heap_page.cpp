@@ -4,9 +4,13 @@
 #include "heap_page.h"
 
 namespace emerald {
+HeapPage::HeapPage() {
+}
+
+/** Temporarily not available, as std::byte is only available in C++ 17
 HeapPage::HeapPage(HeapPageId id, std::byte data[]) {
   this->pid = id;
-  this->td = Database::get_catalog()->get_tuple_desc(id.get_table_id());
+  this->td = &(Database::get_catalog()->get_tuple_desc(id.get_table_id()));
   this->numSlots = get_num_tuples();
   //DataInputStream dis = new DataInputStream(new ByteArrayInputStream(data));
   this->read_index = 0;
@@ -21,9 +25,8 @@ HeapPage::HeapPage(HeapPageId id, std::byte data[]) {
   try {
     // allocate and read the actual records of this page
     for (int i = 0; i < sizeof(tuples) / sizeof(tuples[0]); i++) {
-      /* ReadNextTuple is not declared
+      ReadNextTuple is not declared
       tuples[i] = ReadNextTuple(data, i);
-      */
     }
   } catch (std::exception e) {
     std::cout << "Exception occurred";
@@ -31,6 +34,7 @@ HeapPage::HeapPage(HeapPageId id, std::byte data[]) {
 
   SetBeforeImage();
 }
+*/
 
 HeapPageId::HeapPageId * HeapPage::get_id() {
   return &pid;
@@ -48,7 +52,8 @@ HeapPage::HeapPage * HeapPage::GetBeforeImage() {
   try {
     std::byte * old_data_ref = nullptr;
     old_data_ref = old_data;
-    return new HeapPage(pid, old_data_ref);
+    // return new HeapPage(pid, old_data_ref);
+    return new HeapPage();
   } catch (std::exception e) {
     /*
     System.exit(1);
@@ -98,17 +103,15 @@ Tuple HeapPage::ReadNextTuple(byte[] data, int slotId) {
   }
   return t;
 }
-*/
 
 void HeapPage::GetPageData(std::byte rep[]) {
 }
 
 void HeapPage::CreateEmptyPageData(std::byte rep[]) {
-  /*
   int len = BufferPool.getPageSize();
   return new byte[len];
-  */
 }
+*/
 
 void HeapPage::DeleteTuple(Tuple t) {
 }
