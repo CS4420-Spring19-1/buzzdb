@@ -28,11 +28,11 @@ Tuple::Tuple(Tuple & tuple) {
   tuple.get_fields(new_fields);
 }
 
-TupleDesc::TupleDesc Tuple::get_tuple_desc() const {
+TupleDesc Tuple::get_tuple_desc() const {
   return td;
 }
 
-RecordId::RecordId * Tuple::get_record_id() const {
+RecordId * Tuple::get_record_id() const {
   return rid;
 }
 
@@ -44,7 +44,7 @@ void Tuple::get_fields(Field ** fields) {
   fields = this->fields;
 }
 
-Field::Field * Tuple::get_field(int i) const {
+Field * Tuple::get_field(int i) const {
   return fields[i];
 }
 
