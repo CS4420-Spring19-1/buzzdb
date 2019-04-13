@@ -15,7 +15,7 @@ PageId & RecordId::get_page_id() const {
 }
 
 bool RecordId::operator==(RecordId other) {
-  return *(this->pid) == other.get_page_id()
+  return this->pid->get_page_number() == other.get_page_id().get_page_number()
       && this->tuple_number == other.get_tuple_number();
 }
 }

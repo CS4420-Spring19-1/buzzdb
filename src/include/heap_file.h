@@ -21,21 +21,21 @@ class HeapFile : public DbFile {
 
   FILE * get_file();
 
-  uint32_t get_id();
+  int get_id() const override;
 
-  TupleDesc get_tuple_desc();
-
-  Page * ReadPage(PageId * pid);
-
-  void WritePage(Page * page);
+  TupleDesc get_tuple_desc() const override;
 
   int get_num_pages();
 
-  std::vector<Page> AddTuple(TransactionId tid, Tuple t);
+  Page * ReadPage(PageId * pid) override;
 
-  Page * DeleteTuple(TransactionId tid, Tuple t);
+  void WritePage(Page * page) override;
 
-  DbFileIterator Iterator(TransactionId tid);
+  std::vector<Page *> AddTuple(TransactionId & tid, Tuple & t) override;
+
+  Page * DeleteTuple(TransactionId & tid, Tuple & t) override;
+
+  DbFileIterator * Iterator(TransactionId & tid) override;
 
  private:
   FILE * file;

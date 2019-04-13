@@ -1,10 +1,10 @@
 #pragma once
 
-#include "field.h"
 #include "record_id.h"
 #include "tuple_desc.h"
 
 namespace emerald {
+class Field;
 /**
  * This class maintains information about the contents of a tuple.
  * Tuples have a specified schema specified by a TupleDesc object and contain

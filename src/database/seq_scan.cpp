@@ -1,4 +1,4 @@
-#include "seqscan.h"
+#include "seq_scan.h"
 #include "database.h"
 
 namespace emerald {
@@ -12,12 +12,14 @@ void SeqScan::Open() {
   this->iterator->Open();
 }
 
-TupleDesc & SeqScan::get_tuple_desc() {
+TupleDesc SeqScan::get_tuple_desc() const {
   return this->db_file->get_tuple_desc();
 }
 
 bool SeqScan::HasNext() {
-  if (iterator == nullptr) return false;
+  if (iterator == nullptr) {
+    return false;
+  }
   return iterator->HasNext();
 }
 

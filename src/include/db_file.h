@@ -34,7 +34,7 @@ class DbFile {
   /**
    * Returns the schema of the table stored in the DbFile
    */
-  virtual TupleDesc & get_tuple_desc() const = 0;
+  virtual TupleDesc get_tuple_desc() const = 0;
 
   /**
    * Reads the specified page from disk.
@@ -51,19 +51,19 @@ class DbFile {
    * This method will acquire a lock on the affected pages of the file, and may
    * block until the lock can be acquired.
    */
-  virtual std::vector<Page> AddTuple(TransactionId tid, Tuple t) = 0;
+  virtual std::vector<Page *> AddTuple(TransactionId & tid, Tuple & t) = 0;
 
   /**
    * Removes the specified tuple from the DbFile on behalf of a transaction.
    * This method will acquire a lock on the affected pages of the file, and may
    * block until the lock can be acquired.
    */
-  virtual Page * DeleteTuple(TransactionId tid, Tuple t) = 0;
+  virtual Page * DeleteTuple(TransactionId & tid, Tuple & t) = 0;
 
   /**
    * Returns an iterator over all tuples stored in this DbFile.
    * The iterator must use BufferPool.getPage() to iterate through.
    */
-  virtual DbFileIterator * Iterator(TransactionId tid) = 0;
+  virtual DbFileIterator * Iterator(TransactionId & tid) = 0;
 };
 }

@@ -1,22 +1,13 @@
 #include "database.h"
 
 namespace emerald {
-Database::Database() {
-  catalog = new Catalog();
-  buffer_pool = new BufferPool(BufferPool::DEFAULT_PAGES);
-  /* File class does not exist
-  try {
-    log_file = new LogFile(new File(this->LOGFILENAME));
-  } catch {
-    // catch IOException here
-  }
-  */
-}
+Database * Database::instance = nullptr;
 
-Database::~Database() {
-  delete catalog;
-  delete buffer_pool;
-  delete log_file;
+Database * Database::get_instance() {
+  if (instance == nullptr) {
+    instance = new Database();
+  }
+  return instance;
 }
 
 LogFile * Database::get_log_file() {
@@ -32,11 +23,29 @@ Catalog * Database::get_catalog() {
 
 BufferPool * Database::ResetBufferPool(int pages) {
   delete instance->buffer_pool;
-  instance->buffer_pool = new BufferPool(pages);
+  instance->buffer_pool = new BufferPool(pages, instance->catalog);
 }
 
 void Database::Reset() {
   delete instance;
   instance = new Database();
+}
+
+Database::Database() {
+  catalog = new Catalog();
+  buffer_pool = new BufferPool(BufferPool::DEFAULT_PAGES, catalog);
+  /* File class does not exist
+  try {
+    log_file = new LogFile(new File(this->LOGFILENAME));
+  } catch {
+    // catch IOException here
+  }
+  */
+}
+
+Database::~Database() {
+  delete catalog;
+  delete buffer_pool;
+  delete log_file;
 }
 } 

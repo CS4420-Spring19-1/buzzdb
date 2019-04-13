@@ -7,7 +7,6 @@
 namespace emerald {
 class TupleDesc {
  public:
-
   /**
    * Default constructor of the TupleDesc class.
    */
@@ -43,7 +42,7 @@ class TupleDesc {
    */
   std::string get_field_name(int index) const;
 
-  std::string TupleDesc::get_field_type(int index) const;
+  Type get_field_type(int index) const;
 
   /**
    * Find the index of the field with a given name.
@@ -54,7 +53,7 @@ class TupleDesc {
    * @throws NoSuchElementException
    *             if no field with a matching name is found.
    */
-  int TupleDesc::FieldNameToIndex(std::string name);
+  int FieldNameToIndex(std::string name);
 
   /**
    * Returns the size of the associated tuple in bytes.
@@ -65,14 +64,12 @@ class TupleDesc {
    * Merge two TupleDescs into one with td1.num_fields + td2.num_fields fields.
    * The first fields will come from td1, followed by the fields from td2.
    */
-  static TupleDesc Combine(TupleDesc* td1, TupleDesc* td2);
+  static TupleDesc Combine(TupleDesc * td1, TupleDesc * td2);
 
   /**
    * Overload of the equality operator.
    */
-  bool operator==(TupleDesc& other);
-
-
+  bool operator==(TupleDesc & other);
 
  private:
   std::vector<Type> types;

@@ -4,9 +4,13 @@
 #include "heap_page.h"
 
 namespace emerald {
+HeapPage::HeapPage() {
+}
+
+/** Temporarily not available, as std::byte is only available in C++ 17
 HeapPage::HeapPage(HeapPageId id, std::byte data[]) {
   this->pid = id;
-  this->td = Database::get_catalog().get_tuple_desc(id.get_table_id());
+  this->td = &(Database::get_catalog()->get_tuple_desc(id.get_table_id()));
   this->numSlots = get_num_tuples();
   //DataInputStream dis = new DataInputStream(new ByteArrayInputStream(data));
   this->read_index = 0;
@@ -21,9 +25,8 @@ HeapPage::HeapPage(HeapPageId id, std::byte data[]) {
   try {
     // allocate and read the actual records of this page
     for (int i = 0; i < sizeof(tuples) / sizeof(tuples[0]); i++) {
-      /* ReadNextTuple is not declared
+      ReadNextTuple is not declared
       tuples[i] = ReadNextTuple(data, i);
-      */
     }
   } catch (std::exception e) {
     std::cout << "Exception occurred";
@@ -31,24 +34,28 @@ HeapPage::HeapPage(HeapPageId id, std::byte data[]) {
 
   SetBeforeImage();
 }
+*/
 
-HeapPageId::HeapPageId * HeapPage::get_id() {
+HeapPageId * HeapPage::get_id() {
   return &pid;
 }
 
-TransactionId HeapPage::GetIdOfLastDirtyTransaction() {
+TransactionId * HeapPage::GetIdOfLastDirtyTransaction() {
   // some code goes here
   // return null;
 }
 
-void HeapPage::MarkDirty(bool dirty, TransactionId tid) {
+void HeapPage::MarkDirty(bool dirty, TransactionId & tid) {
 }
 
-HeapPage::HeapPage * HeapPage::GetBeforeImage() {
+HeapPage * HeapPage::GetBeforeImage() {
   try {
+    /*
     std::byte * old_data_ref = nullptr;
     old_data_ref = old_data;
     return new HeapPage(pid, old_data_ref);
+    */
+    return new HeapPage();
   } catch (std::exception e) {
     /*
     System.exit(1);
@@ -60,8 +67,8 @@ void HeapPage::SetBeforeImage() {
 }
 
 int HeapPage::get_num_tuples() {
-  double pagesize = (double) Database.get_buffer_pool().get_page_size() * 8;
-  double tuplesize = (double) (td.get_size() * 8 + 1);
+  double pagesize = (double) Database::get_buffer_pool()->get_page_size() * 8;
+  double tuplesize = (double) (td->get_size() * 8 + 1);
   double res = pagesize / tuplesize;
   return (int) floor(res);
 }
@@ -98,17 +105,15 @@ Tuple HeapPage::ReadNextTuple(byte[] data, int slotId) {
   }
   return t;
 }
-*/
 
 void HeapPage::GetPageData(std::byte rep[]) {
 }
 
 void HeapPage::CreateEmptyPageData(std::byte rep[]) {
-  /*
   int len = BufferPool.getPageSize();
   return new byte[len];
-  */
 }
+*/
 
 void HeapPage::DeleteTuple(Tuple t) {
 }

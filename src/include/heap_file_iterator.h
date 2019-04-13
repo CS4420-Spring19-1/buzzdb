@@ -3,30 +3,33 @@
 #include "heap_file.h"
 #include "transaction_id.h"
 
-
 namespace emerald {
+/**
+ * This class describes an iterator that is designed to iterate through the
+ * tuples in a table, which is stored in a HeapFile object.
+ */
 class HeapFileIterator : public DbFileIterator {
  public:
   HeapFileIterator();
 
-  HeapFileIterator(TransactionId tid, HeapFile f);
+  HeapFileIterator(TransactionId & tid, HeapFile * file);
 
-  virtual ~HeapFileIterator();
+  ~HeapFileIterator();
 
-  void Open();
+  void Open() override;
 
-  bool HasNext();
+  bool HasNext() override;
 
-  Tuple Next();
+  Tuple * Next() override;
 
-  void Restart();
+  void Rewind() override;
 
-  void Close();
+  void Close() override;
 
  private:
-  Iterator<Tuple> iterator;
+  Tuple * current_tuple;
   int page_index;
   TransactionId tid;
-  HeapFile file;
+  HeapFile * file;
 };
 }

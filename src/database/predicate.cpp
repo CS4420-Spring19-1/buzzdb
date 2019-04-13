@@ -1,4 +1,6 @@
 #include "predicate.h"
+#include "field.h"
+#include "tuple.h"
 
 namespace emerald {
 Predicate::Predicate(int field, OpType op_type, Field * operand) {
@@ -8,7 +10,7 @@ Predicate::Predicate(int field, OpType op_type, Field * operand) {
 }
 
 bool Predicate::Filter(Tuple & t) {
-  return t.get_field(field).Compare(op_type, operand);
+  return t.get_field(field)->Compare(op_type, operand);
 }
 
 /* Parsing methods: not implemented
