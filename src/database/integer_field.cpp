@@ -1,53 +1,55 @@
 #include "integer_field.h"
 #include <iostream>
 
-namespace emerald
-{
-    IntegerField::IntegerField(int v) : Field(field_type::INTEGER), value(v) {
-    };
+namespace emerald {
+IntegerField::IntegerField(int v) : value(v) {
+}
 
-    void IntegerField::print() const {
-        std::cout << value << " ";
-    };
+IntegerField::IntegerField(const IntegerField & int_field) { 
+  value = int_field.get_value();
+}
 
-    bool IntegerField::filter(Predicate::opType op, Field* value) {
-        IntegerField* int_value = static_cast<IntegerField*>(value);
-        switch (op) {
-            // SEG FAULT
-            // value is a variable, not a pointer; should not be dereferenced
-            case Predicate::opType::EQ:
-                return this->value == int_value->getValue();
-                break;
-            case Predicate::opType::NE:
-                return this->value != int_value->getValue();
-                break;
-            case Predicate::opType::GT:
-                return this->value > int_value->getValue();
-                break;
-            case Predicate::opType::LT:
-                return this->value < int_value->getValue();
-                break;
-            case Predicate::opType::GE:
-                return this->value >= int_value->getValue();
-                break;
-            case Predicate::opType::LE:
-                return this->value <= int_value->getValue();
-                break;
-            default:
-                return false;
-                break;
-        } 
-    };
+int IntegerField::get_value() const {
+  return this->value;
+}
 
-    int IntegerField::getValue() const {
-        // SEG FAULT
-        // value is a variable, not a pointer; should not be dereferenced
-        return this->value;
-    };
+Type::FieldType IntegerField::get_type() const {
+  return Type::FieldType::INTEGER;
+}
 
-    /*copy constructor for integer field*/
-    // exceeds 80 spaces
-    IntegerField::IntegerField(const IntegerField& field) : Field(field_type::INTEGER) {
-        value = field.getValue();
-    };
-} // emerald
+bool IntegerField::Compare(Predicate::OpType op_type, Field * operand) {
+  IntegerField * operand_value_pointer = static_cast<IntegerField *>(operand);
+  int operand_value = operand_value_pointer->get_value();
+  switch (op_type) {
+    case Predicate::OpType::EQUALS:
+      return this->value == operand_value;
+      break;
+    case Predicate::OpType::NOT_EQUALS:
+      return this->value != operand_value;
+      break;
+    case Predicate::OpType::GREATER_THAN:
+      return this->value > operand_value;
+      break;
+    case Predicate::OpType::LESS_THAN:
+      return this->value < operand_value;
+      break;
+    case Predicate::OpType::GREATER_THAN_OR_EQUAL:
+      return this->value >= operand_value;
+      break;
+    case Predicate::OpType::LESS_THAN_OR_EQUAL:
+      return this->value <= operand_value;
+      break;
+    default:
+      return false; // should throw an exception instead of returning false
+      break;
+  }
+}
+
+void IntegerField::Print() const {
+  std::cout << value << " ";
+}
+
+bool IntegerField::operator==(IntegerField other) {
+  return this->value == other.get_value();
+}
+}

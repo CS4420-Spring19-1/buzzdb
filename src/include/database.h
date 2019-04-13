@@ -1,32 +1,65 @@
 #pragma once
 
-#include <unordered_map>
-#include <vector>
-#include "field.h"
-#include "table.h"
+#include <string>
+#include "buffer_pool.h"
+#include "catalog.h"
+#include "log_file.h"
 
 namespace emerald {
-    class Database {
-        private:
-            std::unordered_map<std::string, int> tableIds;
-            std::vector<Table*> tables;
-        public:
-            Database();
+/**
+ * This class is a class that initializes several static variables used by the
+ * database system.
+ * 
+ * It provides a set of methods that can be used to access these variables from
+ * anywhere.
+ * 
+ * This class is designed as a singleton, meaning that there is only one
+ * instance of the class can exist at a time and that instance is a static
+ * member of the class.
+ */
+class Database {
+ public:
+  /**
+   * Used to access the singular instance of the Database class.
+   * 
+   * The instance is initialized on the first call of this function.
+   */
+  static Database * get_instance();
 
-            void createTable(std::string table_name, std::vector<std::string> column_names, std::vector<std::string> column_types, Table::storageType type);
+  static LogFile * get_log_file();
 
-            Table* getTable(int index);
+  static BufferPool * get_buffer_pool();
 
-            std::vector<Table*> getTables();
+  static Catalog * get_catalog();
 
-            std::unordered_map<std::string, int> getTableIds();
+  static BufferPool * ResetBufferPool(int pages);
 
-            void printTable(std::string table_name);
+  /**
+   * Resets the database, primarily used for unit tests.
+   */
+  static void Reset();
 
-            Table* getTableRef(std::string table_name);
+ private:
+  /**
+   * Constructor for the Database class.
+   * Declared private as this Database class is a singleton.
+   */
+  Database();
 
-            int getTableId(std::string table_name);
+  /**
+   * Destructor for the Database class.
+   * Declared private as this Database class is a singleton.
+   */
+  ~Database();
 
-            Field* get_field(int table_id, int tuple_id, int column_id);
-    };
+  const std::string LOGFILENAME = "log";
+
+  static Database * instance;
+
+  Catalog * catalog;
+
+  BufferPool * buffer_pool;
+
+  LogFile * log_file;
 };
+}
