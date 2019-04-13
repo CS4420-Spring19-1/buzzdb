@@ -28,7 +28,8 @@ class TransactionId {
    * Internal counter of transaction ids.
    * Used to ensure that ids are unique.
    */
-  static std::atomic_long counter;
+  static int counter;
+  // static std::atomic_long counter;
 
   /**
    * Id of a TransactionId object
