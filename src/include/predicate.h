@@ -3,10 +3,9 @@
 #include <string>
 #include "tuple.h"
 
+namespace emerald {
 class Field;
 class Tuple;
-
-namespace emerald {
 /**
  * This class is used to perform comparisons between tuple values.
  */

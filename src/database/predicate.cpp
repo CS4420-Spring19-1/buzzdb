@@ -1,4 +1,6 @@
 #include "predicate.h"
+#include "field.h"
+#include "tuple.h"
 
 namespace emerald {
 Predicate::Predicate(int field, OpType op_type, Field * operand) {
