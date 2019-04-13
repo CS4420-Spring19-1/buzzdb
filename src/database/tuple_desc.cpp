@@ -72,7 +72,7 @@ int TupleDesc::get_size() const {
   return size;
 }
 
-TupleDesc::TupleDesc TupleDesc::Combine(TupleDesc * td1, TupleDesc * td2) {
+TupleDesc TupleDesc::Combine(TupleDesc * td1, TupleDesc * td2) {
   std::vector<Type> types = std::vector<Type>(td1->types.size() + td2->types.size());
   std::vector<std::string> names = std::vector<std::string>(td1->names.size() + td2->names.size());
   int idx = 0;
