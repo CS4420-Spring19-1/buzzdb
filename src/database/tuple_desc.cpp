@@ -96,7 +96,7 @@ bool TupleDesc::operator==(TupleDesc & other) {
   if (other.get_number_fields() != n) {
     return false;
   }
-
+  /* Incomplete implementation
   for (size_t i = 0; i < n; i++) {
     if ((& other.get_field_name(i)) == nullptr) {
       if ((& other.get_field_name(i)) != nullptr) {
@@ -108,7 +108,7 @@ bool TupleDesc::operator==(TupleDesc & other) {
       return false;
     }
   }
-
+  */
   return true;
 }
 }
