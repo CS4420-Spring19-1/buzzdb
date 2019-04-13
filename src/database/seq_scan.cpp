@@ -12,7 +12,7 @@ void SeqScan::Open() {
   this->iterator->Open();
 }
 
-TupleDesc & SeqScan::get_tuple_desc() {
+TupleDesc SeqScan::get_tuple_desc() const {
   return this->db_file->get_tuple_desc();
 }
 

@@ -37,7 +37,7 @@ class SeqScan {
     * @return the TupleDesc with field names from the underlying HeapFile,
     *         prefixed with the tableAlias string from the constructor.
     */
-  TupleDesc & get_tuple_desc();
+  TupleDesc get_tuple_desc() const;
 
   bool HasNext();
 
