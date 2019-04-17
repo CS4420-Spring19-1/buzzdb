@@ -1,7 +1,7 @@
 #include "heap_page_id.h"
 #include <iostream>
 
-namespace emerald {
+namespace buzzdb {
 HeapPageId::HeapPageId() {
 }
 

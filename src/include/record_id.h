@@ -3,7 +3,7 @@
 #include "page_id.h"
 #include "heap_page_id.h"
 
-namespace emerald {
+namespace buzzdb {
 /**
  * This class is a reference to a specific tuple on a specific page
  *  of a specific table.

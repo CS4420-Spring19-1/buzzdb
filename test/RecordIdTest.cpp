@@ -3,7 +3,7 @@
 #include "record_id.h"
 #include "heap_page_id.h"
 
-namespace emerald {
+namespace buzzdb {
 class RecordIdTest {
 public:
   RecordIdTest() {

@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "heap_page_id.h"
 
-namespace emerald {
+namespace buzzdb {
 class PidTests {
 public:
   PidTests() {

@@ -2,7 +2,7 @@
 
 #include "page_id.h"
 
-namespace emerald {
+namespace buzzdb {
 class HeapPageId : public PageId {  // 
  public:
   HeapPageId();

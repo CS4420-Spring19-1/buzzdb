@@ -1,7 +1,7 @@
 #include "record_id.h"
 #include "heap_page_id.h"
 
-namespace emerald {
+namespace buzzdb {
 RecordId::RecordId(HeapPageId * pid, int tuple_number) {
   this->pid = pid;
   this->tuple_number = tuple_number;
