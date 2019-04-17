@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string_field.h>
 
-namespace emerald {
+namespace buzzdb {
 StringField::StringField(std::string s) : value(s) {
 }
 

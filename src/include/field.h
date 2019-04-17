@@ -3,7 +3,7 @@
 #include "predicate.h"
 #include "type.h"
 
-namespace emerald {
+namespace buzzdb {
 /**
  * This is an interface for Field values in tuples.
  */

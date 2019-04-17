@@ -3,7 +3,7 @@
 #include <string>
 #include "tuple.h"
 
-namespace emerald {
+namespace buzzdb {
 class Field;
 class Tuple;
 /**

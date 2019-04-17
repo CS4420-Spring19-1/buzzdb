@@ -7,7 +7,7 @@
  * - IO exceptions not handled
  */
 
-namespace emerald {
+namespace buzzdb {
 Transaction::Transaction() : hasStarted(false) {
   tid = new TransactionId();
 }

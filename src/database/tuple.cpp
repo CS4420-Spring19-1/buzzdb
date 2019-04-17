@@ -4,7 +4,7 @@
 /**
  * This implementation needs an overhaul.
  */
-namespace emerald {
+namespace buzzdb {
 Tuple::Tuple() {
 }
 

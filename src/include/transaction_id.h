@@ -2,7 +2,7 @@
 
 #include <atomic>
 
-namespace emerald {
+namespace buzzdb {
 class TransactionId {
  public:
   /**

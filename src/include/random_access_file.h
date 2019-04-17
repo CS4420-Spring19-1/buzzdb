@@ -1,6 +1,6 @@
 #pragma once
 
-namespace emerald {
+namespace buzzdb {
 class RandomAccessFile {
 /**
  * This is a dummy class, that has to be designed to replicate the

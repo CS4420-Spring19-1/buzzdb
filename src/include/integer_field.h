@@ -2,7 +2,7 @@
 
 #include "field.h"
 
-namespace emerald {
+namespace buzzdb {
 class IntegerField : public Field {
  public:
   /**

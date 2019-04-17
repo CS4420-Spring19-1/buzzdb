@@ -5,7 +5,7 @@
 #include "transaction_id.h"
 #include "tuple.h"
 
-namespace emerald {
+namespace buzzdb {
 /**
  * This class stores pages of HeapFiles and implements the Page interface that
  * is used by the BufferPool class.

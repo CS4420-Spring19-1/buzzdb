@@ -5,7 +5,7 @@
 #include "page.h"
 #include "tuple.h"
 
-namespace emerald {
+namespace buzzdb {
 /**
  * This is an interface for database files on disk. Each table is represented
  * by a DbFile. DbFiles can fetch pages and traverse through tuples. Each file

@@ -2,7 +2,7 @@
 
 #include <exception>
 
-namespace emerald {
+namespace buzzdb {
 class TransactionAbortedException : public std::exception {
  public:
   virtual const char * what() const throw();

@@ -3,7 +3,7 @@
 #include <vector>
 #include "transaction_id.h"
 
-namespace emerald {
+namespace buzzdb {
 class LockManager {
 public:
   LockManager(int num_pages);

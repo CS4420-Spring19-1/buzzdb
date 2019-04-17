@@ -2,7 +2,7 @@
 #include "field.h"
 #include "tuple.h"
 
-namespace emerald {
+namespace buzzdb {
 Predicate::Predicate(int field, OpType op_type, Field * operand) {
   this->field = field;
   this->op_type = op_type;

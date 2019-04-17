@@ -3,7 +3,7 @@
 #include <exception>
 #include "transaction_id.h"
 
-namespace emerald {
+namespace buzzdb {
 class Transaction {
  public:
   /**

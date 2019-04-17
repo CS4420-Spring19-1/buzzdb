@@ -3,7 +3,7 @@
 #include "page_id.h"
 #include "transaction_id.h"
 
-namespace emerald {
+namespace buzzdb {
 /**
  * This is an interface used to represent pages that are resident in the
  *  BufferPool. Typically, DbFiles will read and write pages from disk.

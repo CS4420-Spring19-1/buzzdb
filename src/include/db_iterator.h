@@ -2,7 +2,7 @@
 
 #include "tuple.h"
 
-namespace emerald {
+namespace buzzdb {
 /**
  * DbIterator is the iterator interface that all BuzzDB operators should
  * implement. If the iterator is not open, none of the methods should work,

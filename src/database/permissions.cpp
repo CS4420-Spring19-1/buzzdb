@@ -1,6 +1,6 @@
 #include "permissions.h"
 
-namespace emerald {
+namespace buzzdb {
 Permissions::Permissions(int perm_level) : perm_level(perm_level) {
 }
 }

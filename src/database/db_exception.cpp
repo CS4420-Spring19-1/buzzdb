@@ -1,6 +1,6 @@
 #include "db_exception.h"
 
-namespace emerald {
+namespace buzzdb {
 const char * DbException::what() const throw() {
   return "DbException occurred.";
 }

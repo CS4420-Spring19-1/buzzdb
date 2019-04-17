@@ -7,7 +7,7 @@
 
 #include "random_access_file.h"
 
-namespace emerald {
+namespace buzzdb {
 class LogFile {
  public:
   LogFile(FILE * f);

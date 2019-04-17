@@ -3,7 +3,7 @@
 #include "heap_file.h"
 #include "heap_file_iterator.h"
 
-namespace emerald {
+namespace buzzdb {
 HeapFile::HeapFile(FILE * file, TupleDesc td) {
   this->file = file;
   this->td = td;

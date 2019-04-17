@@ -19,7 +19,7 @@ std::string data_dir;
 emerald::Database* db=nullptr;
 emerald::DataCube* datacube = nullptr;
 
-namespace emerald {
+namespace buzzdb {
 
     void createDB(){
         //setup the database

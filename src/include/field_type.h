@@ -1,6 +1,6 @@
 #pragma once
 
-namespace emerald {
+namespace buzzdb {
     enum field_type {
         INTEGER,
         STRING,

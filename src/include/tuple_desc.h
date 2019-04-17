@@ -4,7 +4,7 @@
 #include <vector>
 #include "type.h"
 
-namespace emerald {
+namespace buzzdb {
 class TupleDesc {
  public:
   /**

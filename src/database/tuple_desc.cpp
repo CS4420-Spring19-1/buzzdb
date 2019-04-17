@@ -1,7 +1,7 @@
 #include <stdexcept>
 #include "tuple_desc.h"
 
-namespace emerald {
+namespace buzzdb {
 /**
  * Implementation needs to be tweaked to provide guarantees
  */

@@ -1,6 +1,6 @@
 #include "catalog.h"
 
-namespace emerald {
+namespace buzzdb {
 Catalog::Catalog() {
   names = new std::unordered_map<int, std::string>();
   db_fields = new std::unordered_map<int, DbFile *>();

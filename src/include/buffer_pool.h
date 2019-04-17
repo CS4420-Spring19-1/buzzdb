@@ -18,7 +18,7 @@
  * 
  * @Threadsafe, all fields are final
  */
-namespace emerald {
+namespace buzzdb {
 class BufferPool {
  public:
   /**
