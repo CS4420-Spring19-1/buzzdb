@@ -1,6 +1,6 @@
 #pragma once
 
-namespace emerald {
+namespace buzzdb {
 /**
  * This is an interface to a page identifier for a specific page in a specific
  * table.

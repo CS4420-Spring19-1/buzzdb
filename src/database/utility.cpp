@@ -1,6 +1,6 @@
 #include "utility.h"
 
-namespace emerald {
+namespace buzzdb {
 /**
  * To be ported over
  */

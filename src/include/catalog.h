@@ -6,7 +6,7 @@
 #include "db_file.h"
 #include "tuple_desc.h"
 
-namespace emerald {
+namespace buzzdb {
 
 /**
  * The Catalog keeps track of all available tables in the database and their

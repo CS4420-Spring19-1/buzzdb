@@ -17,7 +17,7 @@
 std::string file_name;
 std::string data_dir;
 
-namespace emerald {
+namespace buzzdb {
 
 TEST(SetupDBTestSuite, ShouldCreateTableRowStore) {
     Database* db = new Database();

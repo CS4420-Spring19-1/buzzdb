@@ -5,7 +5,7 @@
 #include "page.h"
 #include "tuple.h"
 
-namespace emerald {
+namespace buzzdb {
 /**
  * HeapFile is an implementation of a DbFile that stores a collection of tuples
  * in no particular order. Tuples are stored on pages, each of which is a fixed

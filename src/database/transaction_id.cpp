@@ -2,7 +2,7 @@
 
 // tests not written
 
-namespace emerald {
+namespace buzzdb {
 /**
  * Initialization of private static member in TransactionId class
  */ 

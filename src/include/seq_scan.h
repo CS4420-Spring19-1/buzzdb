@@ -5,7 +5,7 @@
 #include "db_file_iterator.h"
 #include "transaction_id.h"
 
-namespace emerald {
+namespace buzzdb {
 class SeqScan {
  public:
   /**

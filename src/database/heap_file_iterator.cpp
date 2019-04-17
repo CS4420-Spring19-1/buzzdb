@@ -1,7 +1,7 @@
 #include "heap_file_iterator.h"
 #include "database.h"
 
-namespace emerald {
+namespace buzzdb {
 HeapFileIterator::HeapFileIterator(TransactionId & tid, HeapFile * file) {
   this->current_tuple = nullptr;
   this->page_index = -1;

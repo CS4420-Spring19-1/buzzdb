@@ -2,7 +2,7 @@
 
 #include "tuple.h"
 
-namespace emerald {
+namespace buzzdb {
 /**
  * DbFileIterator is the iterator interface that all BuzzDB DBFiles should
  * implement.

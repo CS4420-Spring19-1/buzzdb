@@ -1,7 +1,7 @@
 #include "integer_field.h"
 #include <iostream>
 
-namespace emerald {
+namespace buzzdb {
 IntegerField::IntegerField(int v) : value(v) {
 }
 

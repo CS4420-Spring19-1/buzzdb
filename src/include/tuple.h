@@ -3,7 +3,7 @@
 #include "record_id.h"
 #include "tuple_desc.h"
 
-namespace emerald {
+namespace buzzdb {
 class Field;
 /**
  * This class maintains information about the contents of a tuple.

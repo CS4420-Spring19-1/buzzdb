@@ -1,6 +1,6 @@
 #include "heap_page_id.h"
 
-namespace emerald {
+namespace buzzdb {
 HeapPageId::HeapPageId() {
 }
 

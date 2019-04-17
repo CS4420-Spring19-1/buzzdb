@@ -1,6 +1,6 @@
 #include "database.h"
 
-namespace emerald {
+namespace buzzdb {
 Database * Database::instance = nullptr;
 
 Database * Database::get_instance() {

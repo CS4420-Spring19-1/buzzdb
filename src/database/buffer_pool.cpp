@@ -1,6 +1,6 @@
 #include "buffer_pool.h"
 
-namespace emerald {
+namespace buzzdb {
 BufferPool::BufferPool(int num_pages, Catalog * catalog) {
   buffer_pool = new std::vector<Page*>(num_pages);
   this->catalog = catalog;

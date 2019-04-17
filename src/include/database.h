@@ -5,7 +5,7 @@
 #include "catalog.h"
 #include "log_file.h"
 
-namespace emerald {
+namespace buzzdb {
 /**
  * This class is a class that initializes several static variables used by the
  * database system.

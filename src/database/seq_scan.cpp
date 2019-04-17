@@ -1,7 +1,7 @@
 #include "seq_scan.h"
 #include "database.h"
 
-namespace emerald {
+namespace buzzdb {
 SeqScan::SeqScan(TransactionId & tid, int table_id, std::string table_alias) {
   this->db_file = Database::get_catalog()->get_db_file(table_id);
   this->iterator = this->db_file->Iterator(tid);

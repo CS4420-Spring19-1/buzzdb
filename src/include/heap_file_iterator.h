@@ -3,7 +3,7 @@
 #include "heap_file.h"
 #include "transaction_id.h"
 
-namespace emerald {
+namespace buzzdb {
 /**
  * This class describes an iterator that is designed to iterate through the
  * tuples in a table, which is stored in a HeapFile object.

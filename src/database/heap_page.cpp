@@ -3,7 +3,7 @@
 #include "database.h"
 #include "heap_page.h"
 
-namespace emerald {
+namespace buzzdb {
 HeapPage::HeapPage() {
 }
 

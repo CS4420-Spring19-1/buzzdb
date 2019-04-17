@@ -1,6 +1,6 @@
 #include "heap_file_encoder.h"
 
-namespace emerald {
+namespace buzzdb {
 HeapFileEncoder::HeapFileEncoder() {
 }
 

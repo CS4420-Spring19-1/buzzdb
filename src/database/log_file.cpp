@@ -1,6 +1,6 @@
 #include "log_file.h"
 
-namespace emerald {
+namespace buzzdb {
 LogFile::LogFile(FILE * f) {
 }
 

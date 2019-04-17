@@ -1,6 +1,6 @@
 #include "type.h"
 
-namespace emerald {
+namespace buzzdb {
 int Type::get_length() {
   return 0; // not implemented
 }

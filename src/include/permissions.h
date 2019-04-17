@@ -1,6 +1,6 @@
 #pragma once
 
-namespace emerald {
+namespace buzzdb {
 class Permissions {
  public:
   Permissions(int perm_level);

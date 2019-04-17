@@ -1,6 +1,6 @@
 #pragma once
 
-namespace emerald {
+namespace buzzdb {
 /**
  * This class represents a type in BuzzDB.
  */

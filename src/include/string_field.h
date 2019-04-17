@@ -3,7 +3,7 @@
 #include "field.h"
 #include <string>
 
-namespace emerald {
+namespace buzzdb {
 class StringField : public Field {
  public:
   /**
