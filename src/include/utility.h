@@ -72,7 +72,11 @@ public:
    * @param f location of the file storing the table.
    * @return the opened table.
    */
-  static HeapFile* OpenHeapFile(int cols, )
+
+  static HeapFile* OpenHeapFile(int cols, std::ifstream file);
+  static HeapFile* OpenHeapFile(int cols, std::string colPrefix, std::ifstream file);
+
+  static std::string ListToString (std::vector<int> list);
 private:
 
 }
