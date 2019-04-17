@@ -29,7 +29,7 @@ public:
 
   // Unit test for RecordId.getPageId()
   void test1() {
-    ASSERT_EQ(hpid, hrid->get_page_id());
+    ASSERT_TRUE(hpid->Equal(hrid->get_page_id()));
   }
 
   // Unit test for RecordId.tuplenumber()
@@ -39,12 +39,12 @@ public:
 
   // Unit test for RecordId equals()
   void test3() {
-    ASSERT_EQ(hrid, hrid2);
-    ASSERT_EQ(hrid2, hrid);
-    ASSERT_FALSE(hrid == hrid3);
-    ASSERT_FALSE(hrid3 == hrid);
-    ASSERT_FALSE(hrid2 == hrid4);
-    ASSERT_FALSE(hrid4 == hrid2);
+    ASSERT_TRUE(hrid->Equal(hrid2));
+    ASSERT_TRUE(hrid2->Equal(hrid));
+    ASSERT_FALSE(hrid->Equal(hrid3));
+    ASSERT_FALSE(hrid3->Equal(hrid));
+    ASSERT_FALSE(hrid2->Equal(hrid4));
+    ASSERT_FALSE(hrid4->Equal(hrid2));
   }
   
 private:
@@ -55,19 +55,19 @@ private:
   HeapPageId* hpid;
   HeapPageId* hpid2;
   HeapPageId* hpid3;
-}
+};
 
-RecordId* recordId_test;
-TEST(RecordIdTest, GetPageId) {
+RecordIdTest* recordId_test;
+TEST(RecordIdTests, GetPageId) {
   recordId_test = new RecordIdTest();
   recordId_test->test1();
 }
 
-Test(RecordIdTest, GetTupleNumber) {
+TEST(RecordIdTests, GetTupleNumber) {
   recordId_test->test2();
 }
 
-Test(RecordIdTest, Equal) {
+TEST(RecordIdTests, Equal) {
   recordId_test->test3();
   delete recordId_test;
 }

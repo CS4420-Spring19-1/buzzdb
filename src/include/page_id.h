@@ -1,6 +1,6 @@
 #pragma once
 
-namespace buzzdb {
+namespace emerald {
 /**
  * This is an interface to a page identifier for a specific page in a specific
  * table.
@@ -13,7 +13,6 @@ class PageId {
   /*
    * Necessary for an interface class to ensure correct polymorphic deletion.
    */
-  virtual ~PageId();
 
   /**
    * Returns the table id of the table the page is in

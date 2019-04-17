@@ -1,7 +1,11 @@
 #include "heap_page_id.h"
+#include <iostream>
 
-namespace buzzdb {
+namespace emerald {
 HeapPageId::HeapPageId() {
+}
+
+HeapPageId::~HeapPageId() {
 }
 
 HeapPageId::HeapPageId(int table_id, int page_number) {
@@ -15,6 +19,10 @@ int HeapPageId::get_table_id() {
 
 int HeapPageId::get_page_number() {
   return page_number;
+}
+
+bool HeapPageId::Equal(HeapPageId* other) {
+  return table_id == other->get_table_id() && page_number == other->get_page_number();
 }
 
 bool HeapPageId::operator==(HeapPageId other) {

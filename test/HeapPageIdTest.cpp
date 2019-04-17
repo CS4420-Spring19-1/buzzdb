@@ -10,7 +10,6 @@ public:
 
   ~PidTests() {
     delete pid;
-    pid = nullptr;
   }
 
   void test1() {
@@ -22,15 +21,11 @@ public:
   }
 
   void test3() {
-    HeapPageId* pid1 = new HeapPageId(1, 1);
-    HeapPageId* pid1Copy = new HeapPageId(1, 1);
-    HeapPageId* pid2 = new HeapPageId(2, 2);
-
-    // equals() with null should return false
-    ASSERT_FALSE(pid1 == nullptr);
+    HeapPageId pid1(1, 1);
+    HeapPageId pid1Copy(1, 1);
+    HeapPageId pid2(2, 2);
 
     // equals() with wrong type should return false
-    // ASSERT_FALSE(pid->equals(new Object()));
 
     ASSERT_TRUE(pid1 == pid1);
     ASSERT_TRUE(pid1 == pid1Copy);
@@ -42,39 +37,29 @@ public:
     ASSERT_FALSE(pid2 == pid1);
     ASSERT_FALSE(pid1Copy == pid2);
 
-    delete pid1;
-    pid1 = nullptr;
-    delete pid1Copy;
-    pid1Copy = nullptr;
-    delete pid2;
-    pid2 = nullptr;
   }
 private:
   HeapPageId* pid;
+};
+
+PidTests* pid_test;
+// Unit test for HeapPageId->getTableId()
+TEST(PidTest, GetTableId) {
+  pid_test = new PidTests();
+  pid_test->test1();
+};
+
+// Unit test for HeapPageId->pageno()
+TEST(PidTest, GetTableNumber) {
+  pid_test->test2();
+};
+// Unit test for HeapPageId.hashCode()
+// Not exist in c++
+TEST(PidTest, Equal) {
+  pid_test->test3();
+  delete pid_test;
 }
-
-  PidTests* pid_test;
-  // Unit test for HeapPageId->getTableId()
-  TEST(PidTests, GetTableId) {
-    pid_test = new PidTests();
-    pid_test->test1();
-  }
-
-  // Unit test for HeapPageId->pageno()
-  Test(PidTests, GetTableNumber) {
-    pid_test->test2();
-  }
-
-  // Unit test for HeapPageId.hashCode()
-  // Not exist in c++
-
-  Test(PidTests, Equal) {
-    pid_test->test3();
-    delete pid_test;
-  }
-
 }
-
 
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
