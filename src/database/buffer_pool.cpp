@@ -132,7 +132,7 @@ void BufferPool::InsertTuple(TransactionId * tid, int table_id, Tuple * t) {
 
 void BufferPool::DeleteTuple(TransactionId * tid, Tuple * t) {
   // Implementation: Lab 5 version
-  int table_id = t->get_record_id()->get_page_id().get_table_id();
+  int table_id = t->get_record_id()->get_page_id()->get_table_id();
 
   DbFile * db_file = catalog->get_db_file(table_id);
 
