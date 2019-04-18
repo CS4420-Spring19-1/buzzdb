@@ -1,4 +1,4 @@
-Emerald
+BuzzDB
 -------
 [![Build Status](https://travis-ci.org/georgia-tech-db/buzzdb.svg?branch=master)](https://travis-ci.org/georgia-tech-db/buzzdb)
 
@@ -40,7 +40,7 @@ d) Debugging (Optional)
 cd build
 cmake -DCMAKE_BUILD_TYPE=Debug ..
 make
-gdb ./test/emerald
+gdb ./test/buzzdb
 ```
 
 References
@@ -61,7 +61,6 @@ https://baptiste-wicht.com/posts/2011/07/profile-applications-linux-perf-tools.h
 
 
 Team member work percentages
-----------
 Jon: 1/3
 Huajun:1/3
 Binze: 1/3
