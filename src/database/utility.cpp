@@ -3,15 +3,10 @@
 #include <fstream>
 #include "utility.h"
 
-<<<<<<< HEAD
 namespace buzzdb {
 /**
  * To be ported over
  */
-=======
-namespace emerald {
-
-
 static std::vector<Type*> Utility::GetTypes(int len) {
   std::vector<Type*> types = new std::vector<Type*>(len);
   for (int i = 0; i < len; i++) {
@@ -65,9 +60,6 @@ static Tuple* Utility::GetTuple(std::vector<int> tupledata, int width) {
   }
   return tup;
 }
-<<<<<<< HEAD
->>>>>>> utility
-=======
 
 static HeapFile* Utility::OpenHeapFile(int cols, std::ifstream file) {
   // create the HeapFile and add it to the catalog
@@ -116,5 +108,4 @@ static std::string Utility::ListToString (std::vector<int> list) {
   }
   return out;
 }
->>>>>>> type utility
 }
