@@ -3,7 +3,7 @@
 
 namespace buzzdb {
 class PidTests {
-public:
+ public:
   PidTests() {
     pid = new HeapPageId(1, 1);
   }
@@ -38,7 +38,7 @@ public:
     ASSERT_FALSE(pid1Copy == pid2);
 
   }
-private:
+ private:
   HeapPageId* pid;
 };
 

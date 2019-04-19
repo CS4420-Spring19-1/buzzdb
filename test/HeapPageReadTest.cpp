@@ -1,11 +1,12 @@
 #include <gtest/gtest.h>
+#include <vector>
 #include "heap_page_id.h"
 
-#include <vector>
 
-namespace emerald {
+
+namespace buzzdb {
 class HeapPageReadTest {
-public:
+ public:
   HeapPageReadTest() {
     int EXAMPLE_VALUES[20][2] = {
       { 31933, 862 },
@@ -49,14 +50,14 @@ public:
     //     throw new RuntimeException(e);
     // }
 
-    
+    delete table;
   }
 
   ~HeapPageReadTest() {
-
+    delete pid;
   }
 
-private:
+ private:
   HeapPageId* pid;
 }
 }
