@@ -1,4 +1,7 @@
 #pragma once
+#include <iostream>
+#include <sstream>
+#include "field.h"
 
 namespace buzzdb {
 /**
@@ -19,13 +22,11 @@ class Type {
    * Returns the number of bytes required to store a field of the respective
    * type.
    */
-  int get_length();
+  int get_length(FieldType);
 
-  /* To be implemented
-  Field parse();
-  */
+  Field* Parse(FieldType, std::istringstream dis);
 
  private:
-  // psf: STRING_LEN = 128
+  const int STRING_LEN = 128;
 };
 }
