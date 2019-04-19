@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 #include <sstream>
-#include "field.h"
+// #include "field.h"
 
 namespace buzzdb {
 /**
@@ -24,7 +24,7 @@ class Type {
    */
   int get_length(FieldType);
 
-  Field* Parse(FieldType, std::istringstream dis);
+  // Field* Parse(FieldType, std::istringstream dis);
 
  private:
   int STRING_LEN = 128;
