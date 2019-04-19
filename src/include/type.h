@@ -27,6 +27,6 @@ class Type {
   // Field* Parse(FieldType, std::istringstream dis);
 
  private:
-  const int STRING_LEN = 128;
+  static int STRING_LEN = 128;
 };
 }
