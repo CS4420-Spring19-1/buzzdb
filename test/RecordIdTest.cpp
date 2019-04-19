@@ -5,7 +5,7 @@
 
 namespace buzzdb {
 class RecordIdTest {
-public:
+ public:
   RecordIdTest() {
     hpid = new HeapPageId(-1, 2);
     hpid2 = new HeapPageId(-1, 2);
@@ -74,8 +74,8 @@ TEST(RecordIdTests, Equal) {
 
 }
 
-int main(int argc, char** argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    int result = RUN_ALL_TESTS();
-    return result;
-}
+// int main(int argc, char** argv) {
+//     ::testing::InitGoogleTest(&argc, argv);
+//     int result = RUN_ALL_TESTS();
+//     return result;
+// }
