@@ -10,8 +10,10 @@ namespace buzzdb {
  */
 class PageId {
  public:
-  /*
-   * Necessary for an interface class to ensure correct polymorphic deletion.
+  /**
+   * Destructor.
+   * It is necessary for an interface class to have a virtual destructor to
+   * ensure correct polymorphic deletion.
    */
   virtual ~PageId();
 

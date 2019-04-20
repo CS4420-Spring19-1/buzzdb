@@ -9,6 +9,13 @@ namespace buzzdb {
 class Field {
  public:
   /**
+   * Destructor.
+   * it is necessary for an interface class to have a virtual destructor to
+   * ensure correct polymorphic deletion.
+   */
+  virtual ~Field();
+
+  /**
    * Returns the type of the Field.
    * 
    * Consider restructuring:

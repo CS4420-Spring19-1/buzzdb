@@ -14,6 +14,13 @@ namespace buzzdb {
 class DbIterator {
  public:
   /**
+   * Destructor.
+   * It is necessary for an interface class to have a virtual destructor to
+   * ensure correct polymorphic deletion.
+   */
+  virtual ~DbIterator();
+
+  /**
    * Opens the iterator. This must be called before any of the other methods.
    * 
    * Throws DBException when there are problems opening / closing the database.
