@@ -4,79 +4,98 @@
 #include "tuple_desc.h"
 
 namespace buzzdb {
-class Field;
 /**
- * This class maintains information about the contents of a tuple.
- * Tuples have a specified schema specified by a TupleDesc object and contain
- * Field objects with the respective data.
+ * The Tuple class represents a tuple in a page.
+ * - The schema of a Tuple is specified by td.
+ * - The disk location of a Tuple is specified by rid.
  */
 class Tuple {
-
  public:
   /**
-   * Default constructor of the Tuple class
+   * Default constructor.
+   * Creates a new empty Tuple that does not contain any fields.
    */
   Tuple();
 
   /**
-   * Constructor of the Tuple class
+   * Constructor.
+   * Creates a new Tuple based on the schema given by td.
    */
   Tuple(TupleDesc td);
 
   /**
-   * Destructor of the Tuple class
+   * Destructor.
    */
   ~Tuple();
 
   /**
-   * Copy constructor of the Tuple class
+   * Copy constructor.
    */
-  Tuple(Tuple & tuple);
+  Tuple(const Tuple & original);
 
   /**
-   * Returns the schema representation of the Tuple.
+   * Returns the internal representation of the Tuple's contents.
    */
-  TupleDesc get_tuple_desc() const;
+  const std::vector<Field *> & get_fields() const;
+
+  /**
+   * Returns the value of the i-th field.
+   * If the i-th field has not been set, returns a nullptr.
+   * 
+   * Throws:
+   * - std::domain_error: If i < 0. 
+   * - std::out_of_range: If i >= number of fields. 
+   */
+  Field * get_field(int i) const;
+
+  /**
+   * Returns the TupleDesc.
+   * A TupleDesc represents the schema of the Tuple.
+   */
+  const TupleDesc & get_tuple_desc() const;
 
   /**
    * Returns the disk location representation of the Tuple.
    */
   RecordId * get_record_id() const;
+
+  /**
+   * Changes the value of the i-th field of the Tuple to f.
+   * 
+   * Pre-condition:
+   * - f should not be pointing to a Field object already pointed to by
+   *   another Tuple. Failure to ensure this constraint will lead to
+   *   undefined behaviour.
+   * Throws:
+   * - std::domain_error: If i < 0. 
+   * - std::out_of_range: If i >= number of fields. 
+   * - std::invalid_argument: If f is of incorrect Type, as specified by the
+   *   TupleDesc. 
+   */
+  void set_field(int i, Field * f);
   
   /**
    * Sets the disk location information for the Tuple.
    */
   void set_record_id(RecordId * rid);
 
-  /**
-   * Returns the internal representation of the Tuple's contents.
-   */
-  void get_fields(Field ** fields);
+  bool operator==(const Tuple & other);
 
-  /**
-   * Returns the value of the ith field.
-   * Returns null if the ith field has not been set.
-   */
-  Field * get_field(int i) const;
-
-  /**
-   * Changes the value of the ith field of the Tuple to f.
-   */
-  void set_field(int i, Field * f);
+  bool operator!=(const Tuple & other);
 
  private:
   /**
-   * A TupleDesc that represents the tuple's schema.
+   * The internal representation of the Tuple's contents.
+   */
+  std::vector<Field *> fields;
+
+  /**
+   * The representation of the Tuple's schema.
    */
   TupleDesc td;
 
   /**
-   * A pointer to a Field array that represents the tuple's contents.
-   */
-  Field ** fields;
-
-  /**
-   * Representation of the Tuple's location on disk.
+   * The representation of the Tuple's location on disk.
    */
   RecordId * rid;
 };
