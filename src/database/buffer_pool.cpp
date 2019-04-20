@@ -36,7 +36,7 @@ Page * BufferPool::get_page(TransactionId * tid,
      * Then again, if implemented that way, there must be some way to check
      * equality of two objects pointed to by abstract class type pointers.
      */
-    } else if (pid == buffer_pool_object[i]->get_id()) {
+    } else if (pid == &buffer_pool_object[i]->get_id()) {
       return buffer_pool_object[i];
     }
   }
@@ -146,7 +146,7 @@ void BufferPool::FlushAllPages() {
   
   for (int i = 0; i < buffer_pool_object.size(); i++) {
     if (buffer_pool_object[i] != nullptr
-        && buffer_pool_object[i]->GetIdOfLastDirtyTransaction() != nullptr ) {
+        && buffer_pool_object[i]->get_id_of_last_dirty_transaction() != nullptr ) {
       FlushPage(buffer_pool_object[i]->get_id());
     }
   }
@@ -181,7 +181,7 @@ void BufferPool::FlushPages(TransactionId * tid) {
   */
 }
 
-void BufferPool::FlushPage(PageId * pid) {
+void BufferPool::FlushPage(const PageId & pid) {
   /* Incomplete but not required for Lab 1
   // see explaination in get_page()
   std::vector<Page *> buffer_pool_object = (*buffer_pool);
