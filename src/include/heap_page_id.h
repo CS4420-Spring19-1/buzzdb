@@ -9,8 +9,11 @@ namespace buzzdb {
  */
 class HeapPageId : public PageId {
  public:
-  HeapPageId();
-
+  /**
+   * Default constructor.
+   * Not available as a HeapPageId should be explicitely initialized.
+   */
+  HeapPageId() = delete;
 
   /**
    * Constructor.
@@ -45,8 +48,9 @@ class HeapPageId : public PageId {
    */
   std::array<int, 2> Serialize() override;
 
+  bool operator==(const HeapPageId & other);
 
-  bool operator==(HeapPageId other);
+  bool operator!=(const HeapPageId & other);
 
  private:
   int table_id;
