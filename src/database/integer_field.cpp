@@ -5,18 +5,19 @@ namespace buzzdb {
 IntegerField::IntegerField(int v) : value(v) {
 }
 
-IntegerField::IntegerField(const IntegerField & int_field) { 
-  value = int_field.get_value();
+IntegerField::IntegerField(const IntegerField & original)
+    : value(original.get_value()) { 
 }
 
 int IntegerField::get_value() const {
   return this->value;
 }
 
-Type::FieldType IntegerField::get_type() const {
-  return Type::FieldType::INTEGER;
+Field::Type IntegerField::get_type() const {
+  return Type::INTEGER;
 }
 
+/*
 bool IntegerField::Compare(Predicate::OpType op_type, Field * operand) {
   IntegerField * operand_value_pointer = static_cast<IntegerField *>(operand);
   int operand_value = operand_value_pointer->get_value();
@@ -44,12 +45,17 @@ bool IntegerField::Compare(Predicate::OpType op_type, Field * operand) {
       break;
   }
 }
+*/
 
 void IntegerField::Print() const {
   std::cout << value << " ";
 }
 
-bool IntegerField::operator==(IntegerField other) {
-  return this->value == other.get_value();
+bool IntegerField::operator==(const IntegerField & other) {
+  return value == other.value;
+}
+
+bool IntegerField::operator!=(const IntegerField & other) {
+  return !(*this == other);
 }
 }

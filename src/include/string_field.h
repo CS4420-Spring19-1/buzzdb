@@ -1,33 +1,42 @@
 #pragma once
 
-#include "field.h"
 #include <string>
+#include "field.h"
 
 namespace buzzdb {
+/**
+ * The StringField class represents a string field in a tuple.
+ */
 class StringField : public Field {
  public:
   /**
-   * Constructor for the StringField class
+   * Constructor.
+   * Creates a new StringField with value s.
    */
   StringField(std::string s);
 
   /**
-   * Copy constructor for the StringField class
+   * Destructor.
    */
-  StringField(const StringField & field);
+  ~StringField() = default;
 
   /**
-   * Gets the string field's value
+   * Copy constructor.
+   */
+  StringField(const StringField & original);
+
+  /**
+   * Returns the value of the StringField.
    */
   std::string get_value() const;
 
   /**
-   * Returns the type of the Field.
+   * Returns the type of the StringField.
    */
-  Type::FieldType get_type() const override;
+  Type get_type() const override;
 
   /**
-   * Write the bytes representing the field to the specified Stream.
+   * Write the bytes representing the StringField to the specified Stream.
    */
   /* To be implemented
     void serialize(DataOutputStream dos) override;
@@ -37,18 +46,17 @@ class StringField : public Field {
    * Compares the value of the StringField to the value of operand.
    * 
    * Throws IllegalCastException if operand is not a StringField *.
-   */
   bool Compare(Predicate::OpType op_type, Field * operand) override;
+   */
 
   /**
-   * Prints the string field's contents
+   * Prints the StringField's contents.
    */
   void Print() const override;
 
-  /**
-   * Overload of the equality operator.
-   */
-  bool operator==(StringField other);
+  bool operator==(const StringField & other);
+
+  bool operator!=(const StringField & other);
 
  private:
   std::string value;
