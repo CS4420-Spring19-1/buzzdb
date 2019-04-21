@@ -1,7 +1,4 @@
 #pragma once
-#include <iostream>
-#include <sstream>
-// #include "field.h"
 
 namespace buzzdb {
 /**
@@ -22,11 +19,24 @@ class Type {
    * Returns the number of bytes required to store a field of the respective
    * type.
    */
-  int get_length(FieldType);
+  int get_length();
 
-  // Field* Parse(FieldType, std::istringstream dis);
+  /* To be implemented
+  Field parse();
+  */ 
+
+  /**
+   * Implementation note:
+   * - This overload has to be declared as a friend function for it to be used
+   *   correctly by std::vector.
+   * - An example of this usage is in TupleDesc::operator==(TupleDesc & other).
+   * - The reason for this is still unknown.
+   */
+  friend bool operator==(const Type & first, const Type & second);
+
+  bool operator!=(const Type & other);
 
  private:
-  int STRING_LEN = 128;
+  // psf: STRING_LEN = 128
 };
 }
