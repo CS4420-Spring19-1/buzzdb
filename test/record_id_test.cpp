@@ -1,78 +1,104 @@
 #include <gtest/gtest.h>
-
 #include "record_id.h"
 #include "heap_page_id.h"
 
 namespace buzzdb {
-class RecordIdTest {
- public:
-  RecordIdTest() {
-    hpid = new HeapPageId(-1, 2);
-    hpid2 = new HeapPageId(-1, 2);
-    hpid3 = new HeapPageId(-2, 2);
+/**
+ * Unit test suite: RecordId
+ */
+TEST(GetterTests, GetPageIdWorksCorrectly) {
+  RecordId record_id(HeapPageId(1, 1), 1);
 
-    hrid_ = new RecordId(hpid, 3);
-  }
+  EXPECT_EQ(HeapPageId(1, 1), record_id.get_page_id());
+}
 
-  ~RecordIdTest() {
-    delete hpid;
-    delete hpid2;
-    delete hpid3;
-    delete hrid_;
-  }
+TEST(GetterTests, GetTupleNumberWorksCorrectly) {
+  RecordId record_id(HeapPageId(1, 1), 1);
 
-  // Unit test for RecordId.getPageId()
-  void test1() {
-    ASSERT_TRUE(hpid->Equal(hrid_->get_page_id()));
-  }
+  EXPECT_EQ(1, record_id.get_tuple_number());
+}
 
-  // Unit test for RecordId.tuplenumber()
-  void test2() {
-    ASSERT_EQ(3, hrid_->get_tuple_number());
-  }
+TEST(ConstructorTests, ConstructorWorksCorrectly) {
+  RecordId record_id_new(HeapPageId(1, 2), 3);
 
-  // Unit test for RecordId equals()
-  void test3() {
-    RecordId hrid(hpid, 3);
-    RecordId hrid2(hpid2, 3);
-    RecordId hrid3(hpid, 4);
-    RecordId hrid4(hpid3, 3);
+  EXPECT_EQ(HeapPageId(1, 2), record_id_new.get_page_id());
+  EXPECT_EQ(3, record_id_new.get_tuple_number());
+}
 
-    ASSERT_TRUE(hrid == hrid2);
-    ASSERT_TRUE(hrid2 == hrid);
-    ASSERT_FALSE(hrid == hrid3);
-    ASSERT_FALSE(hrid3 == hrid);
-    ASSERT_FALSE(hrid2 == hrid4);
-    ASSERT_FALSE(hrid4 == hrid2);
-  }
+TEST(ConstructorTests, CopyConstructorWorksCorrectly) {
+  RecordId record_id(HeapPageId(1, 1), 1);
+  RecordId record_id_copy = record_id;
+
+  EXPECT_EQ(record_id.get_page_id(), record_id_copy.get_page_id());
+  EXPECT_EQ(record_id.get_tuple_number(), record_id_copy.get_tuple_number());
+
+  // check that the two objects are distinct
+  EXPECT_NE(&record_id, &record_id_copy);
+}
+
+TEST(OperatorOverloadTests, EqualityOperatorWorksCorrectly) {
+  RecordId record_id(HeapPageId(1, 1), 1);
+  RecordId record_id_same(HeapPageId(1, 1), 1);
+  RecordId record_id_different_page_id(HeapPageId(2, 2), 1);
+  RecordId record_id_different_tuple_number(HeapPageId(1, 1), 2);
+  RecordId record_id_different(HeapPageId(2, 2), 2);
+  RecordId record_id_copy = record_id;
+
+  // check comparison with self
+  EXPECT_TRUE(record_id == record_id);
+
+  // check comparison with same values
+  EXPECT_TRUE(record_id == record_id_same);
   
-private: 
-  RecordId* hrid_;
-  HeapPageId* hpid;
-  HeapPageId* hpid2;
-  HeapPageId* hpid3;
-};
+  // check commutativity of operator
+  EXPECT_TRUE(record_id_same == record_id);
 
-RecordIdTest* recordId_test;
-TEST(RecordIdTests, GetPageId) {
-  recordId_test = new RecordIdTest();
-  recordId_test->test1();
+  // check comparison with copy of self 
+  EXPECT_TRUE(record_id == record_id_copy);
+
+  // check comparison with different table id
+  EXPECT_FALSE(record_id == record_id_different_table_id);
+
+  // check comparison with different page number
+  EXPECT_FALSE(record_id == record_id_different_page_number);
+
+  // check comparison with different values
+  EXPECT_FALSE(record_id == record_id_different);
 }
 
-TEST(RecordIdTests, GetTupleNumber) {
-  recordId_test->test2();
-}
+TEST(OperatorOverloadTest, InequalityOperatorWorksCorrectly) {
+  RecordId record_id(HeapPageId(1, 1), 1);
+  RecordId record_id_same(HeapPageId(1, 1), 1);
+  RecordId record_id_different_page_id(HeapPageId(2, 2), 1);
+  RecordId record_id_different_tuple_number(HeapPageId(1, 1), 2);
+  RecordId record_id_different(HeapPageId(2, 2), 2);
+  RecordId record_id_copy = record_id;
 
-TEST(RecordIdTests, Equal) {
-  recordId_test->test3();
-  delete recordId_test;
-}
+  // check comparison with self
+  EXPECT_FALSE(record_id != record_id);
 
+  // check comparison with same values
+  EXPECT_FALSE(record_id != record_id_same);
+  
+  // check commutativity of operator
+  EXPECT_FALSE(record_id_same != record_id);
+
+  // check comparison with copy of self 
+  EXPECT_FALSE(record_id != record_id_copy);
+
+  // check comparison with different table id
+  EXPECT_TRUE(record_id != record_id_different_table_id);
+
+  // check comparison with different page number
+  EXPECT_TRUE(record_id != record_id_different_page_number);
+
+  // check comparison with different values
+  EXPECT_TRUE(record_id != record_id_different);
+}
 }
 
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     int result = RUN_ALL_TESTS();
     return result;
-    
 }
