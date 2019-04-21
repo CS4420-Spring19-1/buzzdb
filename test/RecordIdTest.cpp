@@ -11,47 +11,43 @@ class RecordIdTest {
     hpid2 = new HeapPageId(-1, 2);
     hpid3 = new HeapPageId(-2, 2);
 
-    hrid = new RecordId(hpid, 3);
-    hrid2 = new RecordId(hpid2, 3);
-    hrid3 = new RecordId(hpid, 4);
-    hrid4 = new RecordId(hpid3, 3);
+    hrid_ = new RecordId(hpid, 3);
   }
 
   ~RecordIdTest() {
-    delete hrid;
-    delete hrid2;
-    delete hrid3;
-    delete hrid4;
     delete hpid;
     delete hpid2;
     delete hpid3;
+    delete hrid_;
   }
 
   // Unit test for RecordId.getPageId()
   void test1() {
-    ASSERT_TRUE(hpid->Equal(hrid->get_page_id()));
+    ASSERT_TRUE(hpid->Equal(hrid_->get_page_id()));
   }
 
   // Unit test for RecordId.tuplenumber()
   void test2() {
-    ASSERT_EQ(3, hrid->get_tuple_number());
+    ASSERT_EQ(3, hrid_->get_tuple_number());
   }
 
   // Unit test for RecordId equals()
   void test3() {
-    ASSERT_TRUE(hrid->Equal(hrid2));
-    ASSERT_TRUE(hrid2->Equal(hrid));
-    ASSERT_FALSE(hrid->Equal(hrid3));
-    ASSERT_FALSE(hrid3->Equal(hrid));
-    ASSERT_FALSE(hrid2->Equal(hrid4));
-    ASSERT_FALSE(hrid4->Equal(hrid2));
+    RecordId hrid(hpid, 3);
+    RecordId hrid2(hpid2, 3);
+    RecordId hrid3(hpid, 4);
+    RecordId hrid4(hpid3, 3);
+
+    ASSERT_TRUE(hrid == hrid2);
+    ASSERT_TRUE(hrid2 == hrid);
+    ASSERT_FALSE(hrid == hrid3);
+    ASSERT_FALSE(hrid3 == hrid);
+    ASSERT_FALSE(hrid2 == hrid4);
+    ASSERT_FALSE(hrid4 == hrid2);
   }
   
-private:
-  RecordId* hrid;
-  RecordId* hrid2;
-  RecordId* hrid3;
-  RecordId* hrid4;
+private: 
+  RecordId* hrid_;
   HeapPageId* hpid;
   HeapPageId* hpid2;
   HeapPageId* hpid3;

@@ -15,15 +15,16 @@ HeapPageId* RecordId::get_page_id() const {
   return pid;
 }
 
-// bool RecordId::operator==(RecordId other) {
-//   return this->pid->get_page_number() == other->get_page_id()->get_page_number()
-//       && this->tuple_number == other.get_tuple_number();
-// }
-
-bool RecordId::Equal(RecordId* other) {
-  return this->pid->get_page_number() == other->get_page_id()->get_page_number()
-      && this->tuple_number == other->get_tuple_number() 
-      && this->pid->get_table_id() == other->get_page_id()->get_table_id();
+bool RecordId::operator==(RecordId other) {
+  return this->pid->get_page_number() == other.pid->get_page_number()
+      && this->tuple_number == other.get_tuple_number()
+      && this->pid->get_table_id() == other.pid->get_table_id();
 }
+
+// bool RecordId::Equal(RecordId* other) {
+//   return this->pid->get_page_number() == other->get_page_id()->get_page_number()
+//       && this->tuple_number == other->get_tuple_number() 
+//       && this->pid->get_table_id() == other->get_page_id()->get_table_id();
+// }
 
 }

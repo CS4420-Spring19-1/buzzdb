@@ -30,7 +30,7 @@ class RecordId {
    */
   bool operator==(RecordId other);
 
-  bool Equal(RecordId* other);
+  // bool Equal(RecordId* other);
  private:
   HeapPageId * pid;
   int tuple_number;
