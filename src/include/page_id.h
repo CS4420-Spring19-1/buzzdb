@@ -17,7 +17,7 @@ class PageId {
    * It is necessary for an interface class to have a virtual destructor to
    * ensure correct polymorphic deletion.
    */
-  virtual ~PageId();
+  virtual ~PageId() = 0;
 
   /**
    * Returns the id of the table the page is in.

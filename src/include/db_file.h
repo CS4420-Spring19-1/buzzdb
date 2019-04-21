@@ -22,7 +22,7 @@ class DbFile {
    * It is necessary for an interface class to have a virtual destructor to
    * ensure correct polymorphic deletion.
    */
-  virtual ~DbFile();
+  virtual ~DbFile() = 0;
 
   /**
    * Returns the unique id of the DbFile.

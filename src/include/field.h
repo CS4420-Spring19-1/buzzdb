@@ -16,7 +16,7 @@ class Field {
    * It is necessary for an interface class to have a virtual destructor to
    * ensure correct polymorphic deletion.
    */
-  virtual ~Field();
+  virtual ~Field() = 0;
 
   /**
    * Returns the type of the Field.

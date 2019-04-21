@@ -19,7 +19,7 @@ class DbIterator {
    * It is necessary for an interface class to have a virtual destructor to
    * ensure correct polymorphic deletion.
    */
-  virtual ~DbIterator();
+  virtual ~DbIterator() = 0;
 
   /**
    * Opens the iterator.

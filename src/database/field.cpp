@@ -2,6 +2,8 @@
 #include <stdexcept>
 
 namespace buzzdb {
+Field::~Field() = default;
+
 int Field::get_length(Type type) {
   switch (type) {
     case INTEGER:
