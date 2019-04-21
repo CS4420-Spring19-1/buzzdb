@@ -1,6 +1,7 @@
 #pragma once
 
 #include "page_id.h"
+#include "heap_page_id.h"
 
 namespace buzzdb {
 /**
@@ -12,7 +13,7 @@ class RecordId {
   /**
    * Constructor of the RecordId class
    */
-  RecordId(PageId * pid, int tuple_number);
+  RecordId(HeapPageId * pid, int tuple_number);
 
   /**
    * Returns the tuple number
@@ -22,15 +23,16 @@ class RecordId {
   /**
    * Returns the page id that the tuple is on
    */
-  PageId & get_page_id() const;
+  HeapPageId* get_page_id() const;
 
   /**
    * Overload of the equality operator
    */
   bool operator==(RecordId other);
 
+  // bool Equal(RecordId* other);
  private:
-  PageId * pid;
+  HeapPageId * pid;
   int tuple_number;
 };
 }

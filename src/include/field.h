@@ -1,7 +1,6 @@
 #pragma once
-
-#include "predicate.h"
 #include "type.h"
+#include "predicate.h"
 
 namespace buzzdb {
 /**
