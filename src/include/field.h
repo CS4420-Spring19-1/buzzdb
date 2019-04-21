@@ -43,6 +43,10 @@ class Field {
    */
   virtual void Print() const = 0;
 
+  virtual bool operator==(const Field & other) = 0;
+
+  virtual bool operator!=(const Field & other) = 0;
+
   /**
    * Returns the number of bytes required to store a field of the respective
    * type.

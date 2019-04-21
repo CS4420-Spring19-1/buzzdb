@@ -48,9 +48,9 @@ class HeapPageId : public PageId {
    */
   std::array<int, 2> Serialize() override;
 
-  bool operator==(const HeapPageId & other);
+  bool operator==(const PageId & other) override;
 
-  bool operator!=(const HeapPageId & other);
+  bool operator!=(const PageId & other) override;
 
  private:
   int table_id;

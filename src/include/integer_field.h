@@ -53,9 +53,9 @@ class IntegerField : public Field {
    */
   void Print() const override;
 
-  bool operator==(const IntegerField & other);
+  bool operator==(const Field & other) override;
 
-  bool operator!=(const IntegerField & other);
+  bool operator!=(const Field & other) override;
 
  private:
   int value;

@@ -54,9 +54,9 @@ class StringField : public Field {
    */
   void Print() const override;
 
-  bool operator==(const StringField & other);
+  bool operator==(const Field & other) override;
 
-  bool operator!=(const StringField & other);
+  bool operator!=(const Field & other) override;
 
  private:
   std::string value;

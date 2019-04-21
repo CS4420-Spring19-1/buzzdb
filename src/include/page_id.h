@@ -35,5 +35,9 @@ class PageId {
    * Used for logging.
    */
   virtual std::array<int, 2> Serialize() = 0;
+
+  virtual bool operator==(const PageId & other) = 0;
+
+  virtual bool operator!=(const PageId & other) = 0;
 };
 }

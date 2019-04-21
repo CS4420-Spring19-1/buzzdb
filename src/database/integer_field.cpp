@@ -51,11 +51,17 @@ void IntegerField::Print() const {
   std::cout << value << " ";
 }
 
-bool IntegerField::operator==(const IntegerField & other) {
-  return value == other.value;
+bool IntegerField::operator==(const Field & other) {
+  try {
+    Field & non_const_other = const_cast<Field &>(other);
+    IntegerField & casted_other = dynamic_cast<IntegerField &>(non_const_other);
+    return value == casted_other.value;
+  } catch (const std::bad_cast & e) {
+    return false;
+  }
 }
 
-bool IntegerField::operator!=(const IntegerField & other) {
+bool IntegerField::operator!=(const Field & other) {
   return !(*this == other);
 }
 }

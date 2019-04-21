@@ -51,11 +51,17 @@ void StringField::Print() const {
   std::cout << value << " \n";
 }
 
-bool StringField::operator==(const StringField & other) {
-  return value == other.value;
+bool StringField::operator==(const Field & other) {
+  try {
+    Field & non_const_other = const_cast<Field &>(other);
+    StringField & casted_other = dynamic_cast<StringField &>(non_const_other);
+    return value == casted_other.value;
+  } catch (const std::bad_cast & e) {
+    return false;
+  }
 }
 
-bool StringField::operator!=(const StringField & other) {
+bool StringField::operator!=(const Field & other) {
   return !(*this == other);
 }
 }
