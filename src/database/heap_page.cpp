@@ -4,9 +4,6 @@
 #include "heap_page.h"
 
 namespace buzzdb {
-HeapPage::HeapPage() {
-}
-
 /** Temporarily not available, as std::byte is only available in C++ 17
 HeapPage::HeapPage(HeapPageId id, std::byte data[]) {
   this->pid = id;
@@ -36,11 +33,11 @@ HeapPage::HeapPage(HeapPageId id, std::byte data[]) {
 }
 */
 
-HeapPageId * HeapPage::get_id() {
-  return &pid;
+const PageId & HeapPage::get_id() const {
+  return pid;
 }
 
-TransactionId * HeapPage::GetIdOfLastDirtyTransaction() {
+const TransactionId * HeapPage::get_id_of_last_dirty_transaction() const {
   // some code goes here
   // return null;
 }
@@ -48,7 +45,7 @@ TransactionId * HeapPage::GetIdOfLastDirtyTransaction() {
 void HeapPage::MarkDirty(bool dirty, TransactionId & tid) {
 }
 
-HeapPage * HeapPage::GetBeforeImage() {
+Page * HeapPage::GetBeforeImage() {
   try {
     /*
     std::byte * old_data_ref = nullptr;

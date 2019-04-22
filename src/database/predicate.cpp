@@ -10,7 +10,10 @@ Predicate::Predicate(int field, OpType op_type, Field * operand) {
 }
 
 bool Predicate::Filter(Tuple & t) {
+  /*
   return t.get_field(field)->Compare(op_type, operand);
+  */
+  return false;
 }
 
 /* Parsing methods: not implemented

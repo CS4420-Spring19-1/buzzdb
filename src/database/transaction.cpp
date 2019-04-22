@@ -1,31 +1,18 @@
 #include "transaction.h"
-
-// tests not written
-/**
- * Implementation incomplete:
- * - Database class missing
- * - IO exceptions not handled
- */
+#include "database.h"
 
 namespace buzzdb {
-Transaction::Transaction() : hasStarted(false) {
-  tid = new TransactionId();
+Transaction::Transaction() : tid(TransactionId()), hasStarted(false) {
 }
 
-Transaction::~Transaction() {
-  delete tid;
-}
-
-TransactionId * Transaction::get_id() {
+const TransactionId & Transaction::get_id() const {
   return tid;
 }
 
 void Transaction::Start() {
   hasStarted = true;
-  /* Ported from Transaction.java
-  Database.getLogFile().logXActionBegin(tid);
-  // handle IO exception if needed
-  */
+  Database::get_log_file()->LogXActionBegin(tid);
+  // todo: ensure IOExceptions are handled
 }
 
 void Transaction::Commit() {
@@ -36,24 +23,23 @@ void Transaction::TransactionComplete(bool abort) {
   if (!hasStarted) {
     return;
   }
-  /* Ported from Transaction.java
-  // write commit / abort records
+
+  // todo: write commit / abort records
   if (abort) {
-    Database.getLogFile().logAbort(tid); // does rollback too
+    Database::get_log_file()->LogAbort(tid);  // does rollback too
   } else {
-    // write back all pages that this transaction dirtied
-    Database.getBufferPool().flushPages();
-    Database.getLogFile().logCommit(tid);
+    Database::get_buffer_pool()->FlushPages(&tid);
+    Database::get_log_file()->LogCommit(tid);
   }
 
-  Database.getBufferPool().transactionComplete(tid, !abort); // release locks
-  // handle IO exception if needed
+  Database::get_buffer_pool()->TransactionComplete(&tid, !abort);
+  // release locks
+  // todo: ensure IOExceptions are handled
 
+  /**
+   * Setting this here means we could possibly write multiple abort records.
+   * Is that ok?
+   */
   hasStarted = false;
-  */
-
-  // Placeholder code to avoid compiler warning, delete once resolved.
-  if (abort) {
-  }
 }
 }

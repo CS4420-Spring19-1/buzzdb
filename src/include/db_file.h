@@ -7,18 +7,22 @@
 
 namespace buzzdb {
 /**
- * This is an interface for database files on disk. Each table is represented
- * by a DbFile. DbFiles can fetch pages and traverse through tuples. Each file
- * has a unique id used to store metadata about the table in the Catalog.
- * DbFiles are generally accessed through the buffer pool, rather than directly
- * by operators.
+ * The DbFile interface class is an interface for table representations.
+ * - Each table in BuzzDB is represented by a DbFile, which contains pages.
+ * - Pages contain tuples, which contain fields, which contain data values.
+ * - Each DbFile has a unique id, which is used to store metadata about the
+ *   table in the Catalog.
+ * - DbFiles are generally accessed through the buffer pool, rather than
+ *   directly by operators.
  */
 class DbFile {
  public:
   /**
-   * Necessary for an interface class to ensure correct polymorphic deletion.
+   * Destructor.
+   * It is necessary for an interface class to have a virtual destructor to
+   * ensure correct polymorphic deletion.
    */
-  virtual ~DbFile();
+  virtual ~DbFile() = 0;
 
   /**
    * Returns the unique id of the DbFile.
@@ -32,7 +36,7 @@ class DbFile {
   virtual int get_id() const = 0;
 
   /**
-   * Returns the schema of the table stored in the DbFile
+   * Returns the schema of the table stored in the DbFile.
    */
   virtual TupleDesc get_tuple_desc() const = 0;
 
@@ -42,7 +46,7 @@ class DbFile {
   virtual Page * ReadPage(PageId * id) = 0;
 
   /**
-   * Pushes the specified page to disk.
+   * Writes the specified page back to disk.
    */
   virtual void WritePage(Page * p) = 0;
 

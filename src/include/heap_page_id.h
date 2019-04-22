@@ -3,23 +3,54 @@
 #include "page_id.h"
 
 namespace buzzdb {
-class HeapPageId : public PageId {  // 
+/**
+ * The HeapPageId class represents the identifier for a HeapPage.
+ * - This class implements the PageId interface.
+ */
+class HeapPageId : public PageId {
  public:
-  HeapPageId();
+  /**
+   * Default constructor.
+   * Not available as a HeapPageId should be explicitely initialized.
+   */
+  HeapPageId() = delete;
 
+  /**
+   * Constructor.
+   * Creates a new HeapPageId with the given table_id and page_number.
+   */
   HeapPageId(int table_id, int page_number);
 
-  ~HeapPageId();
+  /**
+   * Destructor.
+   */
+  ~HeapPageId() override = default;
 
-  int get_table_id();
+  /**
+   * Copy constructor.
+   */
+  HeapPageId(const HeapPageId & original);
 
-  int get_page_number();
+  /**
+   * Returns the id of the table the page is in.
+   */
+  int get_table_id() const override;
 
-  virtual void Serialize(int rep[]);
+  /**
+   * Returns the index of the page in its table.
+   */
+  int get_page_number() const override;
 
-  bool Equal(HeapPageId* other);
+  /**
+   * Returns a representation of the HeapPageId as a 2 element integer array.
+   * The first element is the table id and the second element is the page id.
+   * Used for logging.
+   */
+  std::array<int, 2> Serialize() override;
 
-  bool operator==(HeapPageId other);
+  bool operator==(const PageId & other) override;
+
+  bool operator!=(const PageId & other) override;
 
  private:
   int table_id;

@@ -5,31 +5,32 @@
 
 namespace buzzdb {
 /**
- * This is an interface used to represent pages that are resident in the
- *  BufferPool. Typically, DbFiles will read and write pages from disk.
+ * The Page interface class is an interface for page representations.
+ * - A page contains tuples, which contain fields.
+ * - A page is contained in a table, which is typically implemented as a DbFile.
  * 
  * Pages may be "dirty", meaning that they have been modified since they
- *  were last written out to disk.
+ * were last written out to disk.
  */
 class Page {
  public:
-  /*
-   * Necessary for an interface class to ensure correct polymorphic deletion.
+  /**
+   * Destructor.
+   * It is necessary for an interface class to have a virtual destructor to
+   * ensure correct polymorphic deletion.
    */
-  virtual ~Page();
+  virtual ~Page() = 0;
 
   /**
    * Returns the id of the page.
-   * The id is a unique identifier that can be used to look up the page on disc
-   *  or to determine if the page is resident in the buffer pool.
    */
-  virtual PageId * get_id() = 0;
+  virtual const PageId & get_id() const = 0;
 
   /**
-   * Returns the TransactionId of the last transaction that dirtied the page.
+   * Returns the transaction id of the last transaction that dirtied the page.
    * Returns null if the page is not dirty.
    */
-  virtual TransactionId * GetIdOfLastDirtyTransaction() = 0;
+  virtual const TransactionId * get_id_of_last_dirty_transaction() const = 0;
 
   /**
    * Sets the dirty state of the page as dirtied by a particular transaction.

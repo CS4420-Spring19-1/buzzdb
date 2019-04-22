@@ -2,58 +2,58 @@
 
 #include <string>
 #include <vector>
-#include "type.h"
+#include <field.h>
 
 namespace buzzdb {
+/**
+ * The TupleDesc class represents the schema of a tuple.
+ * - The values of a TupleDesc object cannot be mutated after creation.
+ * - It is not necessary for field names to be distinct.
+ * - The type_vector and name_vector of a TupleDesc object are guaranteed to
+ *   have the same length after construction. 
+ */
 class TupleDesc {
  public:
   /**
-   * Default constructor of the TupleDesc class.
+   * Default constructor.
+   * Creates a new TupleDesc with no fields.
+   * Should only be used to represent the schema of an empty Tuple.
    */
   TupleDesc();
 
   /**
-   * Constructor of the TupleDesc class.
-   * Creates a new TupleDesc with fields of types specified by type_vector. The
-   * fields will be unnamed.
+   * Constructor.
+   * Creates a new TupleDesc with field types specified by type_vector.
+   * The fields will be unnamed.
    */
-  TupleDesc(std::vector<Type> type_vector);
+  TupleDesc(std::vector<Field::Type> type_vector);
 
   /**
-   * Constructor of the TupleDesc class.
-   * Creates a new TupleDesc with fields of types specified by type_vector and
-   * names specified by field_vector.
+   * Constructor.
+   * Creates a new TupleDesc with field types specified by type_vector and
+   * names specified by name_vector.
+   * 
+   * Throws:
+   * - std::invalid_argument: If type_vector and name_vector have different
+   *   lengths.
    */
-  TupleDesc(std::vector<Type> type_vector, std::vector<std::string> field_vector);
+  TupleDesc(std::vector<Field::Type> type_vector,
+            std::vector<std::string> name_vector);
 
   /**
-   * Copy constructor of the TupleDesc class.
+   * Destructor.
    */
-  TupleDesc(const TupleDesc & other);
+  ~TupleDesc() = default;
 
   /**
-   * Returns the number of fields in the TupleDesc.
+   * Copy constructor.
+   */
+  TupleDesc(const TupleDesc & original);
+
+  /**
+   * Returns the number of fields.
    */
   int get_number_fields() const;
-
-  /**
-   * Returns the name of the ith field in the TupleDesc.
-   * The name can be null.
-   */
-  std::string get_field_name(int index) const;
-
-  Type get_field_type(int index) const;
-
-  /**
-   * Find the index of the field with a given name.
-   * 
-   * @param name
-   *            name of the field.
-   * @return the index of the field that is first to have the given name.
-   * @throws NoSuchElementException
-   *             if no field with a matching name is found.
-   */
-  int FieldNameToIndex(std::string name);
 
   /**
    * Returns the size of the associated tuple in bytes.
@@ -61,18 +61,43 @@ class TupleDesc {
   int get_size() const;
 
   /**
-   * Merge two TupleDescs into one with td1.num_fields + td2.num_fields fields.
-   * The first fields will come from td1, followed by the fields from td2.
+   * Returns the type of the i-th field.
+   * 
+   * Throws:
+   * - std::domain_error: If i < 0. 
+   * - std::out_of_range: If i >= number of fields. 
    */
-  static TupleDesc Combine(TupleDesc * td1, TupleDesc * td2);
+  const Field::Type & get_field_type(int i) const;
 
   /**
-   * Overload of the equality operator.
+   * Returns the name of the i-th field.
+   * 
+   * Throws:
+   * - std::domain_error: If i < 0. 
+   * - std::out_of_range: If i >= number of fields. 
    */
-  bool operator==(TupleDesc & other);
+  const std::string & get_field_name(int i) const;
+
+  /**
+   * Returns the index of the first field with a given name.
+   * 
+   * Throws:
+   * - NoSuchElementException: If no field with a matching name is found.
+   */
+  int get_index_of_named_field(std::string & name) const;
+
+  /**
+   * Merge two TupleDescs into one TupleDesc.
+   * The first fields will come from td1, followed by the fields from td2.
+   */
+  static TupleDesc Combine(TupleDesc & td1, TupleDesc & td2);
+
+  bool operator==(const TupleDesc & other);
+
+  bool operator!=(const TupleDesc & other);
 
  private:
-  std::vector<Type> types;
+  std::vector<Field::Type> types;
   std::vector<std::string> names;
 };
 }

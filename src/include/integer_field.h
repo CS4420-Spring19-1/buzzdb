@@ -3,30 +3,39 @@
 #include "field.h"
 
 namespace buzzdb {
+/**
+ * The IntegerField class represents an integer field in a tuple.
+ */
 class IntegerField : public Field {
  public:
   /**
-   * Constructor for the IntegerField class
+   * Constructor.
+   * Creates a new IntegerField with value v.
    */
   IntegerField(int v);
 
   /**
-   * Copy constructor for the IntegerField class
+   * Destructor.
    */
-  IntegerField(const IntegerField &field);
+  ~IntegerField() = default;
 
   /**
-   * Gets the integer field's value
+   * Copy constructor.
+   */
+  IntegerField(const IntegerField & original);
+
+  /**
+   * Returns the value of the IntegerField.
    */
   int get_value() const;
 
   /**
-   * Returns the type of the Field.
+   * Returns the type of the IntegerField.
    */
-  Type::FieldType get_type() const override;
+  Type get_type() const override;
 
   /**
-   * Write the bytes representing the field to the specified Stream.
+   * Write the bytes representing the IntegerField to the specified Stream.
    */
   /* To be implemented
     void serialize(DataOutputStream dos) override;
@@ -36,18 +45,17 @@ class IntegerField : public Field {
    * Compares the value of the IntegerField to the value of operand.
    * 
    * Throws IllegalCastException if operand is not a IntegerField *.
-   */
   bool Compare(Predicate::OpType op_type, Field * operand) override;
+   */
 
   /**
-   * Prints the integer field's contents
+   * Prints the IntegerField's contents.
    */
   void Print() const override;
 
-  /**
-   * Overload of the equality operator.
-   */
-  bool operator==(IntegerField other);
+  bool operator==(const Field & other) override;
+
+  bool operator!=(const Field & other) override;
 
  private:
   int value;
