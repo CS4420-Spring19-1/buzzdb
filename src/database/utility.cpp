@@ -45,7 +45,7 @@ Tuple* Utility::GetHeapTuple(int n) {
 }
 
 Tuple* Utility::GetHeapTuple(std::vector<int> tupdata) {
-  Tuple* tup = new Tuple(GetTupleDesc(tupdata.size()));
+  Tuple* tup = new Tuple(*GetTupleDesc(tupdata.size()));
   HeapPageId* heap_page_id = new HeapPageId(1, 2);
   tup->set_record_id(new RecordId(*heap_page_id, 3));
   for (int i = 0; i < tupdata.size(); i++) {
@@ -60,7 +60,7 @@ Tuple* Utility::GetTuple(std::vector<int> tupledata, int width) {
     return nullptr;
   }
 
-  Tuple* tup = new Tuple(GetTupleDesc(width));
+  Tuple* tup = new Tuple(*GetTupleDesc(width));
   for (int i = 0; i < width; i++) {
     tup->set_field(i, new IntegerField(tupledata[i]));
   }
@@ -70,7 +70,7 @@ Tuple* Utility::GetTuple(std::vector<int> tupledata, int width) {
 HeapFile* Utility::OpenHeapFile(int cols, std::ifstream file) {
   // create the HeapFile and add it to the catalog
   TupleDesc* td = GetTupleDesc(cols);
-  HeapFile* hf = new HeapFile(file, td);
+  HeapFile* hf = new HeapFile(file, *td);
   // Database.getCatalog().addTable(hf, UUID.randomUUID().toString());
   return hf;
 }
@@ -78,16 +78,16 @@ HeapFile* Utility::OpenHeapFile(int cols, std::ifstream file) {
 HeapFile* Utility::OpenHeapFile(int cols, std::string colPrefix, std::ifstream file) {
   // create the HeapFile and add it to the catalog
   TupleDesc* td = GetTupleDesc(cols, colPrefix);
-  HeapFile* hf = new HeapFile(file, td);
+  HeapFile* hf = new HeapFile(file, *td);
   // Database.getCatalog().addTable(hf, UUID.randomUUID().toString());
   return hf;
 }
 
 
 HeapFile* Utility::createEmptyHeapFile(std::string path, int cols) {
-  std::ifstream file(path, std::ifsteam::in);
+  std::ifstream file(path, std::ifstream::in);
   // touch the file
-  std::ostream fos(file);
+  std::ofstream fos(file);
   fos << std::vector<unsigned char>(0);
   fos.close();
 
