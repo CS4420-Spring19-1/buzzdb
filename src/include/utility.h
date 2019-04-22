@@ -17,7 +17,7 @@ public:
   /*
    * @return: Type array of length len populated with Type::INTEGER
    */
-  void GetTypes(int len, std::vector<Field::Type> &types)
+  void GetTypes(int len, std::vector<Field::Type> &types);
   /**
    * @return a String array of length len populated with the (possibly null) strings in val,
    * and an appended increasing integer at the end (val1, val2, etc.).

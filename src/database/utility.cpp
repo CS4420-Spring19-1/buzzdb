@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <iostream>
 #include <vector>
 #include <fstream>
 #include "utility.h"
@@ -37,7 +38,7 @@ TupleDesc* Utility::GetTupleDesc(int n) {
 }
 
 Tuple* Utility::GetHeapTuple(int n) {
-  Tuple* tup = new Tuple(GetTupleDesc(1));
+  Tuple* tup = new Tuple(*GetTupleDesc(1));
   tup->set_record_id(new RecordId(new HeapPageId(1, 2), 3));
   tup->set_field(0, new IntegerField(n));
   return tup;
