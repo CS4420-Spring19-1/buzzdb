@@ -7,6 +7,7 @@
 #include "tuple.h"
 #include "tuple_desc.h"
 #include "heap_page_id.h"
+#include "heap_file.h"
 
 namespace buzzdb {
 class Utility {
@@ -14,7 +15,7 @@ public:
   /*
    * @return: Type array of length len populated with Type::INTEGER
    */
-  static std::vector<Type*> GetTypes(int len);
+  static std::vector<Field::Type> GetTypes(int len);
   /**
    * @return a String array of length len populated with the (possibly null) strings in val,
    * and an appended increasing integer at the end (val1, val2, etc.).

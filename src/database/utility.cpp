@@ -2,10 +2,11 @@
 #include <vector>
 #include <fstream>
 #include "utility.h"
+#include "field.h"
 
 namespace buzzdb {
-static std::vector<Type*> Utility::GetTypes(int len) {
-  std::vector<Type*> types = new std::vector<Type*>(len);
+static std::vector<Field::Type> Utility::GetTypes(int len) {
+  std::vector<Field::Type> types = new std::vector<Field::Type>(len);
   for (int i = 0; i < len; i++) {
     types[i] = Type::FieldType::INTEGER;
   }
