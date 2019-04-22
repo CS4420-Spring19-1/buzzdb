@@ -46,7 +46,8 @@ Tuple* Utility::GetHeapTuple(int n) {
 
 Tuple* Utility::GetHeapTuple(std::vector<int> tupdata) {
   Tuple* tup = new Tuple(GetTupleDesc(tupdata.size()));
-  tup->set_record_id(new RecordId(new HeapPageId(1, 2), 3));
+  HeapPageId* heap_page_id = new HeapPageId(1, 2);
+  tup->set_record_id(new RecordId(*heap_page_id, 3));
   for (int i = 0; i < tupdata.size(); i++) {
     tup->set_field(i, new IntegerField(tupdata[i]));
   }
