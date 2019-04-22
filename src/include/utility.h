@@ -12,15 +12,17 @@
 namespace buzzdb {
 class Utility {
 public:
+  ~Utility() = default;
+  
   /*
    * @return: Type array of length len populated with Type::INTEGER
    */
-  std::vector<Field::Type> GetTypes(int len);
+  void GetTypes(int len, std::vector<Field::Type> &types)
   /**
    * @return a String array of length len populated with the (possibly null) strings in val,
    * and an appended increasing integer at the end (val1, val2, etc.).
    */
-  std::vector<std::string> GetStrings(int len, std::string val);
+  void GetStrings(int len, std::string val, std::vector<std::string> &strings);
   
   /**
    * @return a TupleDesc with n fields of type Type.INT_TYPE, each named

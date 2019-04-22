@@ -5,29 +5,35 @@
 #include "field.h"
 
 namespace buzzdb {
-std::vector<Field::Type> Utility::GetTypes(int len) {
-  std::vector<Field::Type> types = new std::vector<Field::Type>(len);
-  for (int i = 0; i < len; i++) {
-    types[i] = Field::Type::INTEGER;
+void Utility::GetTypes(int len, std::vector<Field::Type> &types) {
+  int idx = 0;
+  while (idx < len) {
+    types.push_back(Field::Type::INTEGER);
+    idx++;
   }
-  return types;
 }
 
-std::vector<std::string> Utility::GetStrings(int len, std::string val) {
-  std::vector<std::string> strings = new std::vector<std::string>(len);
-  for (int i = 0; i < len; i++) {
-    strings[i] = val + std::to_string(i);
+void Utility::GetStrings(int len, std::string val, std::vector<std::string> &strings) {
+  int idx = 0;
+  while (idx < len) {
+    strings.push_back(val + std::to_string(idx));
+    idx++;
   }
-  return strings;
 }
 
 TupleDesc* Utility::GetTupleDesc(int n, std::string name) {
-  return new TupleDesc(GetTypes(n), GetString(n, name));
+  std::vector<Field::Type> types;
+  std::vector<std::string> strings;
+  GetTypes(n, types);
+  GetStrings(n, name, strings);
+  return new TupleDesc(types, strings);
 }
 
 
 TupleDesc* Utility::GetTupleDesc(int n) {
-  return new TupleDesc(GetTypes(n));
+  std::vector<Field::Type> types;
+  GetTypes(n, types);
+  return new TupleDesc(types);
 }
 
 Tuple* Utility::GetHeapTuple(int n) {
