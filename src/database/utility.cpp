@@ -8,12 +8,12 @@ namespace buzzdb {
 static std::vector<Field::Type> Utility::GetTypes(int len) {
   std::vector<Field::Type> types = new std::vector<Field::Type>(len);
   for (int i = 0; i < len; i++) {
-    types[i] = Type::FieldType::INTEGER;
+    types[i] = Field::Type::INTEGER;
   }
   return types;
 }
 
-static std::vector<std::string> Utility::GetStrings(int len, std:::string val) {
+static std::vector<std::string> Utility::GetStrings(int len, std::string val) {
   std::vector<std::string> strings = new std::vector<std::string>(len);
   for (int i = 0; i < len; i++) {
     strings[i] = val + std::to_string(i);

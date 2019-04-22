@@ -74,5 +74,5 @@ public:
   static std::string ListToString (std::vector<int> list);
 private:
 
-}
+};
 }
