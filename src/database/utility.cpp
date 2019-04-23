@@ -73,7 +73,7 @@ Tuple* Utility::GetTuple(std::vector<int> tupledata, int width) {
 HeapFile* Utility::OpenHeapFile(int cols, std::ifstream file) {
   // create the HeapFile and add it to the catalog
   TupleDesc* td = GetTupleDesc(cols);
-  HeapFile* hf = new HeapFile(file, *td);
+  HeapFile* hf = new HeapFile(file, td);
   // Database.getCatalog().addTable(hf, UUID.randomUUID().toString());
   return hf;
 }
