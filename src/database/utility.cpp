@@ -70,14 +70,14 @@ Tuple* Utility::GetTuple(std::vector<int> tupledata, int width) {
   return tup;
 }
 
-HeapFile* Utility::OpenHeapFile(int cols, std::ifstream file) {
+HeapFile* Utility::OpenHeapFile(int cols, std::ifstream &file) {
   // create the HeapFile and add it to the catalog
   HeapFile* hf = new HeapFile(file, *GetTupleDesc(cols));
   // Database.getCatalog().addTable(hf, UUID.randomUUID().toString());
   return hf;
 }
 
-HeapFile* Utility::OpenHeapFile(int cols, std::string colPrefix, std::ifstream file) {
+HeapFile* Utility::OpenHeapFile(int cols, std::string colPrefix, std::ifstream &file) {
   // create the HeapFile and add it to the catalog
   HeapFile* hf = new HeapFile(file, *GetTupleDesc(cols));
   // Database.getCatalog().addTable(hf, UUID.randomUUID().toString());
@@ -88,7 +88,7 @@ HeapFile* Utility::OpenHeapFile(int cols, std::string colPrefix, std::ifstream f
 HeapFile* Utility::createEmptyHeapFile(std::string path, int cols) {
   std::ifstream file(path, std::ifstream::in);
   // touch the file
-  std::ofstream fos(*file);
+  std::ofstream fos(file);
   fos << std::vector<unsigned char>(0);
   fos.close();
   HeapFile* hf = OpenHeapFile(cols, file);
