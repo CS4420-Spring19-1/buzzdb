@@ -39,14 +39,14 @@ class Tuple {
   const std::vector<Field *> & get_fields() const;
 
   /**
-   * Returns the value of the i-th field.
+   * Returns the value of the i-th field, where i is given by index.
    * If the i-th field has not been set, returns a nullptr.
    * 
    * Throws:
-   * - std::domain_error: If i < 0. 
-   * - std::out_of_range: If i >= number of fields. 
+   * - std::invalid_argument: If index < 0. 
+   * - std::out_of_range: If index >= number of fields. 
    */
-  Field * get_field(int i) const;
+  Field * get_field(int index) const;
 
   /**
    * Returns the TupleDesc.
@@ -57,22 +57,23 @@ class Tuple {
   /**
    * Returns the disk location representation of the Tuple.
    */
-  RecordId * get_record_id() const;
+  const RecordId * get_record_id() const;
 
   /**
-   * Changes the value of the i-th field of the Tuple to f.
+   * Changes the value of the i-th field of the Tuple to f, where i is given
+   * by index.
    * 
    * Pre-condition:
    * - f should not be pointing to a Field object already pointed to by
-   *   another Tuple. Failure to ensure this constraint will lead to
+   *   another Tuple. Failure to ensure this constraint will result in
    *   undefined behaviour.
    * Throws:
-   * - std::domain_error: If i < 0. 
-   * - std::out_of_range: If i >= number of fields. 
+   * - std::invalid_argument: If index < 0. 
+   * - std::out_of_range: If index >= number of fields. 
    * - std::invalid_argument: If f is of incorrect Type, as specified by the
    *   TupleDesc. 
    */
-  void set_field(int i, Field * f);
+  void set_field(int index, Field * f);
   
   /**
    * Sets the disk location information for the Tuple.

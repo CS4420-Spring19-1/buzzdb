@@ -17,7 +17,7 @@ TupleDesc::TupleDesc(std::vector<Field::Type> type_vector,
                      std::vector<std::string> name_vector) {
   if (type_vector.size() != name_vector.size()) {
     throw std::invalid_argument(
-        "Pre-condition violation: Type vector and name vector differ in size");
+        "Type vector and name vector cannot have different lengths.");
   }
   types = type_vector;
   names = name_vector; 
@@ -41,24 +41,24 @@ int TupleDesc::get_size() const {
   return size;
 }
 
-const Field::Type & TupleDesc::get_field_type(int i) const {
-  if (i < 0) {
-    throw std::domain_error("Index cannot be negative.");
+const Field::Type & TupleDesc::get_field_type(int index) const {
+  if (index < 0) {
+    throw std::invalid_argument("Index cannot be negative.");
   }
 
-  unsigned int unsigned_index = i;
+  unsigned int unsigned_index = index;
   if (unsigned_index >= types.size()) {
     throw std::out_of_range("Index is out of range.");
   }
   return types[unsigned_index];
 }
 
-const std::string & TupleDesc::get_field_name(int i) const {
-  if (i < 0) {
-    throw std::domain_error("Index cannot be negative.");
+const std::string & TupleDesc::get_field_name(int index) const {
+  if (index < 0) {
+    throw std::invalid_argument("Index cannot be negative.");
   }
 
-  unsigned int unsigned_index = i;
+  unsigned int unsigned_index = index;
   if (unsigned_index >= names.size()) {
     throw std::out_of_range("Index is out of range.");
   }
