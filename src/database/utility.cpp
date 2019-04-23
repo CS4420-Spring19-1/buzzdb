@@ -39,7 +39,9 @@ TupleDesc* Utility::GetTupleDesc(int n) {
 
 Tuple* Utility::GetHeapTuple(int n) {
   Tuple* tup = new Tuple(*GetTupleDesc(1));
-  tup->set_record_id(new RecordId(new HeapPageId(1, 2), 3));
+  HeapPageId* heap_page_id = new HeapPageId(1, 2);
+  
+  tup->set_record_id(new RecordId(*heap_page_id, 3));
   tup->set_field(0, new IntegerField(n));
   return tup;
 }
@@ -47,6 +49,7 @@ Tuple* Utility::GetHeapTuple(int n) {
 Tuple* Utility::GetHeapTuple(std::vector<int> tupdata) {
   Tuple* tup = new Tuple(*GetTupleDesc(tupdata.size()));
   HeapPageId* heap_page_id = new HeapPageId(1, 2);
+  
   tup->set_record_id(new RecordId(*heap_page_id, 3));
   for (int i = 0; i < tupdata.size(); i++) {
     tup->set_field(i, new IntegerField(tupdata[i]));
@@ -90,7 +93,6 @@ HeapFile* Utility::createEmptyHeapFile(std::string path, int cols) {
   std::ofstream fos(file);
   fos << std::vector<unsigned char>(0);
   fos.close();
-
   HeapFile* hf = OpenHeapFile(cols, file);
   HeapPageId* pid = new HeapPageId(hf->get_id(), 0);
 
