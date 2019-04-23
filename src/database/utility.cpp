@@ -75,35 +75,36 @@ HeapFile* Utility::OpenHeapFile(int cols, std::ifstream file) {
   // create the HeapFile and add it to the catalog
   // HeapFile* hf = new HeapFile(file, *GetTupleDesc(cols));
   // Database.getCatalog().addTable(hf, UUID.randomUUID().toString());
-  return hf;
+  // return hf;
 }
 
 HeapFile* Utility::OpenHeapFile(int cols, std::string colPrefix, std::ifstream file) {
   // create the HeapFile and add it to the catalog
   // HeapFile* hf = new HeapFile(file, *GetTupleDesc(cols));
   // Database.getCatalog().addTable(hf, UUID.randomUUID().toString());
-  return hf;
+  // return hf;
 }
 
 
 HeapFile* Utility::createEmptyHeapFile(std::string path, int cols) {
   // touch the file
-  std::ofstream fos(path, std::ofstream::out);
-  fos << std::vector<unsigned char>(0);
-  fos.close();
-  HeapFile* hf = OpenHeapFile(cols, file);
-  HeapPageId* pid = new HeapPageId(hf->get_id(), 0);
+  // std::ofstream fos(path, std::ofstream::out);
+  // fos << "";
+  // fos.close();
+  // HeapFile* hf = OpenHeapFile(cols, fos);
+  // HeapPageId* pid = new HeapPageId(hf->get_id(), 0);
 
-  HeapPage* page = nullptr;
-  try {
-    // page = new HeapPage(pid, HeapPage.createEmptyPageData());
-  } catch {
-    // this should never happen for an empty page; bail;
-    // throw new RuntimeException("failed to create empty page in HeapFile");
-  }
+  // HeapPage* page = nullptr;
+  // // try {s
+  // //   // page = new HeapPage(pid, HeapPage.createEmptyPageData());
+  // // } catch {
+  // //   // this should never happen for an empty page; bail;
+  // //   // throw new RuntimeException("failed to create empty page in HeapFile");
+  // // }
 
-  hf->WritePage(page);
-  return hf;
+  // hf->WritePage(page);
+  // return hf;
+  return nullptr;
 }
 
 std::string Utility::ListToString (std::vector<int> list) {
