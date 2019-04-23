@@ -4,6 +4,7 @@
 #include <fstream>
 #include "utility.h"
 #include "field.h"
+#include "heap_page.h"
 
 namespace buzzdb {
 void Utility::GetTypes(int len, std::vector<Field::Type> &types) {
@@ -70,25 +71,24 @@ Tuple* Utility::GetTuple(std::vector<int> tupledata, int width) {
   return tup;
 }
 
-HeapFile* Utility::OpenHeapFile(int cols, std::ifstream &file) {
+HeapFile* Utility::OpenHeapFile(int cols, std::ifstream file) {
   // create the HeapFile and add it to the catalog
-  HeapFile* hf = new HeapFile(file, *GetTupleDesc(cols));
+  // HeapFile* hf = new HeapFile(file, *GetTupleDesc(cols));
   // Database.getCatalog().addTable(hf, UUID.randomUUID().toString());
   return hf;
 }
 
-HeapFile* Utility::OpenHeapFile(int cols, std::string colPrefix, std::ifstream &file) {
+HeapFile* Utility::OpenHeapFile(int cols, std::string colPrefix, std::ifstream file) {
   // create the HeapFile and add it to the catalog
-  HeapFile* hf = new HeapFile(file, *GetTupleDesc(cols));
+  // HeapFile* hf = new HeapFile(file, *GetTupleDesc(cols));
   // Database.getCatalog().addTable(hf, UUID.randomUUID().toString());
   return hf;
 }
 
 
 HeapFile* Utility::createEmptyHeapFile(std::string path, int cols) {
-  std::ifstream file(path, std::ifstream::in);
   // touch the file
-  std::ofstream fos(file);
+  std::ofstream fos(path, std::ofstream::out);
   fos << std::vector<unsigned char>(0);
   fos.close();
   HeapFile* hf = OpenHeapFile(cols, file);
