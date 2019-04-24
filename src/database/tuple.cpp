@@ -41,12 +41,12 @@ const std::vector<Field *> & Tuple::get_fields() const {
   return fields;
 }
 
-Field * Tuple::get_field(int i) const {
-  if (i < 0) {
-    throw std::domain_error("Index cannot be negative.");
+Field * Tuple::get_field(int index) const {
+  if (index < 0) {
+    throw std::invalid_argument("Index cannot be negative.");
   }
 
-  unsigned int unsigned_index = i;
+  unsigned int unsigned_index = index;
   if (unsigned_index >= fields.size()) {
     throw std::out_of_range("Index is out of range.");
   }
@@ -57,24 +57,25 @@ const TupleDesc & Tuple::get_tuple_desc() const {
   return td;
 }
 
-RecordId * Tuple::get_record_id() const {
+const RecordId * Tuple::get_record_id() const {
   return rid;
 }
 
-void Tuple::set_field(int i, Field * f) {
-  if (i < 0) {
-    throw std::domain_error("Index cannot be negative.");
+void Tuple::set_field(int index, Field * f) {
+  if (index < 0) {
+    throw std::invalid_argument("Index cannot be negative.");
   }
 
-  unsigned int unsigned_index = i;
+  unsigned int unsigned_index = index;
   if (unsigned_index >= fields.size()) {
     throw std::out_of_range("Index is out of range.");
   }
+
   // type check is yet to be implemented.
   if (false) {
     throw std::invalid_argument("Type of *f is incorrect.");
   };
-  fields[i] = f;
+  fields.at(unsigned_index) = f;
 }
 
 void Tuple::set_record_id(RecordId * rid) {

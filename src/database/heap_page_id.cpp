@@ -1,8 +1,15 @@
 #include "heap_page_id.h"
+#include <stdexcept>
 
 namespace buzzdb {
 HeapPageId::HeapPageId(int table_id, int page_number)
     : table_id(table_id), page_number(page_number) {
+  if (table_id < 0) {
+    throw std::invalid_argument("Table id cannot be negative.");
+  }
+  if (page_number < 0) {
+    throw std::invalid_argument("Page number cannot be negative.");
+  }
 }
 
 HeapPageId::HeapPageId(const HeapPageId & original)

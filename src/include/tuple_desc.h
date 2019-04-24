@@ -61,22 +61,22 @@ class TupleDesc {
   int get_size() const;
 
   /**
-   * Returns the type of the i-th field.
+   * Returns the type of the i-th field, where i is given by index.
    * 
    * Throws:
-   * - std::domain_error: If i < 0. 
-   * - std::out_of_range: If i >= number of fields. 
+   * - std::invalid_argument: If index < 0. 
+   * - std::out_of_range: If index >= number of fields. 
    */
-  const Field::Type & get_field_type(int i) const;
+  const Field::Type & get_field_type(int index) const;
 
   /**
-   * Returns the name of the i-th field.
+   * Returns the name of the i-th field, where i is given by index.
    * 
    * Throws:
-   * - std::domain_error: If i < 0. 
-   * - std::out_of_range: If i >= number of fields. 
+   * - std::invalid_argument: If index < 0. 
+   * - std::out_of_range: If index >= number of fields. 
    */
-  const std::string & get_field_name(int i) const;
+  const std::string & get_field_name(int index) const;
 
   /**
    * Returns the index of the first field with a given name.
