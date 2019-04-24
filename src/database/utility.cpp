@@ -9,7 +9,7 @@
 namespace buzzdb {
 Utility::Utility() {}
 
-static std::vector<Field::Type> Utility::GetTypes(int len) {
+std::vector<Field::Type> Utility::GetTypes(int len) {
   std::vector<Field::Type> types;
   int idx = 0;
   while (idx < len) {
@@ -19,28 +19,28 @@ static std::vector<Field::Type> Utility::GetTypes(int len) {
   return types;
 }
 
-static std::vector<std::string> Utility::GetStrings(int len, std::string val) {
+std::vector<std::string> Utility::GetStrings(int len, std::string val) {
   std::vector<std::string> strings;
   int idx = 0;
   while (idx < len) {
-    strings.push_back(val + std::to_string(idx));
-    idx++;
+    strings.push_back(val + std::to_string(idx++));
   }
   return strings;
 }
 
-static TupleDesc Utility::GetTupleDesc(int n, std::string name) { 
+TupleDesc Utility::GetTupleDesc(int n, std::string name) { 
   return TupleDesc(GetTypes(n), GetStrings(n, name));
 }
 
 
-static TupleDesc Utility::GetTupleDesc(int n) {
+TupleDesc Utility::GetTupleDesc(int n) {
   return TupleDesc(GetTypes(n));
 }
 
-static Tuple Utility::GetHeapTuple(int n) {
+Tuple Utility::GetHeapTuple(int n) {
   Tuple tup = Tuple(GetTupleDesc(1));
-  RecordId* rid = new RecordId(HeapPageId(1, 2), 3);
+  HeapPageId heap_page_id(1, 2);
+  RecordId* rid = new RecordId(heap_page_id, 3);
   tup.set_record_id(rid);
 
   Field* field = new IntegerField(n);
@@ -51,9 +51,10 @@ static Tuple Utility::GetHeapTuple(int n) {
   return tup;
 }
 
-static Tuple Utility::GetHeapTuple(std::vector<int> tupdata) {
+Tuple Utility::GetHeapTuple(std::vector<int> tupdata) {
   Tuple tup = Tuple(GetTupleDesc(tupdata.size()));
-  RecordId* rid = new RecordId(HeapPageId(1, 2), 3);
+  HeapPageId heap_page_id(1, 2);
+  RecordId* rid = new RecordId(heap_page_id, 3);
   tup.set_record_id(rid);
   Field* field = nullptr;
   
@@ -67,10 +68,9 @@ static Tuple Utility::GetHeapTuple(std::vector<int> tupdata) {
   return tup;
 }
 
-static Tuple Utility::GetTuple(std::vector<int> tupledata, int width) {
+Tuple Utility::GetTuple(std::vector<int> tupledata, int width) {
   if (tupledata.size() != width) {
     //std::cout << "Get Hash Tuple has the wrong length!" << std::endl;
-    return nullptr;
   }
 
   Tuple tup = Tuple(GetTupleDesc(width));
@@ -85,14 +85,14 @@ static Tuple Utility::GetTuple(std::vector<int> tupledata, int width) {
   return tup;
 }
 
-static HeapFile* Utility::OpenHeapFile(int cols, std::ifstream file) {
+HeapFile* Utility::OpenHeapFile(int cols, std::ifstream file) {
   // create the HeapFile and add it to the catalog
   // HeapFile* hf = new HeapFile(file, *GetTupleDesc(cols));
   // Database.getCatalog().addTable(hf, UUID.randomUUID().toString());
   // return hf;
 }
 
-static HeapFile* Utility::OpenHeapFile(int cols, std::string colPrefix, std::ifstream file) {
+HeapFile* Utility::OpenHeapFile(int cols, std::string colPrefix, std::ifstream file) {
   // create the HeapFile and add it to the catalog
   // HeapFile* hf = new HeapFile(file, *GetTupleDesc(cols));
   // Database.getCatalog().addTable(hf, UUID.randomUUID().toString());
@@ -100,7 +100,7 @@ static HeapFile* Utility::OpenHeapFile(int cols, std::string colPrefix, std::ifs
 }
 
 
-static HeapFile* Utility::createEmptyHeapFile(std::string path, int cols) {
+HeapFile* Utility::createEmptyHeapFile(std::string path, int cols) {
   // touch the file
   // std::ofstream fos(path, std::ofstream::out);
   // fos << "";
@@ -121,7 +121,7 @@ static HeapFile* Utility::createEmptyHeapFile(std::string path, int cols) {
   return nullptr;
 }
 
-static std::string Utility::ListToString (std::vector<int> list) {
+std::string Utility::ListToString (std::vector<int> list) {
   std::string out = "";
   for (int i: list) {
     if (out.size() > 0) out += "\t";
