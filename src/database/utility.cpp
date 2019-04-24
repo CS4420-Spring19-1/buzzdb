@@ -46,8 +46,6 @@ Tuple Utility::GetHeapTuple(int n) {
   Field* field = new IntegerField(n);
   tup.set_field(0, field);
 
-  delete rid;
-  delete field;
   return tup;
 }
 
@@ -63,8 +61,6 @@ Tuple Utility::GetHeapTuple(std::vector<int> tupdata) {
     tup.set_field(i, field);
   }
 
-  delete rid;
-  delete field;
   return tup;
 }
 
@@ -81,7 +77,6 @@ Tuple Utility::GetTuple(std::vector<int> tupledata, int width) {
     tup.set_field(i, field);
   }
 
-  delete field;
   return tup;
 }
 
