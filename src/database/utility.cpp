@@ -69,15 +69,15 @@ Tuple Utility::GetHeapTuple(std::vector<int> tupdata) {
 }
 
 Tuple Utility::GetTuple(std::vector<int> tupledata, int width) {
-  if (tupledata.size() != width) {
-    //std::cout << "Get Hash Tuple has the wrong length!" << std::endl;
-  }
+  // if (tupledata.size() != width) {
+  //   //std::cout << "Get Hash Tuple has the wrong length!" << std::endl;
+  // }
 
   Tuple tup = Tuple(GetTupleDesc(width));
   
   Field* field = nullptr;
   for (int i = 0; i < width; i++) {
-    field = new IntegerField(tupdata[i]);
+    field = new IntegerField(tupledata[i]);
     tup.set_field(i, field);
   }
 
