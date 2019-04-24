@@ -11,41 +11,42 @@
 
 namespace buzzdb {
 class Utility {
-public:
+ public:
+
   ~Utility() = default;
   
   /*
    * @return: Type array of length len populated with Type::INTEGER
    */
-  void GetTypes(int len, std::vector<Field::Type> &types);
+  static std::vector<Field::Type> GetTypes(int len);
   /**
    * @return a String array of length len populated with the (possibly null) strings in val,
    * and an appended increasing integer at the end (val1, val2, etc.).
    */
-  void GetStrings(int len, std::string val, std::vector<std::string> &strings);
+  static std::vector<std::string> GetStrings(int len, std::string val);
   
   /**
    * @return a TupleDesc with n fields of type Type.INT_TYPE, each named
    * name + n (name1, name2, etc.).
    */
-  TupleDesc* GetTupleDesc(int n, std::string name);
+  static TupleDesc GetTupleDesc(int n, std::string name);
   
   /**
    * @return a TupleDesc with n fields of type Type.INT_TYPE
    */
-  TupleDesc* GetTupleDesc(int n);
+  static TupleDesc GetTupleDesc(int n);
 
   /**
    * @return a Tuple with a single IntField with value n and with
    *   RecordId(HeapPageId(1,2), 3)
    */
-  Tuple* GetHeapTuple(int n);
+  static Tuple GetHeapTuple(int n);
 
   /**
    * @return a Tuple with an IntField for every element of tupdata
    *   and RecordId(HeapPageId(1, 2), 3)
    */
-  Tuple* GetHeapTuple(std::vector<int> tupdata);
+  static Tuple GetHeapTuple(std::vector<int> tupdata);
 
   /**
    * @return a Tuple with a 'width' IntFields with the value tupledata[i]
@@ -53,7 +54,7 @@ public:
    *         do not set it's RecordId, hence do not distinguish which
    *         sort of file it belongs to.
    */
-  Tuple* GetTuple(std::vector<int> tupledata, int width);
+  static Tuple GetTuple(std::vector<int> tupledata, int width);
 
   /**
    * A utility method to create a new HeapFile with a single empty page,
@@ -61,7 +62,7 @@ public:
    * will be overwritten. The new table will be added to the Catalog with
    * the specified number of columns as IntFields.
    */
-  HeapFile* createEmptyHeapFile(std::string path, int cols);
+  static HeapFile* createEmptyHeapFile(std::string path, int cols);
 
   /** Opens a HeapFile and adds it to the catalog.
    *
@@ -70,11 +71,11 @@ public:
    * @return the opened table.
    */
 
-  HeapFile* OpenHeapFile(int cols, std::ifstream file);
-  HeapFile* OpenHeapFile(int cols, std::string colPrefix, std::ifstream file);
+  static HeapFile* OpenHeapFile(int cols, std::ifstream file);
+  static HeapFile* OpenHeapFile(int cols, std::string colPrefix, std::ifstream file);
 
-  std::string ListToString (std::vector<int> list);
-private:
-
+  static std::string ListToString (std::vector<int> list);
+ private:
+    Utility();
 };
 }
