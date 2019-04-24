@@ -69,9 +69,9 @@ Tuple Utility::GetHeapTuple(std::vector<int> tupdata) {
 }
 
 Tuple Utility::GetTuple(std::vector<int> tupledata, int width) {
-  // if (tupledata.size() != width) {
-  //   //std::cout << "Get Hash Tuple has the wrong length!" << std::endl;
-  // }
+  if (tupledata.size() != width) {
+    throw std::invalid_argument("Get Hash Tuple has the wrong length!");
+  }
 
   Tuple tup = Tuple(GetTupleDesc(width));
   
