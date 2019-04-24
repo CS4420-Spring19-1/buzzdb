@@ -1,5 +1,6 @@
 #include "seq_scan.h"
 #include "database.h"
+#include "no_such_element_exception.h"
 
 namespace buzzdb {
 SeqScan::SeqScan(TransactionId & tid, int table_id, std::string table_alias) {
@@ -12,10 +13,6 @@ void SeqScan::Open() {
   this->iterator->Open();
 }
 
-TupleDesc SeqScan::get_tuple_desc() const {
-  return this->db_file->get_tuple_desc();
-}
-
 bool SeqScan::HasNext() {
   if (iterator == nullptr) {
     return false;
@@ -23,21 +20,25 @@ bool SeqScan::HasNext() {
   return iterator->HasNext();
 }
 
-Tuple * SeqScan::Next() {
+Tuple & SeqScan::Next() {
   if (iterator == nullptr) {
-    // throw new NoSuchElementException();
+    throw NoSuchElementException("Iterator has no more tuples to read.");
   }
+
   Tuple * t = iterator->Next();
-
   if (t == nullptr) {
-    // throw new NoSuchElementException();
+    throw NoSuchElementException("THe tuple retrieved by next is null.");
   }
 
-  return t;
+  return *t;
 }
 
 void SeqScan::Close() {
   iterator = nullptr;
+}
+
+const TupleDesc & SeqScan::get_tuple_desc() const {
+  return this->db_file->get_tuple_desc();
 }
 
 void SeqScan::Rewind() {

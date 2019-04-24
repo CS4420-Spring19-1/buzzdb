@@ -1,114 +1,105 @@
-#include <stdexcept>
 #include "tuple_desc.h"
+#include <stdexcept>
+#include "no_such_element_exception.h"
 
 namespace buzzdb {
-/**
- * Implementation needs to be tweaked to provide guarantees
- */
 TupleDesc::TupleDesc() {
+  types = std::vector<Field::Type>(0);
+  names = std::vector<std::string>(0);
 }
 
-TupleDesc::TupleDesc(std::vector<Type> type_vector) {
-  std::vector<std::string> empty_string = std::vector<std::string>(0);
-  TupleDesc(type_vector, empty_string);
+TupleDesc::TupleDesc(std::vector<Field::Type> type_vector) {
+  int vector_size = type_vector.size();
+  TupleDesc(type_vector, std::vector<std::string>(vector_size));
 }
 
-TupleDesc::TupleDesc(std::vector<Type> type_vector, std::vector<std::string> field_vector) {
-  types = std::vector<Type>(type_vector.size());
-  // memcpy ?
-  for (size_t i = 0; i < type_vector.size(); i++) {
-      types.push_back(type_vector[i]);
+TupleDesc::TupleDesc(std::vector<Field::Type> type_vector,
+                     std::vector<std::string> name_vector) {
+  if (type_vector.size() != name_vector.size()) {
+    throw std::invalid_argument(
+        "Type vector and name vector cannot have different lengths.");
   }
-  
-  names = std::vector<std::string>(field_vector.size());
-  for (size_t i = 0; i < field_vector.size(); i++) {
-      names.push_back(field_vector[i]);
-  }
+  types = type_vector;
+  names = name_vector; 
 }
 
-TupleDesc::TupleDesc(const TupleDesc & other) {
-  // this might need to be modified if underlying representation is changed
-  this->types = other.types;
-  this->names = other.names;
+TupleDesc::TupleDesc(const TupleDesc & original) {
+  this->types = original.types;
+  this->names = original.names;
 }
 
 int TupleDesc::get_number_fields() const {
   return types.size();
 }
 
-std::string TupleDesc::get_field_name(int index) const {
-  if (index < 0 || index >= types.size()) {
-    throw std::out_of_range("Index out of range");
-  } else {
-    return names[index];
+int TupleDesc::get_size() const {
+  int size = 0;
+  for (size_t i = 0; i < types.size(); i++) {
+    Field::Type type = types[i];
+    size += Field::get_length(type);
   }
+  return size;
 }
 
-Type TupleDesc::get_field_type(int index) const {
-  if (index < 0 || index >= types.size()) {
-    throw std::out_of_range("Index out of range");
-  } else {
-    return types[index];
+const Field::Type & TupleDesc::get_field_type(int index) const {
+  if (index < 0) {
+    throw std::invalid_argument("Index cannot be negative.");
   }
+
+  unsigned int unsigned_index = index;
+  if (unsigned_index >= types.size()) {
+    throw std::out_of_range("Index is out of range.");
+  }
+  return types[unsigned_index];
 }
 
-int TupleDesc::FieldNameToIndex(std::string name) {
-  if (&name == nullptr) {
-    // throw new NoSuchElementException("Unknown Field Name.");
+const std::string & TupleDesc::get_field_name(int index) const {
+  if (index < 0) {
+    throw std::invalid_argument("Index cannot be negative.");
   }
+
+  unsigned int unsigned_index = index;
+  if (unsigned_index >= names.size()) {
+    throw std::out_of_range("Index is out of range.");
+  }
+  return names[unsigned_index];
+}
+
+int TupleDesc::get_index_of_named_field(std::string & name) const {
   for (size_t i = 0; i < name.length(); i++) {
     if (name == names[i]) {
       return i;
     }
   }
+  throw NoSuchElementException("Field name not found.");
 }
 
-int TupleDesc::get_size() const {
-  // inefficient implementation?
-  int size = 0;
-  for (size_t i = 0; i < types.size(); i++) {
-    size += sizeof(types[i]);
+TupleDesc TupleDesc::Combine(TupleDesc & td1, TupleDesc & td2) {
+  size_t td1_size = td1.get_size();
+  size_t td2_size = td2.get_size();
+  std::vector<Field::Type> combined_types;
+  std::vector<std::string> combined_names;
+
+  // firstly populating combined vectors with the elements from td1
+  for (size_t i = 0; i < td1_size; i++) {
+    combined_types.push_back(td1.types.at(i));
+    combined_names.push_back(td1.names.at(i));
   }
-  return size;
+
+  // then populating combined vectors with the elements from td2
+  for (size_t i = td1_size; i < td2_size; i++) {
+    combined_types.push_back(td2.types.at(i));
+    combined_names.push_back(td2.names.at(i));
+  }
+
+  return TupleDesc(combined_types, combined_names);
 }
 
-TupleDesc TupleDesc::Combine(TupleDesc * td1, TupleDesc * td2) {
-  std::vector<Type> types = std::vector<Type>(td1->types.size() + td2->types.size());
-  std::vector<std::string> names = std::vector<std::string>(td1->names.size() + td2->names.size());
-  int idx = 0;
-
-  for (size_t i = 0; i < td1->types.size(); i++) {
-    types[idx] = td1->types[i];
-    names[idx++] = td1->names[i];
-  }
-
-  for (size_t i = 0; i < td2->types.size(); i++) {
-    types[idx] = td2->types[i];
-    names[idx++] = td2->names[i];
-  }
-
-  return TupleDesc(types, names);
+bool TupleDesc::operator==(const TupleDesc & other) {
+  return types == other.types && names == other.names;
 }
 
-bool TupleDesc::operator==(TupleDesc & other) {
-  int n = this->get_number_fields();
-
-  if (other.get_number_fields() != n) {
-    return false;
-  }
-  /* Incomplete implementation
-  for (size_t i = 0; i < n; i++) {
-    if ((& other.get_field_name(i)) == nullptr) {
-      if ((& other.get_field_name(i)) != nullptr) {
-        return false;
-      }
-    } else if (this->get_field_name(i) == other.get_field_name(i)) {
-      return false;
-    } else if (this->get_field_type(i) != other.get_field_type(i)) {
-      return false;
-    }
-  }
-  */
-  return true;
+bool TupleDesc::operator!=(const TupleDesc & other) {
+  return !(*this == other);
 }
 }

@@ -5,18 +5,19 @@ namespace buzzdb {
 StringField::StringField(std::string s) : value(s) {
 }
 
-StringField::StringField(const StringField & string_field) { 
-  value = string_field.get_value();
+StringField::StringField(const StringField & original)
+    : value(original.get_value()) { 
 }
 
 std::string StringField::get_value() const {
   return this->value;
 }
 
-Type::FieldType StringField::get_type() const {
-  return Type::FieldType::STRING;
+Field::Type StringField::get_type() const {
+  return Type::STRING;
 }
 
+/*
 bool StringField::Compare(Predicate::OpType op_type, Field * operand) {
   StringField * operand_value_pointer = static_cast<StringField *>(operand);
   std::string operand_value = operand_value_pointer->get_value();
@@ -44,12 +45,23 @@ bool StringField::Compare(Predicate::OpType op_type, Field * operand) {
       break;
   }
 }
+*/
 
 void StringField::Print() const {
   std::cout << value << " \n";
 }
 
-bool StringField::operator==(StringField other) {
-  return this->value == other.get_value();
+bool StringField::operator==(const Field & other) {
+  try {
+    Field & non_const_other = const_cast<Field &>(other);
+    StringField & casted_other = dynamic_cast<StringField &>(non_const_other);
+    return value == casted_other.value;
+  } catch (const std::bad_cast & e) {
+    return false;
+  }
+}
+
+bool StringField::operator!=(const Field & other) {
+  return !(*this == other);
 }
 }

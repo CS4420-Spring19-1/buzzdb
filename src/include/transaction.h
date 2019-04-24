@@ -4,35 +4,38 @@
 #include "transaction_id.h"
 
 namespace buzzdb {
+/**
+ * The Transaction class represents a transaction in a DBMS.
+ */
 class Transaction {
  public:
   /**
-   * No argument constructor for the Transaction class
+   * Default constructor.
    */
   Transaction();
 
   /**
-   * Destructor for the Transaction class
+   * Destructor.
    */
-  ~Transaction();
+  ~Transaction() = default;
 
   /**
-   * Returns the TransactionId object
+   * Returns the TransactionId.
    */
-  TransactionId * get_id();
+  const TransactionId & get_id() const;
 
   /**
-   * Starts the transaction
+   * Starts the transaction.
    */
   void Start();
 
   /**
-   * Completes the transaction by commiting all changes made
+   * Completes the transaction by commiting all changes made.
    */
   void Commit();
 
  private:
-  TransactionId * tid;
+  TransactionId tid;
   bool hasStarted;
 
   /**

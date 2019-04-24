@@ -151,7 +151,7 @@ class BufferPool {
     * Flushes a certain page to disk
     * @param pid an ID indicating the page to flush
     */
-  void FlushPage(PageId * pid);
+  void FlushPage(const PageId & pid);
 
   /**
     * Discards a page from the buffer pool.

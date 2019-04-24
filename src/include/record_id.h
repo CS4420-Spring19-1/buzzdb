@@ -1,36 +1,44 @@
 #pragma once
 
 #include "page_id.h"
+#include "heap_page_id.h"
 
 namespace buzzdb {
 /**
- * This class is a reference to a specific tuple on a specific page
- *  of a specific table.
+ * The RecordId class represents the location of a tuple.
+ * - A tuple is contained within a page and is indexed within the page by
+ *   its tuple_number.
  */
 class RecordId {
  public:
   /**
-   * Constructor of the RecordId class
+   * Default constructor.
+   * Not available as a RecordId should be explicitely initialized.
    */
-  RecordId(PageId * pid, int tuple_number);
+  RecordId() = delete;
 
   /**
-   * Returns the tuple number
+   * Constructor.
+   * Creates a new RecordId with page id pid and tuple number tuple_number.
+   */
+  RecordId(PageId & pid, int tuple_number);
+
+  /**
+   * Returns the tuple's index in the page.
    */
   int get_tuple_number() const;
 
   /**
-   * Returns the page id that the tuple is on
+   * Returns the id of the page containing the tuple.
    */
-  PageId & get_page_id() const;
+  const PageId & get_page_id() const;
 
-  /**
-   * Overload of the equality operator
-   */
-  bool operator==(RecordId other);
+  bool operator==(const RecordId & other);
+
+  bool operator!=(const RecordId & other);
 
  private:
-  PageId * pid;
+  PageId & pid;
   int tuple_number;
 };
 }
