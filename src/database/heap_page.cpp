@@ -66,10 +66,12 @@ void HeapPage::SetBeforeImage() {
 }
 
 int HeapPage::get_number_of_tuples() {
-  double pagesize = (double) Database::get_buffer_pool()->get_page_size() * 8;
-  double tuplesize = (double) (td->get_size() * 8 + 1);
-  double res = pagesize / tuplesize;
-  return (int) floor(res);
+  // bitwise shift left 3 bits to convert from bytes to bits
+  int page_size_in_bits = Database::get_buffer_pool()->PAGE_SIZE << 3;
+  int tuple_size_in_bits = table_schema.get_size() << 3;
+  int padding_bit = 1;
+
+  return page_size_in_bits / (tuple_size_in_bits + padding_bit);
 }
 
 int HeapPage::get_header_size() {
