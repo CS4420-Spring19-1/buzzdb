@@ -42,6 +42,7 @@ const TransactionId * HeapPage::get_id_of_last_dirty_transaction() const {
 }
 
 void HeapPage::MarkDirty(bool dirty, TransactionId * tid) {
+  id_of_transaction_that_dirtied_page = dirty ? tid : nullptr;
 }
 
 Page * HeapPage::GetBeforeImage() {
