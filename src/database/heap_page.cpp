@@ -38,8 +38,7 @@ const PageId & HeapPage::get_id() const {
 }
 
 const TransactionId * HeapPage::get_id_of_last_dirty_transaction() const {
-  // some code goes here
-  // return null;
+  return id_of_transaction_that_dirtied_page;
 }
 
 void HeapPage::MarkDirty(bool dirty, TransactionId * tid) {
