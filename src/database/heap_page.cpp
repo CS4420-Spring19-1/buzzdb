@@ -74,8 +74,8 @@ int HeapPage::get_header_size() {
   return (number_of_slots + 7) >> 3;
 }
 
-Tuple * HeapPage::ReadInNextTuple(std::stringstream * byte_stream_pointer,
-                                  int slot_index) {
+Tuple HeapPage::ReadInNextTuple(std::stringstream * byte_stream_pointer,
+                                int slot_index) {
   if (!isSlotUsed(slotId)) {
     for (int i = 0; i < td.getSize(); i++) {
       try {
@@ -111,7 +111,6 @@ void HeapPage::CreatePageDataRepresentation(unsigned char * rep) {
 void HeapPage::CreateEmptyPageDataRepresentation(unsigned char * rep) {
 void HeapPage::DeleteTuple(Tuple * t) {
 }
-*/
 
 void HeapPage::InsertTuple(Tuple * t) {
 }

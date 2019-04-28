@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+#include <sstream>
 #include "heap_page_id.h"
 #include "page.h"
 #include "transaction_id.h"
@@ -63,8 +65,8 @@ class HeapPage : public Page {
    */
   int get_header_size();
 
-  Tuple * ReadInNextTuple(std::stringstream * byte_stream_pointer,
-                          int slot_index);
+  Tuple ReadInNextTuple(std::stringstream * byte_stream_pointer,
+                        int slot_index);
 
   void CreatePageDataRepresentation(unsigned char * rep);
 
