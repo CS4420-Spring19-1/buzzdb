@@ -1,6 +1,3 @@
-#include <cmath>
-#include <iostream>
-#include <stringstream>
 #include "database.h"
 #include "heap_page.h"
 #include "no_such_element_exception.h"
