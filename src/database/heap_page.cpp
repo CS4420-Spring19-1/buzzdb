@@ -3,6 +3,7 @@
 #include <stringstream>
 #include "database.h"
 #include "heap_page.h"
+#include "no_such_element_exception.h"
 
 namespace buzzdb {
 /**
@@ -49,19 +50,16 @@ void HeapPage::MarkDirty(bool dirty, TransactionId * tid) {
   id_of_transaction_that_dirtied_page = dirty ? tid : nullptr;
 }
 
+// uses dynamic memory allocatiom: BEWARE
+// update documentation to reflect this
+// ensure that memory is released after use
 Page * HeapPage::GetBeforeImage() {
   try {
-    /*
-    std::byte * old_data_ref = nullptr;
-    old_data_ref = old_data;
-    return new HeapPage(pid, old_data_ref);
-    */
-    return new HeapPage();
-  } catch (std::exception e) {
-    /*
-    System.exit(1);
-    */
+    return new HeapPage(pid, old_data);
+  } catch (std::exception io_exception) {
+    // implement properly
   }
+  return nullptr;
 }
 
 void HeapPage::SetBeforeImage() {
