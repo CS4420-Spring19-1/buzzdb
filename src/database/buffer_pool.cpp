@@ -11,10 +11,6 @@ BufferPool::~BufferPool() {
   buffer_pool = nullptr;
 }
 
-int BufferPool::get_page_size() {
-  return PAGE_SIZE;
-}
-
 Page * BufferPool::get_page(TransactionId * tid, 
                             PageId * pid, 
                             Permissions * perm) {

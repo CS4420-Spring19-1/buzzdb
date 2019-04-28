@@ -28,13 +28,16 @@ class BufferPool {
    */
   static const int DEFAULT_PAGES = 50;
 
+  /**
+    * Bytes per page, including header.
+    */
+  static const int PAGE_SIZE = 4096;
+
   std::vector<Page *> PageList;
 
   BufferPool(int num_pages, Catalog * catalog);
 
   ~BufferPool();
-
-  static int get_page_size();
 
   /**
    * Retrieve the specified page with the associated permissions.
@@ -136,10 +139,6 @@ class BufferPool {
   void FlushPages(TransactionId * tid);
 
  private:
-  /**
-    * Bytes per page, including header.
-    */
-  static const int PAGE_SIZE = 4096;
 
   std::vector<Page *> * buffer_pool;
 
