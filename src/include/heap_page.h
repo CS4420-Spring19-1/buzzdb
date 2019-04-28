@@ -65,8 +65,8 @@ class HeapPage : public Page {
    */
   int get_header_size();
 
-  Tuple ReadInNextTuple(std::stringstream * byte_stream_pointer,
-                        int slot_index);
+  Tuple * ReadInNextTuple(std::stringstream * byte_stream_pointer,
+                          int slot_index);
 
   void CreatePageDataRepresentation(unsigned char * rep);
 

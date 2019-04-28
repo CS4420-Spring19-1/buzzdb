@@ -77,32 +77,43 @@ int HeapPage::get_header_size() {
   return (number_of_slots + 7) >> 3;
 }
 
-Tuple HeapPage::ReadInNextTuple(std::stringstream * byte_stream_pointer,
-                                int slot_index) {
-  if (!isSlotUsed(slotId)) {
-    for (int i = 0; i < td.getSize(); i++) {
+// uses dynamic memory allocatiom: BEWARE
+// update documentation to reflect this
+// ensure that memory is released after use
+Tuple * HeapPage::ReadInNextTuple(std::stringstream * byte_stream_pointer,
+                                  int slot_index) {
+  char input_char = 0;
+  if (!IsSlotUsed(slot_index)) {
+    for (int i = 0; i < table_schema.get_size(); i++) {
       try {
-        readIndex++;
-      } catch (IOException e) {
-        throw new NoSuchElementException("error reading empty tuple");
+        byte_stream_pointer->get(input_char);
+      } catch (std::exception io_exception) {
+        // change catch type
+        throw NoSuchElementException("Error reading empty tuple");
       }
     }
-    return null;
+    return nullptr;
   }
 
-  // read fields in the tuple
-  tuple t = new tuple(td);
-  RecordId rid = new RecordId(pid, slotId);
-  t.setRecordId(rid);
+  Tuple * next_tuple = new Tuple(table_schema);
+  RecordId * rid = new RecordId(pid, slot_index);
+  next_tuple->set_record_id(rid);
+  
   try {
-    for (int j = 0; j < td.numFields(); j++) {
-      field f = td.getFieldType(j).parse(dis);
-      t.setField(j, f);
+    for (int field_index = 0;
+         field_index < table_schema.get_number_fields();
+         field_index++) {
+      Field::Type field_type = table_schema.get_field_type(field_index);
+      Field * parsed_field = ParseIntoField(field_type, byte_stream_pointer);
+      // bad design; introduces coupling with Field class and its subclasses
+      next_tuple->set_field(field_index, parsed_field);
     }
-  } catch (Exception e) {
-    throw new NoSuchElementException("parsing error!");
+  } catch (std::exception e) {
+    // change catch type
+    throw NoSuchElementException("Parsing error.");
   }
-  return t;
+
+  return next_tuple;
 }
 
 void HeapPage::CreatePageDataRepresentation(unsigned char * rep) {
