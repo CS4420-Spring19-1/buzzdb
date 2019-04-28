@@ -39,7 +39,7 @@ class HeapPage : public Page {
   /**
    * Sets the dirty state of the page as dirtied by a particular transaction.
    */
-  void MarkDirty(bool dirty, TransactionId & tid) override;
+  void MarkDirty(bool dirty, TransactionId * tid) override;
 
   /**
    * Returns a representation of the Page before any modifications were made to
