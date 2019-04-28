@@ -137,12 +137,8 @@ int HeapPage::GetNumEmptySlots() {
 }
 
 bool HeapPage::IsSlotUsed(int index) {
-  int x = i / 8;
-  int y = i % 8;
-
-  /* Error here
-  return ((header[x] >> y) & 1) == 1;
-  */
+  // why?
+  return (header[index >> 3] & (1 << (index & 7))) != 0;
 }
 
 void HeapPage::SetSlot(int index, bool updated_status_of_slot) {
