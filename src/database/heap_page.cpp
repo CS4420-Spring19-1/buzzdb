@@ -63,7 +63,7 @@ Page * HeapPage::GetBeforeImage() {
 void HeapPage::SetBeforeImage() {
 }
 
-int HeapPage::get_num_tuples() {
+int HeapPage::get_number_of_tuples() {
   double pagesize = (double) Database::get_buffer_pool()->get_page_size() * 8;
   double tuplesize = (double) (td->get_size() * 8 + 1);
   double res = pagesize / tuplesize;
@@ -71,12 +71,11 @@ int HeapPage::get_num_tuples() {
 }
 
 int HeapPage::get_header_size() {
-  double res = (double) numSlots / (double) 8;
-  return (int) ceil(res);
+  return (number_of_slots + 7) >> 3;
 }
 
-/*
-Tuple HeapPage::ReadNextTuple(byte[] data, int slotId) {
+Tuple * HeapPage::ReadInNextTuple(std::stringstream * byte_stream_pointer,
+                                  int slot_index) {
   if (!isSlotUsed(slotId)) {
     for (int i = 0; i < td.getSize(); i++) {
       try {
@@ -103,22 +102,24 @@ Tuple HeapPage::ReadNextTuple(byte[] data, int slotId) {
   return t;
 }
 
-void HeapPage::GetPageData(std::byte rep[]) {
+void HeapPage::CreatePageDataRepresentation(unsigned char * rep) {
 }
 
-void HeapPage::CreateEmptyPageData(std::byte rep[]) {
+  /* flush byte stream: necessary?
   int len = BufferPool.getPageSize();
   return new byte[len];
+void HeapPage::CreateEmptyPageDataRepresentation(unsigned char * rep) {
+void HeapPage::DeleteTuple(Tuple * t) {
 }
 */
 
-void HeapPage::DeleteTuple(Tuple t) {
+void HeapPage::InsertTuple(Tuple * t) {
 }
 
-void HeapPage::InsertTuple(Tuple t) {
+  for (int slot_index = 0; slot_index < number_of_slots; slot_index++) {
 }
 
-void HeapPage::AddTuple(Tuple t) {
+  throw DbException("This page is full.");
 }
 
 int HeapPage::GetNumEmptySlots() {
@@ -130,7 +131,7 @@ int HeapPage::GetNumEmptySlots() {
   return count;
 }
 
-bool HeapPage::IsSlotUsed(int i) {
+bool HeapPage::IsSlotUsed(int index) {
   int x = i / 8;
   int y = i % 8;
 
@@ -139,7 +140,7 @@ bool HeapPage::IsSlotUsed(int i) {
   */
 }
 
-void HeapPage::SetSlot(int i, bool value) {
+void HeapPage::SetSlot(int index, bool updated_status_of_slot) {
 }
 
 /* Not implemented
@@ -152,4 +153,7 @@ Iterator<tuple> HeapPage::iterator() {
   return arr.iterator();
 }
 */
+Field * HeapPage::ParseIntoField(Field::Type field_type,
+                                 std::stringstream * byte_stream_pointer) {
+}
 }

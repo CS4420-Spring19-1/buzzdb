@@ -56,32 +56,29 @@ class HeapPage : public Page {
   /**
    * Returns the number of tuples in the heap page.
    */
-  int get_num_tuples();
+  int get_number_of_tuples();
 
   /**
    * Returns the size of the heap page's header.
    */
   int get_header_size();
 
-  /* Not implemented
-  Tuple ReadNextTuple(DataInputStream dis, int slotId)();
-  */
+  Tuple * ReadInNextTuple(std::stringstream * byte_stream_pointer,
+                          int slot_index);
 
-  // void GetPageData(std::byte rep[]);
+  void CreatePageDataRepresentation(unsigned char * rep);
 
-  // static void CreateEmptyPageData(std::byte rep[]);
+  static void CreateEmptyPageDataRepresentation(unsigned char * rep);
 
-  void DeleteTuple(Tuple t);
+  void DeleteTuple(Tuple * t);
 
-  void InsertTuple(Tuple t);
-
-  void AddTuple(Tuple t);
+  void InsertTuple(Tuple * t);
 
   int GetNumEmptySlots();
 
-  bool IsSlotUsed(int i);
+  bool IsSlotUsed(int index);
 
-  void SetSlot(int i, bool value);
+  void SetSlot(int index, bool updated_status_of_slot);
 
   /* Not implemented
   Iterator<tuple> iterator();
@@ -98,5 +95,8 @@ class HeapPage : public Page {
 
   // byte oldDataLock = new byte(0);
   int read_index;
+
+  Field * ParseIntoField(Field::Type field_type,
+                         std::stringstream * byte_stream_pointer);
 };
 }
