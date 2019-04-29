@@ -23,6 +23,11 @@ class HeapPage : public Page {
   HeapPage();
 
   /**
+   * Destructor
+   */
+  ~HeapPage();
+
+  /**
    * Constructor.
    */
   HeapPage(HeapPageId & id, unsigned char data[]);

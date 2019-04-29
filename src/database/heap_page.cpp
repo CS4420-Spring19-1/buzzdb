@@ -37,6 +37,16 @@ HeapPage::HeapPage(HeapPageId & pid, unsigned char data[])
   SetBeforeImage();
 }
 
+HeapPage::~HeapPage() {
+  for (int slot_index = 0; slot_index < number_of_slots; slot_index++) {
+    delete tuples.at(slot_index);
+  }
+
+  delete[] header;
+  delete[] old_data;
+  delete id_of_transaction_that_dirtied_page;
+}
+
 const PageId & HeapPage::get_id() const {
   return pid;
 }
