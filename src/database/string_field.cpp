@@ -22,6 +22,10 @@ Field * StringField::ParseStreamForField(
   // to be implemented
 }
 
+void StringField::Serialize(std::stringstream * byte_stream_pointer) {
+  // to be implemented
+}
+
 /*
 bool StringField::Compare(Predicate::OpType op_type, Field * operand) {
   StringField * operand_value_pointer = static_cast<StringField *>(operand);

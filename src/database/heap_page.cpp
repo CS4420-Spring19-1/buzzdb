@@ -2,7 +2,9 @@
 #include "database.h"
 #include "heap_page.h"
 #include "db_exception.h"
+#include "integer_field.h"
 #include "no_such_element_exception.h"
+#include "string_field.h"
 
 namespace buzzdb {
 /**
@@ -268,18 +270,29 @@ Tuple * HeapPage::ParseStreamForTuple(std::stringstream * byte_stream_pointer,
   RecordId * rid = new RecordId(pid, slot_index);
   next_tuple->set_record_id(rid);
   
-  try {
-    for (int field_index = 0;
-         field_index < table_schema.get_number_fields();
-         field_index++) {
-      Field::Type field_type = table_schema.get_field_type(field_index);
-      Field * parsed_field = ParseIntoField(byte_stream_pointer, field_type);
-      // bad design; introduces coupling with Field class and its subclasses
-      next_tuple->set_field(field_index, parsed_field);
+  for (int field_index = 0;
+      field_index < table_schema.get_number_fields();
+      field_index++) {
+    Field::Type field_type = table_schema.get_field_type(field_index);
+    Field * parsed_field;
+    try {
+      switch (field_type) {
+        case Field::Type::INTEGER:
+          parsed_field =
+            IntegerField::ParseStreamForField(byte_stream_pointer);
+          break;
+        case Field::Type::STRING:
+          parsed_field =
+            StringField::ParseStreamForField(byte_stream_pointer);
+          break;
+        default:
+          throw std::runtime_error("Field is of invalid type.");
+      }
+    } catch (std::exception parse_exception) {
+      // change catch type
+      throw NoSuchElementException("Error parsing tuple.");
     }
-  } catch (std::exception e) {
-    // change catch type
-    throw NoSuchElementException("Error parsing tuple.");
+    next_tuple->set_field(field_index, parsed_field);
   }
 
   return next_tuple;

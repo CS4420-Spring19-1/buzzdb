@@ -43,7 +43,7 @@ class StringField : public Field {
   /**
    * Write the bytes representing the StringField to the specified Stream.
    */
-  void Serialize(std::stringstream * byte_stream) override;
+  void Serialize(std::stringstream * byte_stream_pointer) override;
 
   /**
    * Compares the value of the StringField to the value of operand.

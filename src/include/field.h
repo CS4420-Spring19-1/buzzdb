@@ -38,7 +38,7 @@ class Field {
   /**
    * Write the bytes representing the field to the specified Stream.
    */
-  virtual void Serialize(std::stringstream * byte_stream) = 0;
+  virtual void Serialize(std::stringstream * byte_stream_pointer) = 0;
 
   /**
    * Compares the value of the Field to the value of operand.
