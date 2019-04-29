@@ -122,7 +122,7 @@ void BufferPool::InsertTuple(TransactionId * tid, int table_id, Tuple * t) {
   std::vector<Page*> page_vector =
       catalog->get_db_file(table_id)->AddTuple(*tid, *t);
   for (Page * page: page_vector) {
-    page->MarkDirty(true, *tid);
+    page->MarkDirty(true, tid);
   }
 }
 
@@ -132,7 +132,7 @@ void BufferPool::DeleteTuple(TransactionId * tid, Tuple * t) {
 
   DbFile * db_file = catalog->get_db_file(table_id);
 
-  db_file->DeleteTuple(*tid, *t)->MarkDirty(true, *tid);
+  db_file->DeleteTuple(*tid, *t)->MarkDirty(true, tid);
 }
 
 void BufferPool::FlushAllPages() {
