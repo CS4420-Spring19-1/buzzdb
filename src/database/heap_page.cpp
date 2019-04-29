@@ -1,3 +1,4 @@
+#include <cstring>
 #include "database.h"
 #include "heap_page.h"
 #include "no_such_element_exception.h"
@@ -117,11 +118,79 @@ Tuple * HeapPage::ReadInNextTuple(std::stringstream * byte_stream_pointer,
 }
 
 void HeapPage::CreatePageDataRepresentation(unsigned char * rep) {
-}
+  std::stringstream byte_stream;
+
+  // write header to stream
+  // might not be correct to read whole array into stream
+  // how about the ending characters in an array?
+  try {
+    byte_stream << *header;
+  } catch (std::exception io_exception) {
+    // change catch type
+    // print stack trace
+  }
+
+  // write tuples to stream
+  for (int slot_index = 0; slot_index < number_of_slots; slot_index++) {
+    // slot has no tuple in it; add empty tuple to stream
+    if (!IsSlotUsed(slot_index)) {
+      for (int i = 0; i < table_schema.get_size(); i++) {
+        try {
+          byte_stream << '0';
+        } catch (std::exception io_exception) {
+          // change catch type
+          // print stack trace
+        }
+      }
+      continue;
+    }
+
+    // slot has a tuple; add it to stream
+    Tuple * tuple_at_slot_index = tuples.at(slot_index);
+    for (int field_index = 0;
+         field_index < table_schema.get_number_fields();
+         field_index) {
+      Field * field = tuple_at_slot_index->get_field(field_index);
+      try {
+        field->Serialize(&byte_stream);
+      } catch (std::exception io_exception) {
+        // change catch type
+        // print stack trace
+      }
+    }
+  }
+
+  // add padding to stream: fill the remaining space with zeroes
+  // the number of elements in the byte array should = BufferPool::PAGE_SIZE.
+  int padding_length = BufferPool::PAGE_SIZE
+                     - (get_header_size()
+                     + table_schema.get_size() * number_of_slots);
+  unsigned char padding[padding_length] = {0};
+
+  try {
+    byte_stream << padding;
+  } catch (std::exception io_exception) {
+    // change catch type
+    // print stack trace
+  }
 
   /* flush byte stream: necessary?
-  int len = BufferPool.getPageSize();
-  return new byte[len];
+  try {
+    // flush byte stream
+  } catch (std::exception io_exception) {
+    // change catch type
+    // print stack trace
+  }
+  */
+
+  // extracting the byte_stream contents into an unsigned char array 
+  std::string bs_string_rep = byte_stream.str();
+  char * bs_char_array_rep = new char[BufferPool::PAGE_SIZE];
+  strncpy(bs_char_array_rep, bs_string_rep.c_str(), BufferPool::PAGE_SIZE);
+
+  rep = (unsigned char *) bs_char_array_rep;
+}
+
 void HeapPage::CreateEmptyPageDataRepresentation(unsigned char * rep) {
 void HeapPage::DeleteTuple(Tuple * t) {
 }
