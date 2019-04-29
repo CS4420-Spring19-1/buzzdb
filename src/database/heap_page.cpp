@@ -192,6 +192,9 @@ void HeapPage::CreatePageDataRepresentation(unsigned char * rep) {
 }
 
 void HeapPage::CreateEmptyPageDataRepresentation(unsigned char * rep) {
+  rep = new unsigned char[BufferPool::PAGE_SIZE];
+}
+
 void HeapPage::DeleteTuple(Tuple * t) {
 }
 
