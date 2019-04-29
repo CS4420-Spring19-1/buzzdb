@@ -96,6 +96,7 @@ void HeapPage::CreatePageDataRepresentation(unsigned char * rep) {
   // might not be correct to read whole array into stream
   // how about the ending characters in an array?
   try {
+    // correctness needs to be checked
     byte_stream << *header;
   } catch (std::exception io_exception) {
     // change catch type
@@ -246,6 +247,8 @@ Iterator<tuple> HeapPage::iterator() {
 // ensure that memory is released after use
 Tuple * HeapPage::ParseNextTuple(std::stringstream * byte_stream_pointer,
                                   int slot_index) {
+  // if the slot is not set to be used, move internal stream pointer forward
+  // to next tuple, and return nullptr
   char input_char = 0;
   if (!IsSlotUsed(slot_index)) {
     for (int i = 0; i < table_schema.get_size(); i++) {
@@ -259,6 +262,7 @@ Tuple * HeapPage::ParseNextTuple(std::stringstream * byte_stream_pointer,
     return nullptr;
   }
 
+  // otherwise, parse the tuple.
   Tuple * next_tuple = new Tuple(table_schema);
   RecordId * rid = new RecordId(pid, slot_index);
   next_tuple->set_record_id(rid);
