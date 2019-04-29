@@ -95,7 +95,7 @@ class HeapPage : public Page {
   /**
    * Reads in a new tuple from the given byte stream.
    */
-  Tuple * ReadInNextTuple(std::stringstream * byte_stream_pointer,
+  Tuple * ParseNextTuple(std::stringstream * byte_stream_pointer,
                           int slot_index);
 
   Field * ParseIntoField(std::stringstream * byte_stream_pointer,

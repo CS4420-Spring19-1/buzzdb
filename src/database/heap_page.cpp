@@ -28,7 +28,7 @@ HeapPage::HeapPage(HeapPageId & pid, unsigned char data[])
 
   try {
     for (int i = 0; i < number_of_slots; i++) {
-      tuples.push_back(ReadInNextTuple(&byte_stream, i));
+      tuples.push_back(ParseNextTuple(&byte_stream, i));
     }
   } catch (NoSuchElementException e) {
     // print stack trace
@@ -234,7 +234,7 @@ Iterator<tuple> HeapPage::iterator() {
 // uses dynamic memory allocatiom: BEWARE
 // update documentation to reflect this
 // ensure that memory is released after use
-Tuple * HeapPage::ReadInNextTuple(std::stringstream * byte_stream_pointer,
+Tuple * HeapPage::ParseNextTuple(std::stringstream * byte_stream_pointer,
                                   int slot_index) {
   char input_char = 0;
   if (!IsSlotUsed(slot_index)) {
@@ -243,7 +243,7 @@ Tuple * HeapPage::ReadInNextTuple(std::stringstream * byte_stream_pointer,
         byte_stream_pointer->get(input_char);
       } catch (std::exception io_exception) {
         // change catch type
-        throw NoSuchElementException("Error reading empty tuple");
+        throw NoSuchElementException("Error parsing empty tuple.");
       }
     }
     return nullptr;
@@ -264,7 +264,7 @@ Tuple * HeapPage::ReadInNextTuple(std::stringstream * byte_stream_pointer,
     }
   } catch (std::exception e) {
     // change catch type
-    throw NoSuchElementException("Parsing error.");
+    throw NoSuchElementException("Error parsing tuple.");
   }
 
   return next_tuple;
