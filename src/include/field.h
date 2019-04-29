@@ -1,5 +1,7 @@
 #pragma once
 
+#include <sstream>
+
 namespace buzzdb {
 /**
  * The Field abstract class is an interface for a field in a tuple.
@@ -29,9 +31,7 @@ class Field {
   /**
    * Write the bytes representing the field to the specified Stream.
    */
-  /*
-    virtual void serialize(DataOutputStream dos) = 0;
-  */
+  virtual void Serialize(std::stringstream * byte_stream) = 0;
 
   /**
    * Compares the value of the Field to the value of operand.

@@ -38,9 +38,7 @@ class StringField : public Field {
   /**
    * Write the bytes representing the StringField to the specified Stream.
    */
-  /* To be implemented
-    void serialize(DataOutputStream dos) override;
-  */
+  void Serialize(std::stringstream * byte_stream) override;
 
   /**
    * Compares the value of the StringField to the value of operand.

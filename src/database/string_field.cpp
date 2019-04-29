@@ -17,6 +17,10 @@ Field::Type StringField::get_type() const {
   return Type::STRING;
 }
 
+void StringField::Serialize(std::stringstream * byte_stream) {
+  // to be implemented
+}
+
 /*
 bool StringField::Compare(Predicate::OpType op_type, Field * operand) {
   StringField * operand_value_pointer = static_cast<StringField *>(operand);

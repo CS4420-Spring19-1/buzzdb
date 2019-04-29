@@ -37,9 +37,7 @@ class IntegerField : public Field {
   /**
    * Write the bytes representing the IntegerField to the specified Stream.
    */
-  /* To be implemented
-    void serialize(DataOutputStream dos) override;
-  */
+  void Serialize(std::stringstream * byte_stream) override;
 
   /**
    * Compares the value of the IntegerField to the value of operand.
