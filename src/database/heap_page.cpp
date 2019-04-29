@@ -29,7 +29,7 @@ HeapPage::HeapPage(HeapPageId & pid, unsigned char data[])
 
   try {
     for (int i = 0; i < number_of_slots; i++) {
-      tuples.push_back(ParseNextTuple(&byte_stream, i));
+      tuples.push_back(ParseStreamForTuple(&byte_stream, i));
     }
   } catch (NoSuchElementException e) {
     // print stack trace
@@ -246,8 +246,8 @@ Iterator<tuple> HeapPage::iterator() {
 // uses dynamic memory allocatiom: BEWARE
 // update documentation to reflect this
 // ensure that memory is released after use
-Tuple * HeapPage::ParseNextTuple(std::stringstream * byte_stream_pointer,
-                                  int slot_index) {
+Tuple * HeapPage::ParseStreamForTuple(std::stringstream * byte_stream_pointer,
+                                      int slot_index) {
   // if the slot is not set to be used, move internal stream pointer forward
   // to next tuple, and return nullptr
   char input_char = 0;

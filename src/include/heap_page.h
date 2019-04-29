@@ -147,8 +147,8 @@ class HeapPage : public Page {
    * Throws:
    * - NoSuchElementException: If there is an error while parsing the tuple.
    */
-  Tuple * ParseNextTuple(std::stringstream * byte_stream_pointer,
-                          int slot_index);
+  Tuple * ParseStreamForTuple(std::stringstream * byte_stream_pointer,
+                              int slot_index);
 
   Field * ParseIntoField(std::stringstream * byte_stream_pointer,
                          Field::Type field_type);
