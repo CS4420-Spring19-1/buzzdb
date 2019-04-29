@@ -92,13 +92,13 @@ class HeapPage : public Page {
   TransactionId * id_of_transaction_that_dirtied_page;
   int number_of_slots;
 
-  // byte oldDataLock = new byte(0);
-  int read_index;
+  /**
+   * Reads in a new tuple from the given byte stream.
    */
   Tuple * ReadInNextTuple(std::stringstream * byte_stream_pointer,
                           int slot_index);
 
-  Field * ParseIntoField(Field::Type field_type,
-                         std::stringstream * byte_stream_pointer);
+  Field * ParseIntoField(std::stringstream * byte_stream_pointer,
+                         Field::Type field_type);
 };
 }

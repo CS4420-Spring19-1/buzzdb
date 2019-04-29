@@ -230,8 +230,8 @@ Iterator<tuple> HeapPage::iterator() {
   return arr.iterator();
 }
 */
-Field * HeapPage::ParseIntoField(Field::Type field_type,
-                                 std::stringstream * byte_stream_pointer) {
+
+// uses dynamic memory allocatiom: BEWARE
 // update documentation to reflect this
 // ensure that memory is released after use
 Tuple * HeapPage::ReadInNextTuple(std::stringstream * byte_stream_pointer,
@@ -270,5 +270,7 @@ Tuple * HeapPage::ReadInNextTuple(std::stringstream * byte_stream_pointer,
   return next_tuple;
 }
 
+Field * HeapPage::ParseIntoField(std::stringstream * byte_stream_pointer,
+                                 Field::Type field_type) {
 }
 }
