@@ -79,45 +79,6 @@ int HeapPage::get_header_size() {
   return (number_of_slots + 7) >> 3;
 }
 
-// uses dynamic memory allocatiom: BEWARE
-// update documentation to reflect this
-// ensure that memory is released after use
-Tuple * HeapPage::ReadInNextTuple(std::stringstream * byte_stream_pointer,
-                                  int slot_index) {
-  char input_char = 0;
-  if (!IsSlotUsed(slot_index)) {
-    for (int i = 0; i < table_schema.get_size(); i++) {
-      try {
-        byte_stream_pointer->get(input_char);
-      } catch (std::exception io_exception) {
-        // change catch type
-        throw NoSuchElementException("Error reading empty tuple");
-      }
-    }
-    return nullptr;
-  }
-
-  Tuple * next_tuple = new Tuple(table_schema);
-  RecordId * rid = new RecordId(pid, slot_index);
-  next_tuple->set_record_id(rid);
-  
-  try {
-    for (int field_index = 0;
-         field_index < table_schema.get_number_fields();
-         field_index++) {
-      Field::Type field_type = table_schema.get_field_type(field_index);
-      Field * parsed_field = ParseIntoField(field_type, byte_stream_pointer);
-      // bad design; introduces coupling with Field class and its subclasses
-      next_tuple->set_field(field_index, parsed_field);
-    }
-  } catch (std::exception e) {
-    // change catch type
-    throw NoSuchElementException("Parsing error.");
-  }
-
-  return next_tuple;
-}
-
 void HeapPage::CreatePageDataRepresentation(unsigned char * rep) {
   std::stringstream byte_stream;
 
@@ -271,5 +232,43 @@ Iterator<tuple> HeapPage::iterator() {
 */
 Field * HeapPage::ParseIntoField(Field::Type field_type,
                                  std::stringstream * byte_stream_pointer) {
+// update documentation to reflect this
+// ensure that memory is released after use
+Tuple * HeapPage::ReadInNextTuple(std::stringstream * byte_stream_pointer,
+                                  int slot_index) {
+  char input_char = 0;
+  if (!IsSlotUsed(slot_index)) {
+    for (int i = 0; i < table_schema.get_size(); i++) {
+      try {
+        byte_stream_pointer->get(input_char);
+      } catch (std::exception io_exception) {
+        // change catch type
+        throw NoSuchElementException("Error reading empty tuple");
+      }
+    }
+    return nullptr;
+  }
+
+  Tuple * next_tuple = new Tuple(table_schema);
+  RecordId * rid = new RecordId(pid, slot_index);
+  next_tuple->set_record_id(rid);
+  
+  try {
+    for (int field_index = 0;
+         field_index < table_schema.get_number_fields();
+         field_index++) {
+      Field::Type field_type = table_schema.get_field_type(field_index);
+      Field * parsed_field = ParseIntoField(byte_stream_pointer, field_type);
+      // bad design; introduces coupling with Field class and its subclasses
+      next_tuple->set_field(field_index, parsed_field);
+    }
+  } catch (std::exception e) {
+    // change catch type
+    throw NoSuchElementException("Parsing error.");
+  }
+
+  return next_tuple;
+}
+
 }
 }

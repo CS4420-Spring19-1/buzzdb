@@ -65,9 +65,6 @@ class HeapPage : public Page {
    */
   int get_header_size();
 
-  Tuple * ReadInNextTuple(std::stringstream * byte_stream_pointer,
-                          int slot_index);
-
   void CreatePageDataRepresentation(unsigned char * rep);
 
   static void CreateEmptyPageDataRepresentation(unsigned char * rep);
@@ -97,6 +94,9 @@ class HeapPage : public Page {
 
   // byte oldDataLock = new byte(0);
   int read_index;
+   */
+  Tuple * ReadInNextTuple(std::stringstream * byte_stream_pointer,
+                          int slot_index);
 
   Field * ParseIntoField(Field::Type field_type,
                          std::stringstream * byte_stream_pointer);
