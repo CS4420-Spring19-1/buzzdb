@@ -1,6 +1,7 @@
 #include <cstring>
 #include "database.h"
 #include "heap_page.h"
+#include "db_exception.h"
 #include "no_such_element_exception.h"
 
 namespace buzzdb {
@@ -196,6 +197,20 @@ void HeapPage::CreateEmptyPageDataRepresentation(unsigned char * rep) {
 }
 
 void HeapPage::DeleteTuple(Tuple * t) {
+  if (pid == t->get_record_id()->get_page_id()) {
+    int tuple_number = t->get_record_id()->get_tuple_number();
+
+    if (tuple_number >= 0
+        && tuple_number < number_of_slots
+        && IsSlotUsed(tuple_number)) {
+      SetSlot(tuple_number, false);
+      // update tuple's record id
+      delete t->get_record_id();
+      t->set_record_id(nullptr);
+    }
+  }
+
+  throw DbException("Tuple not found on page");
 }
 
 void HeapPage::InsertTuple(Tuple * t) {
