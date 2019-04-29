@@ -17,7 +17,8 @@ Field::Type StringField::get_type() const {
   return Type::STRING;
 }
 
-void StringField::Serialize(std::stringstream * byte_stream) {
+Field * StringField::ParseStreamForField(
+    std::stringstream * byte_stream_pointer) {
   // to be implemented
 }
 

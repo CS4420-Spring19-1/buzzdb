@@ -17,7 +17,8 @@ Field::Type IntegerField::get_type() const {
   return Type::INTEGER;
 }
 
-void IntegerField::Serialize(std::stringstream * byte_stream) {
+Field * IntegerField::ParseStreamForField(
+    std::stringstream * byte_stream_pointer) {
   // to be implemented
 }
 
