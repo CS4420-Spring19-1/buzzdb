@@ -149,8 +149,5 @@ class HeapPage : public Page {
    */
   Tuple * ParseStreamForTuple(std::stringstream * byte_stream_pointer,
                               int slot_index);
-
-  Field * ParseIntoField(std::stringstream * byte_stream_pointer,
-                         Field::Type field_type);
 };
 }

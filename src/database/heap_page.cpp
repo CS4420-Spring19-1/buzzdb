@@ -284,10 +284,4 @@ Tuple * HeapPage::ParseStreamForTuple(std::stringstream * byte_stream_pointer,
 
   return next_tuple;
 }
-
-Field * HeapPage::ParseIntoField(std::stringstream * byte_stream_pointer,
-                                 Field::Type field_type) {
-  // to be implemented
-  return nullptr;
-}
 }
