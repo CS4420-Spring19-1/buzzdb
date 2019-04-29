@@ -214,10 +214,24 @@ void HeapPage::DeleteTuple(Tuple * t) {
 }
 
 void HeapPage::InsertTuple(Tuple * t) {
-}
+  if (table_schema != t->get_tuple_desc()) {
+    throw DbException("Schema mismatch: Table and tuple");
+  }
+  if (t->get_record_id() != nullptr) {
+    if (pid == t->get_record_id()->get_page_id()) {
+      throw DbException("Tuple already resides on this page.");
+    }
+    throw DbException("Tuple already resides on another page.");
+  }
 
   for (int slot_index = 0; slot_index < number_of_slots; slot_index++) {
-}
+    if (!IsSlotUsed(slot_index)) {
+      tuples.at(slot_index) = t;
+      t->set_record_id(new RecordId(pid, slot_index));
+      SetSlot(slot_index, true);
+      return;
+    }
+  }
 
   throw DbException("This page is full.");
 }
