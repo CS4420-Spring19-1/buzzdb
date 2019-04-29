@@ -13,9 +13,10 @@ HeapPage::HeapPage(HeapPageId & pid, unsigned char data[])
   : pid(pid),
     table_schema(Database::get_catalog()->get_tuple_desc(pid.get_table_id())),
     number_of_slots(get_number_of_tuples()),
-    header(new unsigned char[get_header_size()]),
     tuples(0),
-    old_data(nullptr) {
+    header(new unsigned char[get_header_size()]),
+    old_data(nullptr),
+    id_of_transaction_that_dirtied_page(nullptr) {
   std::stringstream byte_stream;
   byte_stream << data;
 
@@ -122,7 +123,7 @@ void HeapPage::CreatePageDataRepresentation(unsigned char * rep) {
     Tuple * tuple_at_slot_index = tuples.at(slot_index);
     for (int field_index = 0;
          field_index < table_schema.get_number_fields();
-         field_index) {
+         field_index++) {
       Field * field = tuple_at_slot_index->get_field(field_index);
       try {
         field->Serialize(&byte_stream);
@@ -210,8 +211,8 @@ void HeapPage::InsertTuple(Tuple * t) {
 
 int HeapPage::GetNumEmptySlots() {
   int count = 0;
-  for (int i = 0; i < sizeof(tuples) / sizeof(tuples[0]); ++i) {
-    if (!IsSlotUsed(i))
+  for (int slot_index = 0; slot_index < number_of_slots; slot_index++) {
+    if (!IsSlotUsed(slot_index))
       count++;
   }
   return count;
@@ -286,5 +287,7 @@ Tuple * HeapPage::ParseNextTuple(std::stringstream * byte_stream_pointer,
 
 Field * HeapPage::ParseIntoField(std::stringstream * byte_stream_pointer,
                                  Field::Type field_type) {
+  // to be implemented
+  return nullptr;
 }
 }

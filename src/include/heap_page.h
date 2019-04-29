@@ -132,11 +132,11 @@ class HeapPage : public Page {
  private:
   HeapPageId pid;
   TupleDesc table_schema;
+  int number_of_slots;
   std::vector<Tuple *> tuples;
   unsigned char * header;
   unsigned char * old_data;
   TransactionId * id_of_transaction_that_dirtied_page;
-  int number_of_slots;
 
   /**
    * If the slot given by slot_index is set to be used, the next tuple is
