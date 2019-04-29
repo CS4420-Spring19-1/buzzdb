@@ -142,6 +142,12 @@ bool HeapPage::IsSlotUsed(int index) {
 }
 
 void HeapPage::SetSlot(int index, bool updated_status_of_slot) {
+  // why?
+  if (updated_status_of_slot) {
+    header[index >> 3] |= (1 << (index & 7));
+  } else {
+    header[index >> 3] &= ~(1 << (index & 7));
+  }
 }
 
 /* Not implemented
