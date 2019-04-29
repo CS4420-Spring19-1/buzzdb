@@ -20,7 +20,7 @@ class HeapPage : public Page {
   /**
    * Default constructor.
    */
-  HeapPage();
+  HeapPage() = delete;
 
   /**
    * Destructor
