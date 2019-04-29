@@ -89,11 +89,12 @@ class HeapPage : public Page {
 
  private:
   HeapPageId pid;
-  TupleDesc * td;
-  // std::byte * header;
-  Tuple * tuples;
-  int numSlots;
-  // std::byte * old_data;
+  TupleDesc table_schema;
+  std::vector<Tuple *> tuples;
+  unsigned char * header;
+  unsigned char * old_data;
+  TransactionId * id_of_transaction_that_dirtied_page;
+  int number_of_slots;
 
   // byte oldDataLock = new byte(0);
   int read_index;
