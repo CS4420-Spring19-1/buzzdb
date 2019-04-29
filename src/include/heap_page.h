@@ -24,8 +24,8 @@ class HeapPage : public Page {
 
   /**
    * Constructor.
-  HeapPage(HeapPageId id, std::byte data[]);
    */
+  HeapPage(HeapPageId & id, unsigned char data[]);
 
   /**
    * Returns the id of the page.

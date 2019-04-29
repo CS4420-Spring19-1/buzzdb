@@ -1,37 +1,41 @@
 #include <cmath>
 #include <iostream>
+#include <stringstream>
 #include "database.h"
 #include "heap_page.h"
 
 namespace buzzdb {
-/** Temporarily not available, as std::byte is only available in C++ 17
-HeapPage::HeapPage(HeapPageId id, std::byte data[]) {
-  this->pid = id;
-  this->td = &(Database::get_catalog()->get_tuple_desc(id.get_table_id()));
-  this->numSlots = get_num_tuples();
-  //DataInputStream dis = new DataInputStream(new ByteArrayInputStream(data));
-  this->read_index = 0;
+/**
+ * Implementation is possibly wrong:
+ * - Interactions between sstreams and unsigned chars need to be tested
+ */
+HeapPage::HeapPage(HeapPageId & pid, unsigned char data[])
+  : pid(pid),
+    table_schema(Database::get_catalog()->get_tuple_desc(pid.get_table_id())),
+    number_of_slots(get_number_of_tuples()),
+    header(new unsigned char[get_header_size()]),
+    tuples(0),
+    old_data(nullptr) {
+  std::stringstream byte_stream;
+  byte_stream << data;
 
-  this->header = new std::byte[get_header_size()];
-  for (int i = 0; i < sizeof(header) / sizeof(header[0]); i++) {
-    header[i] = data[read_index];
-    read_index++;
+  char input_char = 0;
+  for (int i = 0; i < get_header_size(); i++) {
+    // TODO: handle IO exception
+    byte_stream.get(input_char);
+    header[i] = input_char;
   }
 
-  this->tuples = new Tuple[numSlots];
   try {
-    // allocate and read the actual records of this page
-    for (int i = 0; i < sizeof(tuples) / sizeof(tuples[0]); i++) {
-      ReadNextTuple is not declared
-      tuples[i] = ReadNextTuple(data, i);
+    for (int i = 0; i < number_of_slots; i++) {
+      tuples.push_back(ReadInNextTuple(&byte_stream, i));
     }
-  } catch (std::exception e) {
-    std::cout << "Exception occurred";
+  } catch (NoSuchElementException e) {
+    // print stack trace
   }
 
   SetBeforeImage();
 }
-*/
 
 const PageId & HeapPage::get_id() const {
   return pid;
