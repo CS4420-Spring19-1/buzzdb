@@ -61,6 +61,8 @@ Page * HeapPage::GetBeforeImage() {
 }
 
 void HeapPage::SetBeforeImage() {
+  delete[] old_data;
+  CreatePageDataRepresentation(old_data);
 }
 
 int HeapPage::get_number_of_tuples() {
