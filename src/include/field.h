@@ -1,8 +1,17 @@
 #pragma once
 
+#include <sstream>
+
 namespace buzzdb {
 /**
  * The Field abstract class is an interface for a field in a tuple.
+ * - Every class that implements this interface must implement the following
+ *   method:
+ *    static Field * ParseStreamForField(std::stringstream byte_stream_pointer)
+ * - The above constraint cannot be enforced by the specifications of this
+ *   interface as static methods cannot be virtual.
+ * - If this method is not implemented in a particular Field subclass, it will
+ *   not be possible to parse the particular field type from the byte stream.
  */
 class Field {
  public:
@@ -29,9 +38,7 @@ class Field {
   /**
    * Write the bytes representing the field to the specified Stream.
    */
-  /*
-    virtual void serialize(DataOutputStream dos) = 0;
-  */
+  virtual void Serialize(std::stringstream * byte_stream_pointer) = 0;
 
   /**
    * Compares the value of the Field to the value of operand.

@@ -25,7 +25,7 @@ TupleDesc HeapFile::get_tuple_desc() const {
 }
 
 int HeapFile::get_num_pages() {
-  return (int) ceil(ftell(file) / BufferPool::get_page_size());
+  return (int) ceil(ftell(file) / BufferPool::PAGE_SIZE);
 }
 
 Page * HeapFile::ReadPage(PageId * pid) {

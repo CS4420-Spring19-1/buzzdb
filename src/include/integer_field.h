@@ -35,11 +35,14 @@ class IntegerField : public Field {
   Type get_type() const override;
 
   /**
+   * Creates an IntegerField by parsing the stream and returns a pointer to it.
+   */
+  static Field * ParseStreamForField(std::stringstream * byte_stream_pointer);
+
+  /**
    * Write the bytes representing the IntegerField to the specified Stream.
    */
-  /* To be implemented
-    void serialize(DataOutputStream dos) override;
-  */
+  void Serialize(std::stringstream * byte_stream_pointer) override;
 
   /**
    * Compares the value of the IntegerField to the value of operand.

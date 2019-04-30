@@ -6,11 +6,12 @@
 namespace buzzdb {
 /**
  * The Page interface class is an interface for page representations.
+ * - This interface is largely utilized by the BufferPool.
  * - A page contains tuples, which contain fields.
- * - A page is contained in a table, which is typically implemented as a DbFile.
- * 
- * Pages may be "dirty", meaning that they have been modified since they
- * were last written out to disk.
+ * - A page is contained in a table, which is typically implemented as a
+ *   DbFile.
+ * - A page may be "dirty", meaning that it has been modified since it was last
+ *   written out to disk.
  */
 class Page {
  public:
@@ -35,7 +36,7 @@ class Page {
   /**
    * Sets the dirty state of the page as dirtied by a particular transaction.
    */
-  virtual void MarkDirty(bool dirty, TransactionId & tid) = 0;
+  virtual void MarkDirty(bool dirty, TransactionId * tid) = 0;
  
   /* Need to use another input parameter type besides byte
   virtual void GetPageData(std::byte content_rep[]) = 0;

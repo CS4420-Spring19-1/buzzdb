@@ -36,11 +36,14 @@ class StringField : public Field {
   Type get_type() const override;
 
   /**
+   * Creates an StringField by parsing the stream and returns a pointer to it.
+   */
+  static Field * ParseStreamForField(std::stringstream * byte_stream_pointer);
+
+  /**
    * Write the bytes representing the StringField to the specified Stream.
    */
-  /* To be implemented
-    void serialize(DataOutputStream dos) override;
-  */
+  void Serialize(std::stringstream * byte_stream_pointer) override;
 
   /**
    * Compares the value of the StringField to the value of operand.

@@ -17,6 +17,15 @@ Field::Type IntegerField::get_type() const {
   return Type::INTEGER;
 }
 
+Field * IntegerField::ParseStreamForField(
+    std::stringstream * byte_stream_pointer) {
+  // to be implemented
+}
+
+void IntegerField::Serialize(std::stringstream * byte_stream_pointer) {
+  // to be implemented
+}
+
 /*
 bool IntegerField::Compare(Predicate::OpType op_type, Field * operand) {
   IntegerField * operand_value_pointer = static_cast<IntegerField *>(operand);
