@@ -14,4 +14,6 @@ class DbException : public std::runtime_error {
  private:
   std::string what_message;
 };
+
+
 }
