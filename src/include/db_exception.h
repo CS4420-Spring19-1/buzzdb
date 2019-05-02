@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdexcept>
+#include <string>
 
 namespace buzzdb {
 class DbException : public std::runtime_error {

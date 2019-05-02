@@ -1,5 +1,5 @@
-#include "tuple.h"
 #include <stdexcept>
+#include "tuple.h"
 #include "field.h"
 
 namespace buzzdb {
